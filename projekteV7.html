@@ -1,0 +1,3130 @@
+<!DOCTYPE html>
+<html lang="de"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>XY-To-Dos</title>
+
+<!-- Google Material Symbols (Icons) -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+<style>
+  :root{
+    --bg:#0f172a; --card:#0b1225; --muted:#94a3b8; --text:#e6eaf3;
+    --accent:#7c3aed; --accent-2:#16a34a; --danger:#ef4444; --border:#1f2a44;
+    --chip:#111b36; --progress:#16a34a; --hover:rgba(255,255,255,.06);
+    --shadow:0 10px 24px rgba(0,0,0,.25); --row-sel:rgba(124,58,237,.18)
+  }
+  body.light{
+    --bg:#f7fafc; --card:#ffffff; --muted:#475569; --text:#0f172a;
+    --accent:#7c3aed; --accent-2:#16a34a; --danger:#b91c1c; --border:#e2e8f0;
+    --chip:#f1f5f9; --progress:#16a34a; --hover:rgba(0,0,0,.04);
+    --shadow:0 8px 18px rgba(2,6,23,.08); --row-sel:rgba(124,58,237,.14)
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font:15px/1.45 ui-sans-serif, system-ui, -apple-system, Segoe UI, Inter, Roboto, Helvetica, Arial, sans-serif;
+    color:var(--text); background:var(--bg)
+  }
+
+  /* Einheitliche Schrift für Formularelemente, damit Projekt‑Datum und Deadline identisch aussehen */
+  input, select, button, textarea{
+    font-family: inherit;
+  }
+  .container{max-width:1600px; margin:24px auto 120px; padding:0 20px}
+.pathPreview{
+  margin-top:8px; font-size:12px; color:var(--muted);
+  cursor:pointer; text-decoration:underline dotted;
+}
+tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand verstecken */
+
+
+  /* Header */
+  header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px}
+  .title{font-weight:800; letter-spacing:.2px; font-size:28px; display:flex; align-items:center; gap:10px}
+  .title [contenteditable]{padding:4px 8px; border-radius:10px}
+  .title [contenteditable]:focus{outline:2px solid #334155; background:#0c1630}
+  body.light .title [contenteditable]:focus{background:#f8fafc}
+  .dirty{width:10px; height:10px; border-radius:999px; background:#f59e0b; display:none}
+  .dirty.on{display:inline-block}
+  .sub{color:var(--muted); font-size:13px}
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); overflow:hidden
+  }
+
+  /* Icon-Buttons (Nur Icons) */
+  .actions-right{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .iconbtn{
+    --bg1:rgba(255,255,255,.06); --bg2:rgba(255,255,255,.02);
+    position:relative; display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:12px; border:1px solid var(--border);
+    background:linear-gradient(180deg,var(--bg1),var(--bg2)); box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+    cursor:pointer
+  }
+  .printToggle{
+    display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted);
+    border:1px solid var(--border); border-radius:10px; padding:6px 10px;
+    background:var(--card); cursor:pointer;
+  }
+  .printToggle input{margin:0; accent-color:var(--accent);}
+  .iconbtn:hover{background:var(--hover)}
+  .ms{
+  font-family: "Material Symbols Rounded";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 22px;      /* Icon-Größe */
+  line-height: 1;
+  display: inline-block;
+  vertical-align: middle;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+  .ic-save{color:#22c55e}
+  .ic-print{color:#8b5cf6}
+  .ic-undo{color:#f59e0b}
+  .ic-redo{color:#06b6d4}
+  .ic-backup{color:#0ea5e9}
+
+  /* Top-Bars */
+  .barTop{display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); background:rgba(255,255,255,.02)}
+  .leftTop{display:flex; align-items:center; gap:12px}
+  .rightTop{display:flex; gap:8px; align-items:center}
+
+  /* Tabs */
+  .tabs{display:flex; gap:10px; overflow:auto; padding:10px}
+  .tab{
+    display:flex; align-items:center; gap:8px; padding:8px 14px; border:1px solid var(--border);
+    background:var(--card); color:var(--text); border-radius:999px; user-select:none
+  }
+  .tab.active{outline:2px solid var(--accent)}
+  .tab .name{max-width:260px; overflow:hidden; text-overflow:ellipsis}
+  .tab button{background:transparent; border:none; color:var(--muted); cursor:pointer}
+  .tab.add{border-style:dashed; font-weight:700}
+  .tab.dragging{opacity:.6}
+  .tab.drop-hint{outline:2px dashed #64748b}
+
+  /* Ansicht Toggle */
+  .viewToggle{display:flex; gap:6px; padding-right:10px}
+  .viewToggle button{border:1px solid var(--border); background:var(--card); color:var(--text); border-radius:10px; padding:8px 10px; cursor:pointer}
+  .viewToggle .on{outline:2px solid var(--accent)}
+
+  /* Eingabe-Toolbar */
+  .toolbar{
+    display:grid;
+    grid-template-columns: minmax(90px,.9fr) minmax(0,1.5fr) minmax(110px,.9fr) 36px minmax(0,1.25fr) minmax(0,1.35fr) minmax(130px,.85fr);
+    gap:10px; padding:14px; border-bottom:1px solid var(--border); background:rgba(255,255,255,.02);
+    align-items:center;
+  }
+  .toolbar input[type="text"], .toolbar input[type="date"]{
+    width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+    background:#0c1630; color:var(--text); outline:none
+  }
+  body.light .toolbar input[type="text"], body.light .toolbar input[type="date"]{background:#ffffff}
+  .toolbar .btnPrimary{justify-self:stretch; align-self:stretch; display:flex; align-items:center; justify-content:center;}
+  .toolbar .todoHelp{
+    color:var(--muted);
+    font-size:12px;
+    align-self:flex-start;
+    grid-column:1/-1;
+    line-height:1.35;
+  }
+  .btnPrimary{
+    border:none; padding:10px 16px; border-radius:12px; color:#fff; cursor:pointer;
+    background:linear-gradient(135deg, var(--accent), #4f46e5);
+    justify-self:stretch;
+    white-space:nowrap;
+  }
+  .btn{border:1px solid var(--border); background:var(--card); color:var(--text); border-radius:10px; padding:9px 12px; cursor:pointer}
+
+  /* Filter-Bar */
+  .filterbar{
+    /* Grid-Aufteilung: Suchfeld, Status, Prozentbereich, Sortierung
+       sowie vier kleine Aktionsbuttons (Auswählen, Abwählen, Alle ausklappen, Alle zuklappen).
+
+       Um Platz für die zusätzlichen Buttons zu schaffen, wurden die Breiten der Status‑
+       und Sortierfelder leicht reduziert. Das Suchfeld behält flexible Breite. */
+    display:grid;
+    grid-template-columns: 1fr .7fr .7fr .8fr auto auto auto auto;
+    gap:10px;
+    padding:12px 14px;
+    border-bottom:1px solid var(--border);
+    background:rgba(255,255,255,.02);
+    align-items:center;
+  }
+  .filterbar input[type="text"], .filterbar select{
+    width:100%;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:#0c1630;
+    color:var(--text);
+  }
+  body.light .filterbar input[type="text"],
+  body.light .filterbar select{
+    background:#ffffff;
+  }
+  .miniBtn{
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    border-radius:10px;
+    padding:8px 10px;
+    cursor:pointer;
+  }
+
+  /* Bulkbar */
+  .bulkbar{display:none; gap:10px; align-items:center; padding:10px 14px; border-bottom:1px solid var(--border); background:rgba(124,58,237,.08)}
+  .bulkbar.show{display:flex}
+  .bulkInfo{color:var(--muted)}
+
+  /* Tabelle */
+  table{width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed}
+  colgroup col:nth-child(1){width:120px} /* Pfeil + Auswahl + Farbe */
+  colgroup col:nth-child(2){width:12%}
+  colgroup col:nth-child(3){width:19%}
+  /* Datum/Deadline reduziert, Notizen verbreitert. Insgesamt müssen 69% verteilt werden (nachdem 12+19=31% für Nummer und Name reserviert sind). */
+  colgroup col:nth-child(4){width:14%} /* Datum & Deadline */
+  colgroup col:nth-child(5){width:26%} /* To‑Dos & Fortschritt */
+  colgroup col:nth-child(6){width:20%} /* Notizen */
+  colgroup col:nth-child(7){width:9%}  /* Pfad */
+  /* col7 width overridden above to 9% */
+  thead th{
+    text-align:left; font-weight:700; padding:12px 14px; color:var(--muted); background:rgba(255,255,255,.02);
+    border-bottom:1px solid var(--border); user-select:none
+  }
+  tbody tr{border-bottom:none; position:relative}
+  tbody tr::after{
+    content:'';
+    position:absolute;
+    left:14px;
+    right:14px;
+    bottom:0;
+    height:1px;
+    background:rgba(148,163,184,.18);
+    pointer-events:none;
+  }
+  tbody tr:last-child::after{background:transparent}
+  body.light tbody tr::after{background:rgba(148,163,184,.28)}
+  tbody tr.drop-before::before,
+  tbody tr.drop-after::before{
+    content:'';
+    position:absolute;
+    left:10px;
+    right:10px;
+    border-top:2px solid var(--accent);
+    pointer-events:none;
+  }
+  tbody tr.drop-before::before{top:-2px;}
+  tbody tr.drop-after::before{bottom:-2px;}
+  td{vertical-align:top; padding:12px 14px; overflow:visible}
+  td .editable{min-width:60px; padding:8px 10px; border:1px solid transparent; border-radius:10px}
+  td .editable:focus{outline:none; border-color:#334155; background:#0c1630}
+  body.light td .editable:focus{background:#f8fafc}
+  .dateInput{width:100%; background:#0c1630; color:var(--text); border:1px solid var(--border); border-radius:10px; padding:8px 10px}
+  /* Einheitliche Schrift und kleinere Datumsanzeige */
+  .dateInput, input[type="date"]{
+    /* Gleiche Schriftart und kleinere Schriftgröße für alle Datumsfelder (Projektdatum, Deadlines) */
+    font-family: inherit;
+    font-size:12px;
+  }
+  body.light .dateInput{background:#ffffff}
+  .row-selected{background:var(--row-sel)}
+  tr{--pcolor: transparent}
+  tr.colored{background:linear-gradient(90deg, color-mix(in srgb, var(--pcolor) 15%, transparent), transparent)}
+
+/* Auswahl soll die Projektfarbe komplett überdecken */
+tbody tr.row-selected{
+  --pcolor: transparent;                 /* evtl. gesetzte Zeilenfarbe neutralisieren */
+  background: var(--row-sel) !important; /* Auswahlfarbe hat Vorrang */
+}
+tbody tr.row-selected.colored{
+  --pcolor: transparent;
+  background: var(--row-sel) !important; /* auch falls die Zeile zusätzlich 'colored' hat */
+}
+
+  /* Linke Steuerzelle */
+  .leftCell{display:flex; align-items:flex-start; gap:8px}
+  .caret{cursor:pointer; background:transparent; border:1px solid var(--border); border-radius:10px; width:28px; height:28px; display:flex; align-items:center; justify-content:center}
+  .selectCb{margin-top:2px}
+  .colorBtn{width:28px; height:28px; border-radius:8px; border:1px solid var(--border); background:var(--pcolor, #7c3aed); cursor:pointer; position:relative}
+  .colorBtn::after{content:""; position:absolute; inset:0; border-radius:8px; box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 1px 4px rgba(0,0,0,.25) }
+
+  /* Farb-Popover */
+  .colorPopover{position:fixed; z-index:50; background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); padding:12px; display:none}
+  .colorRow{display:flex; gap:8px; margin:8px 0}
+  .sw{width:24px; height:24px; border-radius:6px; border:1px solid var(--border); cursor:pointer}
+  .popBtns{display:flex; gap:8px; justify-content:flex-end}
+
+  /* Fortschritt + Todos (30% kompakter) + Reorder */
+  .todoCol{display:flex; flex-direction:column; gap:8px}
+  .progress{height:6px; border-radius:999px; background:#0c1630; border:1px solid #223055; overflow:hidden}
+  body.light .progress{background:#e2e8f0; border-color:#cbd5e1}
+  .progress > i{display:block; height:100%; width:0%}
+  .todoHead{display:flex; align-items:center; gap:10px; margin-bottom:0; color:var(--muted); font-size:12px}
+
+  .todoList{display:flex; flex-direction:column; gap:6px}
+  .todoItem{
+    display:grid;
+    /* Kompaktere Aufteilung: 16px Checkbox, flexibler Text, 90px Datum, 24px Kalenderbutton, 24px Löschen */
+    grid-template-columns: 16px 1fr 90px 24px 24px;
+    align-items:center;
+    gap:6px;
+    background:var(--chip);
+    padding:4px 6px;
+    border-radius:10px;
+    border:1px solid #1b2643;
+    font-size:12px;
+    cursor:grab;
+  }
+  body.light .todoItem{border-color:#e2e8f0}
+  .todoItem.dragging{opacity:.6; outline:2px dashed #64748b}
+  .todoItem input[type="checkbox"]{accent-color:var(--accent-2)}
+  .todoItem.done{opacity:.65}
+  .todoText{min-height:16px}
+  .todoDel{background:transparent; border:none; color:#93a1c8; cursor:pointer; padding:2px 4px; border-radius:8px}
+  .todoDel:hover{color:#cbd5e1}
+
+  /* Mini‑Kalenderbutton in To‑Do‑Zeilen */
+  .miniCal{
+    width:24px;
+    height:24px;
+    background:transparent;
+    border:none;
+    color:#93a1c8;
+    cursor:pointer;
+    padding:0;
+    border-radius:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .miniCal:hover{ color:#cbd5e1; }
+
+  .badge{display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:2px 8px; font-size:11px; border:1px solid var(--border)}
+  .b-red{background:#7f1d1d; color:#fecaca; border-color:#7f1d1d}
+  .b-amber{background:#78350f; color:#fde68a; border-color:#78350f}
+  .b-yellow{background:#3f3f0f; color:#fef08a; border-color:#3f3f0f}
+  .b-green{background:#064e3b; color:#bbf7d0; border-color:#064e3b}
+  /* Im eingeklappten Zustand nur die Notizen ausblenden – der Fortschrittsbalken bleibt sichtbar. */
+  .collapsed .note{display:none}
+  /* In collapsed rows, hide the detailed todo list and add area but keep summary and progress visible */
+  /* In zusammengeklappten Projektzeilen werden detaillierte To‑Do‑Listen und das Eingabefeld ausgeblendet. */
+  .collapsed .todoList,
+  .collapsed .todoAdd{
+    display:none;
+  }
+  /* Spezifischer: auch innerhalb der Tabelle sicherstellen, dass Listen und Eingabe bei collapsed‑Zeilen verborgen werden */
+  tbody tr.collapsed .todoList,
+  tbody tr.collapsed .todoAdd{
+    display:none;
+  }
+
+  /* Collapsed rows: kleinere Höhe, Notizen und Editier-Icons ausblenden */
+  tbody tr.collapsed > td{
+    padding-top:6px;
+    padding-bottom:6px;
+  }
+
+  /* Hinweisleiste für bevorstehende Deadlines wurde entfernt */
+
+  /* Timeline‑Ansicht */
+  .timelineShell{display:none; padding:14px 14px 22px;}
+  .timelineShell.show{display:block}
+  .timeline{
+    --timeline-px-day:22px;
+    --timeline-row-height:40px;
+    --timeline-bar-height:14px;
+    --timeline-label-width:220px;
+    --timeline-grid-step:var(--timeline-px-day);
+    padding:0;
+    overflow-x:auto;
+    overflow-y:auto;
+    max-height:600px;
+    scroll-behavior:smooth;
+  }
+  /* Kopfzeile der Timeline: getrennte Zeilen für Monate und Tage */
+  .timelineMonths,
+  .timelineWeeks,
+  .timelineDays{
+    display:flex;
+    position:relative;
+    margin-left:var(--timeline-label-width);
+    min-width:max-content;
+    gap:0;
+  }
+  .timelineMonths{ margin-bottom:2px; }
+  .timelineWeeks{ margin-bottom:2px; }
+  .timeline-month{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    color:var(--muted);
+    border-left:1px solid var(--border);
+    white-space:nowrap;
+    height:20px;
+    flex:0 0 auto;
+    min-width:var(--timeline-px-day);
+  }
+  .timeline-month:first-child{ border-left:none; }
+  .timeline-day{
+    flex:0 0 var(--timeline-px-day);
+    font-size:9px;
+    color:var(--muted);
+    text-align:center;
+    border-left:1px solid var(--border);
+    padding-top:2px;
+    white-space:nowrap;
+    min-width:var(--timeline-px-day);
+  }
+  .timeline-week{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    color:var(--muted);
+    border-left:1px solid var(--border);
+    min-width:calc(var(--timeline-px-day) * 7);
+    height:22px;
+    white-space:nowrap;
+  }
+  .timeline-week:first-child{border-left:none;}
+  .timeline[data-zoom="weeks"] .timelineDays{display:none;}
+
+  /* Popover für Datumsauswahl (benutzerdefinierter DatePicker) */
+  .datePicker{
+    position: fixed;
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    padding: 6px;
+    font-size: 12px;
+    z-index: 10000;
+  }
+  .datePicker header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .datePicker .navBtn{
+    cursor: pointer;
+    padding: 0 4px;
+    user-select: none;
+  }
+  .datePicker table{
+    border-collapse: collapse;
+  }
+  .datePicker th, .datePicker td{
+    width: 24px;
+    height: 22px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .datePicker td.disabled{
+    color: var(--muted);
+    cursor: default;
+  }
+  .datePicker td:hover:not(.disabled){
+    background: var(--chip);
+  }
+  .datePicker td.selected{
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+  }
+  .timeline-day:first-child{ border-left:none; }
+  .timelineChart{
+    position:relative;
+    margin-left:var(--timeline-label-width);
+    background-image:
+      repeating-linear-gradient(to right, var(--border) 0, var(--border) 1px, transparent 1px, transparent var(--timeline-grid-step)),
+      repeating-linear-gradient(to bottom, rgba(148,163,184,.18) 0, rgba(148,163,184,.18) 1px, transparent 1px, transparent var(--timeline-row-height));
+    min-width:max-content;
+  }
+  .timelineControls{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    margin-bottom:12px;
+  }
+  .timelineFilter{display:flex; flex-direction:column; gap:4px; min-width:180px;}
+  .timelineFilter label{font-size:12px; color:var(--muted);}
+  .timelineFilter select{
+    padding:8px 10px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+  }
+  body.light .timelineFilter select{background:#ffffff;}
+  .timelineZoomWrap{display:flex; flex-direction:column; align-items:flex-end; gap:6px; min-width:220px;}
+  .timelineZoomWrap span{color:var(--muted); font-size:12px;}
+  .timelineZoomWrap input[type="range"]{width:200px; accent-color:var(--accent);}
+  .timelineZoomLabels{display:flex; width:200px; justify-content:space-between; font-size:11px; color:var(--muted); gap:4px;}
+  .timelineZoomLabels span{flex:1; text-align:center; transition:color .2s, font-weight .2s;}
+  .timelineZoomLabels span.active{color:var(--text); font-weight:600;}
+
+  /* Erlaube horizontales Scrollen in der Timeline, damit weit entfernte Deadlines erreichbar sind */
+  #timelineView{
+    overflow-x:auto;
+    overflow-y:auto;
+    padding-bottom:8px;
+  }
+  .timeline-row{
+    position:absolute;
+    left:0;
+    right:0;
+    height:var(--timeline-row-height);
+  }
+  .timeline-row::after{
+    content:'';
+    position:absolute;
+    left:calc(var(--timeline-label-width) * -1);
+    right:0;
+    bottom:0;
+    height:1px;
+    background:rgba(148,163,184,.18);
+    pointer-events:none;
+  }
+  body.light .timeline-row::after{background:rgba(148,163,184,.26)}
+  .timeline-label{
+    position:absolute;
+    left:calc(var(--timeline-label-width) * -1);
+    top:0;
+    bottom:0;
+    width:var(--timeline-label-width);
+    display:flex;
+    align-items:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size:13px;
+    padding-right:12px;
+  }
+  .timeline-bar{
+    position:absolute;
+    height:var(--timeline-bar-height);
+    border-radius:999px;
+    top:calc((var(--timeline-row-height) - var(--timeline-bar-height))/2);
+    /* Balkenfarbe wird im Script gesetzt (accent, danger oder muted) */
+  }
+  .timeline-row.is-overdue .timeline-label{color:var(--danger); font-weight:600;}
+  body.light .timeline-row.is-overdue .timeline-label{color:#b91c1c;}
+  .timeline-arrow{
+    position:absolute;
+    top:calc((var(--timeline-row-height) - var(--timeline-bar-height))/2);
+    height:var(--timeline-bar-height);
+    background:var(--danger);
+    border-radius:0 var(--timeline-bar-height) var(--timeline-bar-height) 0;
+    min-width:20px;
+    box-shadow:0 0 0 1px rgba(0,0,0,.2);
+  }
+  .timeline-arrow::before{
+    content:'';
+    position:absolute;
+    left:calc(var(--arrow-head, 18px) * -1);
+    top:0;
+    bottom:0;
+    border-top:calc(var(--timeline-bar-height)/2) solid transparent;
+    border-bottom:calc(var(--timeline-bar-height)/2) solid transparent;
+    border-left:var(--arrow-head, 18px) solid var(--danger);
+  }
+  body.light .timeline-arrow{box-shadow:0 0 0 1px rgba(15,23,42,.15);}
+  .today-line{
+    position:absolute;
+    width:2px;
+    background:var(--danger);
+    top:0;
+    bottom:0;
+  }
+
+  /* Dispo-Ansicht */
+  .dispoView{display:none; padding:14px 14px 22px;}
+  .dispoView.show{display:block}
+  .dispoToolbar{display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; margin-bottom:18px;}
+  .dispoWeekPicker{display:flex; flex-direction:column; gap:4px; min-width:160px;}
+  .dispoWeekPicker label{font-size:12px; color:var(--muted);}
+  .dispoWeekPicker input{padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:#0c1630; color:var(--text);}
+  body.light .dispoWeekPicker input{background:#ffffff;}
+  .dispoEmpty{display:none; border:1px dashed var(--border); border-radius:16px; padding:20px; text-align:center; color:var(--muted);}
+  .dispoWeeks{display:flex; flex-direction:column; gap:18px;}
+  .dispoWeek{border:1px solid var(--border); border-radius:18px; padding:16px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)); box-shadow:var(--shadow);}
+  .dispoWeek.collapsed .dispoItems{display:none;}
+  .dispoWeek.collapsed .dispoNotes{display:none;}
+  .dispoWeekHeader{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .dispoToggle{background:transparent; border:1px solid var(--border); border-radius:10px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;}
+  .dispoWeekTitle{font-weight:700; font-size:16px;}
+  .dispoWeekRange{font-size:12px; color:var(--muted);}
+  .dispoWeekActions{margin-left:auto; display:flex; gap:8px;}
+  .dispoWeekActions .btn{padding:8px 12px;}
+  .dispoNotes textarea{width:100%; min-height:56px; border-radius:12px; border:1px solid var(--border); background:#0c1630; color:var(--text); padding:10px 12px; font-size:13px; resize:vertical;}
+  body.light .dispoNotes textarea{background:#ffffff;}
+  .dispoNotes{margin-bottom:12px;}
+  .dispoItems{display:flex; flex-direction:column; gap:12px;}
+  .dispoItemsEmpty{color:var(--muted); font-size:13px; border:1px dashed var(--border); border-radius:12px; padding:12px; text-align:center;}
+  .dispoItem{display:grid; grid-template-columns:minmax(150px,1.1fr) minmax(130px,1fr) minmax(220px,2.2fr) minmax(150px,.9fr) 36px; align-items:start; gap:10px; background:var(--chip); border:1px solid rgba(148,163,184,.35); border-radius:14px; padding:10px 12px;}
+  .dispoItem input,
+  .dispoItem textarea{width:100%; border-radius:10px; border:1px solid var(--border); background:#0c1630; color:var(--text); padding:8px 10px; font-size:13px;}
+  body.light .dispoItem input,
+  body.light .dispoItem textarea{background:#ffffff;}
+  .dispoItem textarea{min-height:48px; resize:vertical;}
+  .dispoDue{display:flex; align-items:center; gap:6px;}
+  .dispoDue input{flex:1;}
+  .dispoItem button.dispoRemove{background:transparent; border:none; color:#93a1c8; cursor:pointer; border-radius:8px; height:32px; width:32px; display:flex; align-items:center; justify-content:center;}
+  .dispoItem button.dispoRemove:hover{color:#fca5a5;}
+  .dispoView .miniCal{background:transparent; border:1px solid var(--border); border-radius:8px; color:#93a1c8; width:32px; height:32px;}
+  .dispoView .miniCal:hover{color:#cbd5e1;}
+  body.light .dispoItem button.dispoRemove{color:#64748b;}
+  body.light .dispoView .miniCal{color:#64748b;}
+
+  .note{min-height:140px; background:linear-gradient(180deg,#0c1630,#0a132a); border:1px dashed #314064; border-radius:12px; padding:10px 12px; outline:none}
+  body.light .note{background:#ffffff; border-color:#e2e8f0}
+
+  .folderWrap{display:flex; align-items:center; gap:8px}
+  .folderInput{width:100%; background:#0c1630; color:var(--text); border:1px solid var(--border); border-radius:10px; padding:8px 10px}
+  body.light .folderInput{background:#ffffff}
+  /* Floating Save */
+  .fab{position:fixed; right:24px; bottom:24px; z-index:10}
+  .toast{position:fixed; left:24px; bottom:24px; background:#111827; color:#fff; padding:10px 14px; border-radius:10px; box-shadow:var(--shadow); opacity:0; transform:translateY(8px); transition:.25s}
+  .toast.show{opacity:1; transform:translateY(0)}
+
+  /* Kanban */
+  .kanban{display:none; padding:14px}
+  .kanban.show{display:block}
+  .kbWrap{display:grid; grid-template-columns: repeat(3, 1fr); gap:12px}
+  .kbCol{border:1px solid var(--border); border-radius:14px; background:var(--card); min-height:240px; padding:10px}
+  .kbHead{font-weight:700; color:var(--muted); margin:4px 6px 10px}
+  .kbList{display:flex; flex-direction:column; gap:10px; min-height:200px}
+  .kbCard{border:1px solid var(--border); border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); padding:10px; cursor:grab; transition:border-color .2s, box-shadow .2s; position:relative;}
+  .kbCard.drop-before,
+  .kbCard.drop-after{border-color:rgba(124,58,237,.55); box-shadow:0 0 0 1px rgba(124,58,237,.35) inset;}
+  .kbCard.drop-before::before,
+  .kbCard.drop-after::before{content:''; position:absolute; left:12px; right:12px; border-top:2px solid var(--accent);}
+  .kbCard.drop-before::before{top:-2px;}
+  .kbCard.drop-after::before{bottom:-2px;}
+  .kbTitle{font-weight:700; margin-bottom:6px}
+  .kbMeta{display:flex; gap:8px; align-items:center; color:var(--muted); font-size:12px}
+  .kbProg{height:6px; border-radius:999px; background:#0c1630; border:1px solid #223055; overflow:hidden; margin-top:8px}
+  .kbProg > i{display:block; height:100%; width:0%}
+
+  /* Wenn es viele Projekte gibt, soll jede Kanban‑Spalte selbst scrollen. Ab 10 Karten wird der Bereich begrenzt. */
+  .kbList{
+    max-height:480px;
+    overflow-y:auto;
+  }
+
+  /* Print */
+  @media print{
+    /* Kopfzeilen und interaktive Elemente verbergen */
+    header, .barTop, .viewToggle, .toolbar, .filterbar, .bulkbar, .footer, .fab, .actions-right,
+    .caret, .leftCell .selectCb, .colorBtn, .todoDel, .dispoView { display:none !important; }
+    body{ background:white; color:black; }
+    .container{ margin:0; max-width:100%; padding:0; }
+    table{ width:100%; table-layout:auto; border-collapse:collapse; }
+    thead th, tbody td{ white-space:normal; word-break:break-word; }
+    thead th, td{ padding:4px 6px; font-size:11px; }
+    tbody tr{ page-break-inside: avoid; }
+    .todoList, .todoAdd, .note{ display:none !important; }
+    .progress{ height:4px; }
+    td:nth-child(7), th:nth-child(7){ width:22%; }
+    td:nth-child(7){ font-size:10px; }
+    .folderWrap{ display:none !important; }
+    .pathPreview{ display:block !important; color:transparent; font-size:10px; white-space:normal; word-break:break-word; margin-top:4px; }
+    .pathPreview::after{ content:attr(data-full); color:black; }
+    /* Eingabefelder als Text darstellen */
+    input[type="date"], input[type="text"]{ border:none !important; padding:0 !important; background:none !important; color:black !important; width:auto !important; }
+    body.print-show-todos header{ display:none; }
+    body.print-show-todos .todoList{ display:flex !important; }
+    body.print-show-todos .note{ display:block !important; }
+    body.print-show-todos tbody tr.collapsed .todoList{ display:flex !important; }
+    body.print-show-todos tbody tr.collapsed .pathPreview{ display:block !important; }
+    body.print-show-todos tbody tr.collapsed > td{ padding-top:12px; padding-bottom:12px; }
+  }
+</style>
+<style id="ce-placeholder-rule">.title [contenteditable]:empty::before{content:attr(data-placeholder); color:var(--muted);}</style></head>
+<body>
+  <!-- eingebetteter Zustand -->
+  <script id="APP_STATE" type="application/json">{
+  "title": "XY-To-Dos",
+  "projects": [
+    {
+      "id": "ct8ogtd",
+      "number": "dsafewr",
+      "name": "343434",
+      "date": "",
+      "deadline": "",
+      "showDeadline": false,
+      "todos": [],
+      "notes": "",
+      "tab": "Alle",
+      "folder": "",
+      "color": "",
+      "collapsed": false
+    },
+    {
+      "id": "9scywmt",
+      "number": "5467q2345135",
+      "name": "dbndfghdfgh",
+      "date": "",
+      "deadline": "",
+      "showDeadline": false,
+      "todos": [],
+      "notes": "",
+      "tab": "Alle",
+      "folder": "",
+      "color": "",
+      "collapsed": false
+    },
+    {
+      "id": "bwadcix",
+      "number": "23451341",
+      "name": "dsfgdfsgdswgdsfg",
+      "date": "",
+      "deadline": "",
+      "showDeadline": false,
+      "todos": [],
+      "notes": "",
+      "tab": "Alle",
+      "folder": "",
+      "color": "",
+      "collapsed": false
+    },
+    {
+      "id": "bdlykea",
+      "number": "sdfgdfsg34",
+      "name": "534523452345",
+      "date": "",
+      "deadline": "",
+      "showDeadline": false,
+      "todos": [],
+      "notes": "",
+      "tab": "Alle",
+      "folder": "",
+      "color": "",
+      "collapsed": false
+    },
+    {
+      "id": "jvv9n9x",
+      "number": "3452345234",
+      "name": "dsfdsdfdfgs",
+      "date": "",
+      "deadline": "",
+      "showDeadline": false,
+      "todos": [],
+      "notes": "",
+      "tab": "Alle",
+      "folder": "",
+      "color": "",
+      "collapsed": false
+    },
+    {
+      "id": "zri8cf4",
+      "number": "234234456456",
+      "name": "sdfgdsfgdfsgsdf",
+      "date": "2025-09-27",
+      "deadline": "",
+      "showDeadline": false,
+      "todos": [
+        {
+          "text": "dsfghsdfgsdg",
+          "done": false,
+          "due": ""
+        }
+      ],
+      "notes": "",
+      "tab": "Alle",
+      "folder": "C:\\Users\\magomed.harkimov\\Desktop\\3005328 -Systemzentrale, Reinigung\\Zeichnungen",
+      "color": "",
+      "collapsed": false
+    },
+    {
+      "id": "a2g6fws",
+      "number": "2341234",
+      "name": "adsadsfsa",
+      "date": "",
+      "deadline": "",
+      "showDeadline": false,
+      "todos": [],
+      "notes": "",
+      "tab": "Alle",
+      "folder": "",
+      "color": "",
+      "collapsed": false
+    },
+    {
+      "id": "gfsvizm",
+      "number": "123123",
+      "name": "sdaadsf",
+      "date": "",
+      "deadline": "",
+      "showDeadline": false,
+      "todos": [],
+      "notes": "",
+      "tab": "Alle",
+      "folder": "",
+      "color": "",
+      "collapsed": false
+    },
+    {
+      "id": "p1",
+      "number": "001",
+      "name": "Projekt A",
+      "date": "2025-09-23",
+      "deadline": "",
+      "showDeadline": false,
+      "todos": [
+        {
+          "text": "Aufgabe 2025",
+          "done": false,
+          "due": "2025-09-23"
+        },
+        {
+          "text": "Aufgabe 2027",
+          "done": false,
+          "due": "2027-09-23"
+        },
+        {
+          "text": "Aufgabe 2030",
+          "done": false,
+          "due": "2030-09-23"
+        }
+      ],
+      "notes": "",
+      "tab": "Alle",
+      "folder": "",
+      "color": "",
+      "collapsed": false
+    },
+    {
+      "id": "p2",
+      "number": "002",
+      "name": "Projekt B",
+      "date": "2025-09-23",
+      "deadline": "",
+      "showDeadline": false,
+      "todos": [],
+      "notes": "",
+      "tab": "Alle",
+      "folder": "",
+      "color": "",
+      "collapsed": false
+    }
+  ],
+  "filters": {
+    "q": "",
+    "status": "all",
+    "sort": "date_desc",
+    "pctMin": 0,
+    "pctMax": 100
+  },
+  "trash": [],
+  "tabs": [
+    "Alle"
+  ],
+  "currentTab": "Alle",
+  "theme": "dark",
+  "view": "table",
+  "timelineTab": "Alle",
+  "timelineZoom": "days",
+  "order": []
+}</script>
+
+  <script>
+  // Fehlerdiagnose: Alle JavaScript-Fehler im Fenster auf der Seite anzeigen.
+  window.onerror = function(msg, url, line, col, error){
+    const div = document.createElement('pre');
+    div.style.color = 'red';
+    div.style.whiteSpace = 'pre-wrap';
+    div.textContent = 'JS-Fehler: ' + msg + ' at ' + line + ':' + col;
+    document.body.appendChild(div);
+  };
+  window.addEventListener('unhandledrejection', function(event){
+    const div = document.createElement('pre');
+    div.style.color = 'red';
+    div.style.whiteSpace = 'pre-wrap';
+    div.textContent = 'Unhandled promise rejection: ' + (event.reason && event.reason.message || event.reason);
+    document.body.appendChild(div);
+  });
+  </script>
+
+  <script>
+  // Beim Laden der Datei die gespeicherten Autosave-Daten entfernen, um eine saubere Testumgebung zu gewährleisten.
+  try{
+    localStorage.removeItem('autosaveState');
+  }catch(e){}
+  </script>
+
+  <!-- Autosave Toast -->
+  <div class="toast" id="toast">Gespeichert</div>
+
+  <!-- Floating Save -->
+  <div class="fab">
+    <button class="iconbtn" id="saveFab" title="Speichern"><span class="ms ic-save">save</span></button>
+  </div>
+
+  <div class="container">
+    <header>
+      <div>
+        <div class="title">
+          <span class="dirty on" id="dirtyDot"></span>
+          <span id="titleText" contenteditable="true" spellcheck="false" data-placeholder="Titel hier ändern …">XY-To-Dos</span>
+        </div>
+        <div class="sub">Tabs • Drag &amp; Drop • Deadlines &amp; Fällig-Badges • CSV / Export für Kalender • Kanban (Beta) • Datei-Speicherung</div>
+      </div>
+      <div class="actions-right" role="toolbar" aria-label="Aktionen">
+        <!-- Nur Icons (ohne Text) -->
+        <button class="iconbtn" id="saveBtn" title="Speichern"><span class="ms ic-save">save</span></button>
+        <button class="iconbtn" id="printBtn" title="Drucken"><span class="ms ic-print">print</span></button>
+        <label class="printToggle" for="printTodosToggle" title="To-Dos auch im Ausdruck anzeigen">
+          <input type="checkbox" id="printTodosToggle">
+          <span>To-Dos drucken</span>
+        </label>
+        <button class="iconbtn" id="undoBtn" title="Rückgängig"><span class="ms ic-undo">undo</span></button>
+        <button class="iconbtn" id="redoBtn" title="Wiederholen"><span class="ms ic-redo">redo</span></button>
+        <button class="iconbtn" id="backupBtn" title="Backup"><span class="ms ic-backup">backup</span></button>
+        <!-- Farbmodus Switch -->
+        <label class="iconbtn" title="Farbmodus umschalten" style="width:auto; gap:8px">
+          <input id="modeToggle" type="checkbox" role="switch" aria-checked="false" style="accent-color:#64748b; width:18px; height:18px">
+          <span class="ms">dark_mode</span>
+        </label>
+        <!-- Papierkorb (ständig verfügbar) -->
+        <button class="btn" id="trashOpenBtn" title="Papierkorb öffnen">Papierkorb</button>
+      </div>
+    </header>
+
+    <div class="card">
+      <!-- Tabs + Ansicht -->
+      <div class="barTop">
+        <div class="leftTop">
+          <div class="tabs" id="tabs"><button class="tab active" type="button" data-name="Alle" draggable="false"><span class="name">Alle</span></button><button class="tab add" title="Neuer Tab"><span class="name">+ Neuer Tab</span></button></div>
+        </div>
+        <div class="rightTop">
+          <div class="viewToggle">
+            <button id="viewTable" class="on">Tabelle</button>
+            <button id="viewKanban">Kanban</button>
+            <button id="viewTimeline">Timeline</button>
+            <button id="viewDispo">Dispo</button>
+          </div>
+          <!-- Text‑Buttons für restliche Funktionen. Die Option "Öffnen" wurde entfernt. -->
+          <button class="btn" id="saveAsBtn" title="Speichern unter">Speichern unter</button>
+          <button class="btn" id="csvImportBtn" title="CSV importieren">CSV import</button>
+          <button class="btn" id="csvExportBtn" title="CSV exportieren">CSV export</button>
+          <button class="btn" id="calendarExportBtn" title="Export für Kalender">Export für Kalender</button>
+        </div>
+      </div>
+
+      <!-- Eingabezeile -->
+      <div class="toolbar" id="addForm">
+        <input id="inNr" type="text" placeholder="Projektnummer">
+        <input id="inName" type="text" placeholder="Projektname">
+        <input id="inDate" type="text" placeholder="tt.mm.jjjj">
+        <!-- Kalenderbutton für Projektdatum -->
+        <button class="iconbtn miniCal" id="inDateCalBtn" title="Datum auswählen"><span class="ms">event</span></button>
+        <input id="inFolder" type="text" placeholder="Pfad (file://, C:\\..., /mnt/...)">
+        <input id="inTodos" type="text" placeholder="To-Dos mit ; trennen">
+        <button class="btnPrimary" id="addBtn" type="button">Projekt hinzufügen</button>
+        <div class="todoHelp">E-Mail schreiben, Analytikauftrag erstellen, Bericht erstellen etc.</div>
+      </div>
+
+      <!-- Filter -->
+      <div class="filterbar">
+        <input id="q" type="text" placeholder="Suchen in Nr. und Name">
+        <select id="status">
+          <option value="all">Status Alle</option>
+          <option value="open">Nur offen</option>
+          <option value="done">Nur erledigt</option>
+          <option value="partial">Teilweise erledigt</option>
+        </select>
+        <div class="pct">
+          <span>% von</span>
+          <input id="pctMin" type="number" min="0" max="100" step="1" value="0">
+          <span>bis</span>
+          <input id="pctMax" type="number" min="0" max="100" step="1" value="100">
+        </div>
+        <select id="sort">
+          <option value="date_desc">Sortieren Datum ↓</option>
+          <option value="date_asc">Datum ↑</option>
+          <option value="name_asc">Name A → Z</option>
+          <option value="name_desc">Name Z → A</option>
+          <option value="nr_asc">Nummer ↑</option>
+          <option value="nr_desc">Nummer ↓</option>
+          <option value="prog_desc">Fortschritt ↓</option>
+          <option value="prog_asc">Fortschritt ↑</option>
+          <option value="manual">Manuell (Drag &amp; Drop)</option>
+        </select>
+        <!-- Anzahl der Tage bis zum Fälligkeitsdatum, ab dem eine Warnung angezeigt wird -->
+        <button class="miniBtn" id="selectAllBtn">Alle auswählen</button>
+        <button class="miniBtn" id="clearSelBtn">Alle abwählen</button>
+        <!-- Neue Buttons zum gleichzeitigen Auf- und Zuklappen aller Projekte -->
+        <button class="miniBtn" id="expandAllBtn" title="Alle Projekte ausklappen">Alle ausklappen</button>
+        <button class="miniBtn" id="collapseAllBtn" title="Alle Projekte zuklappen">Alle zuklappen</button>
+      </div>
+
+      <!-- Bulk Aktionen -->
+      <div class="bulkbar" id="bulkbar">
+        <span class="bulkInfo" id="selCount">0 ausgewählt</span>
+        <select id="bulkAction">
+          <option value="">Aktion wählen</option>
+          <option value="delete">Löschen → Papierkorb</option>
+          <option value="move">Verschieben in Tab</option>
+          <option value="export_csv">Export CSV</option>
+          <option value="export_ics">Export Kalender</option>
+        </select>
+        <select id="bulkTarget" style="display:none"><option value="Alle">Alle</option></select>
+        <button class="btnPrimary" id="bulkGo">Ausführen</button>
+      </div>
+
+      <!-- Hinweisleiste für kommende Deadlines entfernt -->
+
+      <!-- Tabellenansicht -->
+      <div id="tableView" style="display: block;">
+        <table>
+          <colgroup><col><col><col><col><col><col><col></colgroup>
+          <thead>
+            <tr>
+              <th><!-- leer (Pfeil, Auswahl, Farbe) --></th>
+              <th>Projektnummer</th>
+              <th>Projektname</th>
+              <th>Datum · Deadline</th>
+              <th>To-Dos · Fortschritt</th>
+              <th>Notizen</th>
+              <th>Pfad</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"><tr data-id="zri8cf4"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">234234456456</div></td><td><div class="editable" contenteditable="true">sdfgdsfgdfsgsdf</div></td><td><div style="display: flex; flex-direction: column; gap: 8px;"><input type="date" class="dateInput" title="Projekt‑Datum" lang="de" placeholder="tt.mm.jjjj"><div style="display: flex; gap: 8px; align-items: center;"><input type="text" class="dateInput" placeholder="tt.mm.jjjj" style="display: none;"><button class="btn" title="Deadline anzeigen"><span class="ms">event</span></button></div></div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left:auto">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"><div class="todoItem" draggable="true"><input type="checkbox"><div class="todoText editable" contenteditable="true">dsfghsdfgsdg</div><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="todoAdd" style="display: flex; gap: 8px;"><input type="text" placeholder="To-Do hinzufügen"><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" style="display: block;">C:\Users\magomed.h… Reinigung\Zeichnungen</div></td></tr><tr data-id="p1"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">001</div></td><td><div class="editable" contenteditable="true">Projekt A</div></td><td><div style="display: flex; flex-direction: column; gap: 8px;"><input type="date" class="dateInput" title="Projekt‑Datum" lang="de" placeholder="tt.mm.jjjj"><div style="display: flex; gap: 8px; align-items: center;"><input type="text" class="dateInput" placeholder="tt.mm.jjjj" style="display: none;"><button class="btn" title="Deadline anzeigen"><span class="ms">event</span></button></div></div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 3 erledigt</span><span style="margin-left:auto">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"><div class="todoItem" draggable="true" style="box-shadow: rgba(239, 68, 68, 0.7) 0px 0px 0px 2px inset;"><input type="checkbox"><div class="todoText editable" contenteditable="true">Aufgabe 2025</div><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div><div class="todoItem" draggable="true" style="box-shadow: rgba(16, 185, 129, 0.45) 0px 0px 0px 2px inset;"><input type="checkbox"><div class="todoText editable" contenteditable="true">Aufgabe 2027</div><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div><div class="todoItem" draggable="true" style="box-shadow: rgba(16, 185, 129, 0.45) 0px 0px 0px 2px inset;"><input type="checkbox"><div class="todoText editable" contenteditable="true">Aufgabe 2030</div><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="todoAdd" style="display: flex; gap: 8px;"><input type="text" placeholder="To-Do hinzufügen"><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" style="display: none;"></div></td></tr><tr data-id="p2"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">002</div></td><td><div class="editable" contenteditable="true">Projekt B</div></td><td><div style="display: flex; flex-direction: column; gap: 8px;"><input type="date" class="dateInput" title="Projekt‑Datum" lang="de" placeholder="tt.mm.jjjj"><div style="display: flex; gap: 8px; align-items: center;"><input type="text" class="dateInput" placeholder="tt.mm.jjjj" style="display: none;"><button class="btn" title="Deadline anzeigen"><span class="ms">event</span></button></div></div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 0 erledigt</span><span style="margin-left:auto">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"></div><div class="todoAdd" style="display: flex; gap: 8px;"><input type="text" placeholder="To-Do hinzufügen"><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" style="display: none;"></div></td></tr><tr data-id="ct8ogtd"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">dsafewr</div></td><td><div class="editable" contenteditable="true">343434</div></td><td><div style="display: flex; flex-direction: column; gap: 8px;"><input type="date" class="dateInput" title="Projekt‑Datum" lang="de" placeholder="tt.mm.jjjj"><div style="display: flex; gap: 8px; align-items: center;"><input type="text" class="dateInput" placeholder="tt.mm.jjjj" style="display: none;"><button class="btn" title="Deadline anzeigen"><span class="ms">event</span></button></div></div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 0 erledigt</span><span style="margin-left:auto">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"></div><div class="todoAdd" style="display: flex; gap: 8px;"><input type="text" placeholder="To-Do hinzufügen"><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" style="display: none;"></div></td></tr><tr data-id="9scywmt"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">5467q2345135</div></td><td><div class="editable" contenteditable="true">dbndfghdfgh</div></td><td><div style="display: flex; flex-direction: column; gap: 8px;"><input type="date" class="dateInput" title="Projekt‑Datum" lang="de" placeholder="tt.mm.jjjj"><div style="display: flex; gap: 8px; align-items: center;"><input type="text" class="dateInput" placeholder="tt.mm.jjjj" style="display: none;"><button class="btn" title="Deadline anzeigen"><span class="ms">event</span></button></div></div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 0 erledigt</span><span style="margin-left:auto">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"></div><div class="todoAdd" style="display: flex; gap: 8px;"><input type="text" placeholder="To-Do hinzufügen"><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" style="display: none;"></div></td></tr><tr data-id="bwadcix"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">23451341</div></td><td><div class="editable" contenteditable="true">dsfgdfsgdswgdsfg</div></td><td><div style="display: flex; flex-direction: column; gap: 8px;"><input type="date" class="dateInput" title="Projekt‑Datum" lang="de" placeholder="tt.mm.jjjj"><div style="display: flex; gap: 8px; align-items: center;"><input type="text" class="dateInput" placeholder="tt.mm.jjjj" style="display: none;"><button class="btn" title="Deadline anzeigen"><span class="ms">event</span></button></div></div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 0 erledigt</span><span style="margin-left:auto">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"></div><div class="todoAdd" style="display: flex; gap: 8px;"><input type="text" placeholder="To-Do hinzufügen"><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" style="display: none;"></div></td></tr><tr data-id="bdlykea"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">sdfgdfsg34</div></td><td><div class="editable" contenteditable="true">534523452345</div></td><td><div style="display: flex; flex-direction: column; gap: 8px;"><input type="date" class="dateInput" title="Projekt‑Datum" lang="de" placeholder="tt.mm.jjjj"><div style="display: flex; gap: 8px; align-items: center;"><input type="text" class="dateInput" placeholder="tt.mm.jjjj" style="display: none;"><button class="btn" title="Deadline anzeigen"><span class="ms">event</span></button></div></div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 0 erledigt</span><span style="margin-left:auto">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"></div><div class="todoAdd" style="display: flex; gap: 8px;"><input type="text" placeholder="To-Do hinzufügen"><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" style="display: none;"></div></td></tr><tr data-id="jvv9n9x"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3452345234</div></td><td><div class="editable" contenteditable="true">dsfdsdfdfgs</div></td><td><div style="display: flex; flex-direction: column; gap: 8px;"><input type="date" class="dateInput" title="Projekt‑Datum" lang="de" placeholder="tt.mm.jjjj"><div style="display: flex; gap: 8px; align-items: center;"><input type="text" class="dateInput" placeholder="tt.mm.jjjj" style="display: none;"><button class="btn" title="Deadline anzeigen"><span class="ms">event</span></button></div></div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 0 erledigt</span><span style="margin-left:auto">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"></div><div class="todoAdd" style="display: flex; gap: 8px;"><input type="text" placeholder="To-Do hinzufügen"><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" style="display: none;"></div></td></tr><tr data-id="a2g6fws"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">2341234</div></td><td><div class="editable" contenteditable="true">adsadsfsa</div></td><td><div style="display: flex; flex-direction: column; gap: 8px;"><input type="date" class="dateInput" title="Projekt‑Datum" lang="de" placeholder="tt.mm.jjjj"><div style="display: flex; gap: 8px; align-items: center;"><input type="text" class="dateInput" placeholder="tt.mm.jjjj" style="display: none;"><button class="btn" title="Deadline anzeigen"><span class="ms">event</span></button></div></div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 0 erledigt</span><span style="margin-left:auto">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"></div><div class="todoAdd" style="display: flex; gap: 8px;"><input type="text" placeholder="To-Do hinzufügen"><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" style="display: none;"></div></td></tr><tr data-id="gfsvizm"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">123123</div></td><td><div class="editable" contenteditable="true">sdaadsf</div></td><td><div style="display: flex; flex-direction: column; gap: 8px;"><input type="date" class="dateInput" title="Projekt‑Datum" lang="de" placeholder="tt.mm.jjjj"><div style="display: flex; gap: 8px; align-items: center;"><input type="text" class="dateInput" placeholder="tt.mm.jjjj" style="display: none;"><button class="btn" title="Deadline anzeigen"><span class="ms">event</span></button></div></div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 0 erledigt</span><span style="margin-left:auto">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"></div><div class="todoAdd" style="display: flex; gap: 8px;"><input type="text" placeholder="To-Do hinzufügen"><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" style="display: none;"></div></td></tr></tbody>
+        </table>
+      </div>
+
+      <!-- Kanban -->
+      <div id="kanbanView" class="kanban">
+        <div class="kbWrap">
+          <div class="kbCol" data-col="open">
+            <div class="kbHead">Offen</div>
+            <div class="kbList" id="kbOpen"></div>
+          </div>
+          <div class="kbCol" data-col="partial">
+            <div class="kbHead">Teilweise</div>
+            <div class="kbList" id="kbPartial"></div>
+          </div>
+          <div class="kbCol" data-col="done">
+            <div class="kbHead">Erledigt</div>
+            <div class="kbList" id="kbDone"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline Ansicht -->
+      <div id="timelineShell" class="timelineShell">
+        <div class="timelineControls">
+          <div class="timelineFilter">
+            <label for="timelineTabSelect">Tab-Auswahl</label>
+            <select id="timelineTabSelect"></select>
+          </div>
+          <div class="timelineZoomWrap">
+            <span>Zoom</span>
+            <input id="timelineZoom" type="range" min="0" max="2" step="1">
+            <div class="timelineZoomLabels" id="timelineZoomLabels"></div>
+          </div>
+        </div>
+        <div id="timelineView" class="timeline"></div>
+      </div>
+
+      <!-- Dispo Ansicht -->
+      <div id="dispoView" class="dispoView">
+        <div class="dispoToolbar">
+          <div class="dispoWeekPicker">
+            <label for="dispoWeekInput">Woche</label>
+            <input id="dispoWeekInput" type="week">
+          </div>
+          <button class="btnPrimary" id="dispoAddWeekBtn" type="button">Woche anlegen</button>
+          <button class="btn" id="dispoAddCurrentBtn" type="button">Aktuelle Woche</button>
+        </div>
+        <div class="dispoEmpty" id="dispoEmpty">Noch keine Dispo-Einträge. Lege eine Woche an, um loszulegen.</div>
+        <div class="dispoWeeks" id="dispoWeeks"></div>
+      </div>
+
+      <div class="footer" style="display:flex; justify-content:space-between; padding:12px 14px; color:var(--muted); font-size:12px; border-top:1px solid var(--border)">
+        <div>Speichern schreibt alle Daten in diese HTML-Datei. Tastenkürzel: <span class="kbd">Strg+S</span>, <span class="kbd">Strg+Z</span>, <span class="kbd">Strg+Y</span></div>
+        <div><span class="kbd">Strg+P</span> öffnet die kompakte Druckansicht</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Farb-Popover -->
+  <div class="colorPopover" id="colorPop">
+    <div style="font-weight:700; margin-bottom:6px">Projektfarbe</div>
+    <input type="color" id="colorPicker" value="#7c3aed" style="width:100%; height:36px; border:1px solid var(--border); border-radius:10px; background:transparent">
+    <div class="colorRow">
+      <div class="sw" data-v="#7c3aed" style="background:#7c3aed"></div>
+      <div class="sw" data-v="#06b6d4" style="background:#06b6d4"></div>
+      <div class="sw" data-v="#22c55e" style="background:#22c55e"></div>
+      <div class="sw" data-v="#f59e0b" style="background:#f59e0b"></div>
+      <div class="sw" data-v="#ef4444" style="background:#ef4444"></div>
+    </div>
+    <div class="popBtns">
+      <button class="btn" id="colorCancel">Abbrechen</button>
+      <button class="btnPrimary" id="colorOk">OK</button>
+    </div>
+  </div>
+
+  <!-- Papierkorb-Dialog -->
+  <dialog id="trashDlg">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border)">
+      <div>Papierkorb</div>
+      <button class="btn" id="trashClose">Schließen</button>
+    </div>
+    <div style="padding:16px">
+      <div class="trash-list" id="trashList" style="max-height:360px; overflow:auto"></div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px">
+        <button class="btn" id="trashEmpty">Papierkorb leeren</button>
+      </div>
+    </div>
+  </dialog>
+
+<dialog id="pathDlg">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border)">
+    <div>Voller Pfad</div>
+    <button class="btn" onclick="document.getElementById('pathDlg').close()">Schließen</button>
+  </div>
+  <div style="padding:14px">
+    <pre id="pathFull" style="white-space:pre-wrap;word-break:break-all;margin:0"></pre>
+  </div>
+</dialog>
+
+
+<script>
+  // ===== Zustand =====
+  const embedded = document.getElementById('APP_STATE').textContent
+  let state = JSON.parse(embedded || '{}')
+  if(!state.timelineTab) state.timelineTab = 'Alle'
+  if(!state.timelineZoom) state.timelineZoom = 'days'
+  if(!Array.isArray(state.dispoEntries)) state.dispoEntries = []
+  if(typeof state.printShowTodos !== 'boolean') state.printShowTodos = false
+  if(!state.view) state.view = 'table'
+  // Verwende einen zufälligen Autosave-Key, damit keine alte Speicherung aus dem
+  // localStorage geladen wird. Dies verhindert, dass beim Testen zuvor gespeicherte
+  // Zustände automatisch wiederhergestellt werden und beeinflusst die aktuelle Anzeige.
+  const autosaveKey = 'projekttodos_autosave_' + Math.random().toString(36).slice(2);
+  const dirtyDot = document.getElementById('dirtyDot')
+  let unsaved = false, fileHandle = null
+  const history = [], future = [], selected = new Set()
+  const toast = document.getElementById('toast')
+  let draggingProjectId = null
+  let pendingDispoFocus = null
+
+  // ===== Theme / Title =====
+  function applyTheme(){
+    const isLight = state.theme === 'light'
+    document.body.classList.toggle('light', isLight)
+    const modeToggle = document.getElementById('modeToggle')
+    modeToggle.checked = isLight
+    modeToggle.setAttribute('aria-checked', String(isLight))
+  }
+ function setTitle(){
+  const t = (state.title || '').trim() || 'XY-To-Dos';
+  document.getElementById('titleText').textContent = t;
+  document.title = t;                   // ← Tab-Titel aktualisieren
+}
+
+  function snapshot(){ return JSON.parse(JSON.stringify(state)) }
+  function setDirty(v){
+    unsaved = !!v; dirtyDot.classList.toggle('on', unsaved)
+    try{ localStorage.setItem(autosaveKey, JSON.stringify(state)) }catch(e){}
+  }
+  function showToast(msg){
+    toast.textContent = msg
+    toast.classList.add('show')
+    setTimeout(()=>toast.classList.remove('show'), 1800)
+  }
+
+  // Die automatische Wiederherstellung des zuletzt gespeicherten Zustands wird deaktiviert.
+  // Dadurch kann diese HTML-Datei ohne Beeinflussung durch frühere Session‑Daten getestet werden.
+  /*
+  try{
+    const auto = localStorage.getItem(autosaveKey)
+    if(auto && JSON.stringify(JSON.parse(auto)) !== JSON.stringify(state)){
+      if(confirm('Nicht gespeicherte Änderungen gefunden. Wiederherstellen?')) state = JSON.parse(auto)
+    }
+  }catch(e){}
+  */
+
+  window.addEventListener('beforeunload', e => { if(unsaved){ e.preventDefault(); e.returnValue = '' } })
+
+  // ===== Utils =====
+  const tbody = document.getElementById('tbody')
+  const emptyRow = document.getElementById('emptyRow')
+  const tabsEl = document.getElementById('tabs')
+  const bulkbar = document.getElementById('bulkbar')
+  const bulkTarget = document.getElementById('bulkTarget')
+  const selCount = document.getElementById('selCount')
+  const tableView = document.getElementById('tableView')
+  const kanbanView = document.getElementById('kanbanView')
+  const timelineShell = document.getElementById('timelineShell')
+  const timelineViewEl = document.getElementById('timelineView')
+  const timelineTabSelect = document.getElementById('timelineTabSelect')
+  const timelineZoomInput = document.getElementById('timelineZoom')
+  const timelineZoomLabelsEl = document.getElementById('timelineZoomLabels')
+  const toolbar = document.getElementById('addForm')
+  const filterbar = document.querySelector('.filterbar')
+  const dispoView = document.getElementById('dispoView')
+  const dispoWeeksEl = document.getElementById('dispoWeeks')
+  const dispoEmptyEl = document.getElementById('dispoEmpty')
+  const dispoWeekInput = document.getElementById('dispoWeekInput')
+  const dispoAddWeekBtn = document.getElementById('dispoAddWeekBtn')
+  const dispoAddCurrentBtn = document.getElementById('dispoAddCurrentBtn')
+  const printTodosToggle = document.getElementById('printTodosToggle')
+  const viewDispoBtn = document.getElementById('viewDispo')
+  const TIMELINE_ZOOMS = [
+    { value:'weeks',   label:'KW',       min:8,  max:16, showDays:false, labelStep:7, unitDays:7 },
+    { value:'compact', label:'Kompakt',  min:14, max:26, showDays:true,  labelStep:2, unitDays:1 },
+    { value:'days',    label:'Tage',     min:20, max:40, showDays:true,  labelStep:1, unitDays:1 }
+  ]
+  const DAY_MS = 86400000
+
+  function startOfISOWeek(date){
+    const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
+    const day = d.getUTCDay() || 7
+    d.setUTCDate(d.getUTCDate() - (day - 1))
+    return d
+  }
+  function isoWeekInfo(date){
+    const target = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
+    const dayNr = (target.getUTCDay() + 6) % 7
+    target.setUTCDate(target.getUTCDate() - dayNr + 3)
+    const firstThursday = new Date(Date.UTC(target.getUTCFullYear(), 0, 4))
+    const week = 1 + Math.round((target - firstThursday) / (7 * DAY_MS))
+    return { week, year: target.getUTCFullYear() }
+  }
+  function isoWeekStringFromDate(date){
+    const info = isoWeekInfo(date)
+    return `${info.year}-W${String(info.week).padStart(2,'0')}`
+  }
+  function isoWeekToRange(iso){
+    const m = /^([0-9]{4})-W([0-9]{2})$/.exec(iso || '')
+    if(!m) return null
+    const year = Number(m[1])
+    const week = Number(m[2])
+    if(!week) return null
+    const base = startOfISOWeek(new Date(Date.UTC(year, 0, 4)))
+    const start = new Date(base.getTime() + (week - 1) * 7 * DAY_MS)
+    const end = new Date(start.getTime() + 6 * DAY_MS)
+    return { start, end }
+  }
+  function isoDateString(date){
+    return `${date.getUTCFullYear()}-${String(date.getUTCMonth()+1).padStart(2,'0')}-${String(date.getUTCDate()).padStart(2,'0')}`
+  }
+  function germanFromIso(iso){
+    if(!iso) return ''
+    const parts = iso.split('-')
+    if(parts.length !== 3) return iso
+    return `${parts[2]}.${parts[1]}.${parts[0]}`
+  }
+  function isoFromGerman(str){
+    const m = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec((str||'').trim())
+    if(!m) return ''
+    const [_, dd, mm, yyyy] = m
+    return `${yyyy.padStart(4,'0')}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`
+  }
+
+  function ensureDispoEntries(){
+    if(!Array.isArray(state.dispoEntries)) state.dispoEntries = []
+    state.dispoEntries.forEach(entry => {
+      if(!entry || typeof entry !== 'object') return
+      if(!entry.id) entry.id = uid()
+      if(!entry.isoWeek){
+        entry.isoWeek = isoWeekStringFromDate(new Date())
+      }
+      entry.notes = entry.notes || ''
+      entry.title = entry.title || ''
+      entry.collapsed = !!entry.collapsed
+      if(!Array.isArray(entry.items)) entry.items = []
+      entry.items.forEach(item => {
+        if(!item || typeof item !== 'object') return
+        if(!item.id) item.id = uid()
+        item.text = item.text || ''
+        item.owner = item.owner || ''
+        item.notes = item.notes || ''
+        item.due = item.due || ''
+      })
+    })
+  }
+
+  if(timelineZoomLabelsEl){
+    timelineZoomLabelsEl.innerHTML = ''
+    TIMELINE_ZOOMS.forEach(z => {
+      const span = document.createElement('span')
+      span.textContent = z.label
+      timelineZoomLabelsEl.appendChild(span)
+    })
+  }
+  if(timelineZoomInput){
+    timelineZoomInput.max = String(Math.max(0, TIMELINE_ZOOMS.length - 1))
+  }
+
+  function updateTimelineZoomIndicator(value){
+    const idx = TIMELINE_ZOOMS.findIndex(z => z.value === (value || state.timelineZoom))
+    const activeIdx = idx >= 0 ? idx : Math.max(0, TIMELINE_ZOOMS.length - 1)
+    if(timelineZoomInput){
+      timelineZoomInput.value = String(activeIdx)
+    }
+    if(timelineZoomLabelsEl){
+      Array.from(timelineZoomLabelsEl.children).forEach((node, i) => {
+        node.classList.toggle('active', i === activeIdx)
+      })
+    }
+  }
+
+  function clampPct(n){ n = Number.isFinite(+n) ? +n : 0; return Math.max(0, Math.min(100, Math.round(n))) }
+  function uid(){ return Math.random().toString(36).slice(2,9) }
+  function todayYMD(){ return new Date().toISOString().slice(0,10) }
+  function progressOf(p){
+    const total = p.todos.length || 0
+    const done  = p.todos.filter(t => t.done).length
+    const pct   = total === 0 ? 0 : Math.round((done/total)*100)
+    const status = total === 0 ? 'open' : done === 0 ? 'open' : done === total ? 'done' : 'partial'
+    return { total, done, pct, status }
+  }
+
+  // Fällig-Badge
+  function dueBadge(dateYMD){
+    if(!dateYMD) return null;
+    const d = new Date(dateYMD + 'T00:00:00');
+    const t = new Date(); t.setHours(0,0,0,0);
+    const diff = Math.round((d - t) / 86400000);
+    // Hilfsfunktion: y-m-d → dd.mm.yyyy
+    function formatGerman(ymd){
+      const parts = (ymd||'').split('-');
+      if(parts.length === 3){ return `${parts[2]}.${parts[1]}.${parts[0]}`; }
+      return ymd;
+    }
+    if(diff < 0) return { cls:'b-red', label:'Überfällig' };
+    if(diff === 0) return { cls:'b-amber', label:'Heute' };
+    if(diff <= 3) return { cls:'b-yellow', label:`In ${diff} Tag${diff===1?'':'en'}` };
+    return { cls:'b-green', label:`Am ${formatGerman(dateYMD)}` };
+  }
+
+  // ===== Eingabehilfe: Blur bei Enter =====
+  // Einige Editierfelder (contenteditable und Inputs) sollen beim Drücken von Enter die Eingabe abschließen,
+  // ohne eine neue Zeile zu erzeugen. Diese Hilfsfunktionen fangen die Enter‑Taste ab,
+  // verhindern den Standard und entfernen den Fokus vom aktuellen Element.
+  function blurOnEnter(e){
+    if(e && e.key === 'Enter'){
+      e.preventDefault();
+      if(e.target && typeof e.target.blur === 'function') e.target.blur();
+      // Selektion entfernen, damit Cursor ausgeblendet wird
+      if(window.getSelection){
+        const sel = window.getSelection();
+        if(sel) sel.removeAllRanges();
+      }
+    }
+  }
+  function blurOnEnterInput(e){
+    if(e && e.key === 'Enter'){
+      e.preventDefault();
+      if(e.target && typeof e.target.blur === 'function') e.target.blur();
+    }
+  }
+
+  function applyFilters(list){
+    const f = state.filters, min = clampPct(f.pctMin), max = clampPct(f.pctMax)
+    let res = [...list]
+    if(state.currentTab && state.currentTab !== 'Alle'){ res = res.filter(p => (p.tab || 'Alle') === state.currentTab) }
+    res = res.filter(p => {
+      const st = progressOf(p); const inRange = st.pct >= min && st.pct <= max
+      if(!inRange) return false
+      if(f.status === 'all') return true
+      return st.status === f.status
+    })
+    if(f.q && f.q.trim()){
+      const needle = f.q.trim().toLowerCase()
+      res = res.filter(p => (p.number||'').toLowerCase().includes(needle) || (p.name||'').toLowerCase().includes(needle))
+    }
+    const cmpMap = {
+      date_desc: (a,b) => (b.date||'').localeCompare(a.date||''),
+      date_asc:  (a,b) => (a.date||'').localeCompare(b.date||''),
+      name_asc:  (a,b) => (a.name||'').localeCompare(b.name||''),
+      name_desc: (a,b) => (b.name||'').localeCompare(a.name||''),
+      nr_asc:    (a,b) => (a.number||'').localeCompare(b.number||'', undefined, {numeric:true}),
+      nr_desc:   (a,b) => (b.number||'').localeCompare(a.number||'', undefined, {numeric:true}),
+      prog_desc: (a,b) => progressOf(b).pct - progressOf(a).pct,
+      prog_asc:  (a,b) => progressOf(a).pct - progressOf(b).pct,
+      manual:    (a,b) => (state.order?.indexOf(a.id) ?? 0) - (state.order?.indexOf(b.id) ?? 0)
+    }
+    if(f.sort !== 'manual'){ res.sort(cmpMap[f.sort] || cmpMap.date_desc) }
+    else{ state.order = state.order || res.map(p => p.id); res.sort(cmpMap.manual) }
+    return res
+  }
+
+  function ensureTabs(){ if(!Array.isArray(state.tabs) || !state.tabs.length) state.tabs=['Alle']; if(!state.currentTab) state.currentTab='Alle'; state.tabs = ['Alle', ...state.tabs.filter(t => t !== 'Alle')] }
+  function pushHistory(){ history.push(snapshot()); if(history.length>400) history.shift(); future.length=0 }
+  function undo(){ if(!history.length) return; future.push(snapshot()); state = history.pop(); setDirty(true); render() }
+  function redo(){ if(!future.length) return; history.push(snapshot()); state = future.pop(); setDirty(true); render() }
+
+  // ===== Tabs render + Reorder =====
+  function renderTabs(){
+    ensureTabs()
+    tabsEl.innerHTML = ''
+    state.tabs.forEach((name, idx) => {
+      const el = document.createElement('button')
+      el.className = 'tab' + (state.currentTab === name ? ' active' : '')
+      el.type = 'button'; el.dataset.name = name; el.draggable = name !== 'Alle'
+      el.addEventListener('click', () => { state.currentTab = name; render() })
+      el.addEventListener('dragstart', e => { if(name==='Alle') return; el.classList.add('dragging'); e.dataTransfer.setData('text/tab', name) })
+      el.addEventListener('dragend',   ()=> el.classList.remove('dragging'))
+      el.addEventListener('dragover',  e => e.preventDefault())
+      el.addEventListener('dragleave', ()=> el.classList.remove('drop-hint'))
+      el.addEventListener('drop', e => {
+        e.preventDefault()
+        el.classList.remove('drop-hint')
+        const tabName = e.dataTransfer.getData('text/tab')
+        const projId  = e.dataTransfer.getData('text/proj') || e.dataTransfer.getData('text/plain') || draggingProjectId
+        if(tabName){ // Tab-Reorder
+          if(tabName==='Alle' || tabName===name) return
+          pushHistory()
+          const a = state.tabs.indexOf(tabName), b = state.tabs.indexOf(name)
+          if(a>0 && b>0){ const tmp=state.tabs[a]; state.tabs.splice(a,1); state.tabs.splice(b,0,tmp) }
+          setDirty(true); render()
+        }else if(projId){ // Projekt hierher verschieben
+          const p = state.projects.find(x=>x.id===projId); if(p){ pushHistory(); p.tab = name; setDirty(true); render() }
+        }
+        if(projId) draggingProjectId = null
+      })
+      el.addEventListener('dragenter', ()=> el.classList.add('drop-hint'))
+
+      const label = document.createElement('span'); label.className='name'; label.textContent=name; el.appendChild(label)
+      if(name !== 'Alle'){
+        const edit = document.createElement('button'); edit.title='Tab umbenennen'; edit.textContent='✎'
+        edit.addEventListener('click', ev => {
+          ev.stopPropagation(); const nn = prompt('Neuer Name für Tab', name)
+          if(nn && nn.trim() && nn !== 'Alle'){
+            pushHistory()
+            const i = state.tabs.indexOf(name)
+            state.tabs[i] = nn.trim()
+            state.projects.forEach(p => { if(p.tab === name) p.tab = nn.trim() })
+            if(state.currentTab === name) state.currentTab = nn.trim()
+            setDirty(true); render()
+          }
+        })
+        const x = document.createElement('button'); x.title='Tab löschen'; x.textContent='✕'
+        x.addEventListener('click', ev => {
+          ev.stopPropagation()
+          if(confirm('Tab löschen? Projekte werden nach „Alle“ verschoben.')){
+            pushHistory()
+            state.projects.forEach(p => { if(p.tab === name) p.tab = 'Alle' })
+            state.tabs = state.tabs.filter(t => t !== name)
+            if(state.currentTab === name) state.currentTab = 'Alle'
+            setDirty(true); render()
+          }
+        })
+        el.appendChild(edit); el.appendChild(x)
+      }
+      tabsEl.appendChild(el)
+    })
+    // Plus-Tab
+    const add = document.createElement('button')
+    add.className = 'tab add'; add.title = 'Neuer Tab'; add.innerHTML = `<span class="name">+ Neuer Tab</span>`
+    add.addEventListener('click', () => {
+      const nn = prompt('Name des neuen Tabs')
+      if(nn && nn.trim() && nn !== 'Alle'){ pushHistory(); state.tabs.push(nn.trim()); state.currentTab = nn.trim(); setDirty(true); render() }
+    })
+    tabsEl.appendChild(add)
+
+    // Bulk Move Ziel
+    bulkTarget.innerHTML = ''
+    state.tabs.forEach(t => { const opt=document.createElement('option'); opt.value=t; opt.textContent=t; bulkTarget.appendChild(opt) })
+    if(timelineTabSelect){
+      const current = state.timelineTab && state.tabs.includes(state.timelineTab) ? state.timelineTab : 'Alle'
+      state.timelineTab = current
+      timelineTabSelect.innerHTML = ''
+      state.tabs.forEach(tabName => {
+        const opt = document.createElement('option')
+        opt.value = tabName
+        opt.textContent = tabName
+        timelineTabSelect.appendChild(opt)
+      })
+      timelineTabSelect.value = current
+    }
+  }
+
+  // ===== Rendering =====
+  function render(){
+    applyTheme(); setTitle(); renderTabs();
+    const isTable = state.view === 'table';
+    const isKanban = state.view === 'kanban';
+    const isTimeline = state.view === 'timeline';
+    const isDispo = state.view === 'dispo';
+    // Toggle view buttons
+    document.getElementById('viewTable').classList.toggle('on', isTable);
+    document.getElementById('viewKanban').classList.toggle('on', isKanban);
+    const viewTimelineBtn = document.getElementById('viewTimeline');
+    if(viewTimelineBtn) viewTimelineBtn.classList.toggle('on', isTimeline);
+    if(viewDispoBtn) viewDispoBtn.classList.toggle('on', isDispo);
+    // Show/hide main sections
+    tableView.style.display = isTable ? 'block' : 'none';
+    kanbanView.classList.toggle('show', isKanban);
+    if(timelineShell) timelineShell.classList.toggle('show', isTimeline);
+    if(timelineViewEl) timelineViewEl.classList.toggle('show', isTimeline);
+    if(dispoView) dispoView.classList.toggle('show', isDispo);
+    if(toolbar) toolbar.style.display = (isTimeline || isDispo) ? 'none' : 'grid';
+    if(filterbar) filterbar.style.display = isTable ? 'grid' : 'none';
+    if(printTodosToggle){ printTodosToggle.checked = !!state.printShowTodos; }
+    document.body.classList.toggle('print-show-todos', !!state.printShowTodos);
+    if(timelineZoomInput || timelineZoomLabelsEl){
+      updateTimelineZoomIndicator();
+    }
+    // Render per view
+    if(isKanban){
+      renderKanban();
+      updateBulkUi();
+      return;
+    }
+    if(isTimeline){
+      renderTimeline();
+      updateBulkUi();
+      return;
+    }
+    if(isDispo){
+      renderDispo();
+      updateBulkUi();
+      return;
+    }
+    // Table view
+    tbody.innerHTML = '';
+    const list = applyFilters(state.projects || []);
+    if(list.length === 0){ tbody.appendChild(emptyRow); }
+    else { list.forEach(p => tbody.appendChild(rowFor(p))); }
+    updateBulkUi();
+  }
+
+  // ===== Zeilenaufbau =====
+function rowFor(p){
+  const tr = document.createElement('tr');
+  // Row identifier
+  tr.dataset.id = p.id;
+
+// Auswahl/Farbe
+  if (selected.has(p.id)) tr.classList.add('row-selected');
+  if (p.color){ tr.classList.add('colored'); tr.style.setProperty('--pcolor', p.color); }
+
+  // NEU: collapsed-Klasse initial setzen
+  tr.classList.toggle('collapsed', !!p.collapsed);
+
+    // Drag events: verwenden Sie die linke Steuerzelle als Drag‑Handle für Projektverschiebungen
+    // Beim Dragstart wird die Projekt‑ID übermittelt. Das Ziehen auf einen Tab verschiebt das Projekt dorthin.
+    // Beim Ziehen über eine Tabellenzeile wird die Reihenfolge geändert (manuelle Sortierung).
+
+     // Linke Zelle: Pfeil, Auswahl, Farbe (mit Popover)
+  const tdCtl = document.createElement('td'); tdCtl.className='leftCell';
+  const caret = document.createElement('button'); caret.className='caret';
+  caret.title = p.collapsed ? 'Aufklappen' : 'Einklappen';
+  
+// NEU: Icon initial nach Zustand
+  caret.innerHTML = `<span class="ms">${p.collapsed ? 'chevron_right' : 'expand_more'}</span>`;
+  caret.addEventListener('click', () => {
+    pushHistory();
+    p.collapsed = !p.collapsed;
+    tr.classList.toggle('collapsed', p.collapsed);
+    caret.innerHTML = `<span class="ms">${p.collapsed ? 'chevron_right' : 'expand_more'}</span>`;
+    setDirty(true); render();
+  });
+  const select = document.createElement('input'); select.type='checkbox'; select.className='selectCb';
+  select.checked = selected.has(p.id);
+  select.addEventListener('change', () => { if(select.checked) selected.add(p.id); else selected.delete(p.id); render(); });
+  const colorBtn = document.createElement('button'); colorBtn.className='colorBtn'; colorBtn.title='Projektfarbe';
+  colorBtn.style.setProperty('--pcolor', p.color || '#7c3aed');
+  colorBtn.addEventListener('click', (e)=> openColorPopover(e.currentTarget, p));
+  tdCtl.appendChild(caret); tdCtl.appendChild(select); tdCtl.appendChild(colorBtn);
+
+    // === Drag‑Handle auf der linken Zelle ===
+    tdCtl.draggable = true;
+    tdCtl.addEventListener('dragstart', e => {
+      draggingProjectId = p.id;
+      e.dataTransfer.setData('text/proj', p.id);
+      e.dataTransfer.setData('text/plain', p.id);
+      e.dataTransfer.effectAllowed = 'move';
+      tdCtl.classList.add('dragging');
+    });
+    tdCtl.addEventListener('dragend', () => {
+      draggingProjectId = null;
+      tdCtl.classList.remove('dragging');
+      tr.classList.remove('drop-before','drop-after');
+    });
+    tr.addEventListener('dragover', e => {
+      const dragId = draggingProjectId;
+      if(!dragId || dragId === p.id){
+        tr.classList.remove('drop-before','drop-after');
+        return;
+      }
+      e.preventDefault();
+      if(state.filters.sort !== 'manual'){
+        e.dataTransfer.dropEffect = 'none';
+        tr.classList.remove('drop-before','drop-after');
+        return;
+      }
+      e.dataTransfer.dropEffect = 'move';
+      const rect = tr.getBoundingClientRect();
+      const before = e.clientY < rect.top + rect.height / 2;
+      tr.classList.toggle('drop-before', before);
+      tr.classList.toggle('drop-after', !before);
+    });
+    tr.addEventListener('dragleave', e => {
+      if(e.currentTarget.contains(e.relatedTarget)) return;
+      tr.classList.remove('drop-before','drop-after');
+    });
+    tr.addEventListener('drop', e => {
+      e.preventDefault();
+      tr.classList.remove('drop-before','drop-after');
+      const dragId = e.dataTransfer.getData('text/proj') || e.dataTransfer.getData('text/plain') || draggingProjectId;
+      draggingProjectId = null;
+      if(!dragId || dragId === p.id) return;
+      if(state.filters.sort !== 'manual'){
+        showToast('Sortierung auf „Manuell“ stellen, um die Reihenfolge zu ändern.');
+        return;
+      }
+      pushHistory();
+      state.order = state.order || state.projects.map(x => x.id);
+      const fromIdx = state.order.indexOf(dragId);
+      if(fromIdx < 0) return;
+      let insertIdx = state.order.indexOf(p.id);
+      if(insertIdx < 0) insertIdx = state.order.length;
+      const rect = tr.getBoundingClientRect();
+      const before = e.clientY < rect.top + rect.height / 2;
+      if(!before) insertIdx += 1;
+      if(fromIdx < insertIdx) insertIdx--;
+      state.order.splice(fromIdx, 1);
+      state.order.splice(insertIdx, 0, dragId);
+      setDirty(true);
+      render();
+    });
+
+    // Nummer
+    const tdNr = document.createElement('td')
+    const nr = document.createElement('div'); nr.className='editable'; nr.contentEditable='true'; nr.textContent = p.number || ''
+    nr.addEventListener('keydown', blurOnEnter)
+    nr.addEventListener('input', () => { pushHistory(); p.number = nr.textContent.trim(); setDirty(true) })
+    tdNr.appendChild(nr)
+
+    // Name
+    const tdName = document.createElement('td')
+    const name = document.createElement('div'); name.className='editable'; name.contentEditable='true'; name.textContent = p.name || ''
+    name.addEventListener('keydown', blurOnEnter)
+    name.addEventListener('input', () => { pushHistory(); p.name = name.textContent.trim(); setDirty(true) })
+    tdName.appendChild(name)
+
+    // Datum + Deadline (stacked, keine Überlappung)
+    const tdDate = document.createElement('td')
+    const stack = document.createElement('div'); stack.style.display='flex'; stack.style.flexDirection='column'; stack.style.gap='8px'
+    const date = document.createElement('input');
+    date.type = 'date';
+    date.className = 'dateInput';
+    date.value = p.date || '';
+    date.title = 'Projekt‑Datum';
+    // Deutsches Datumsformat in Browser (sofern unterstützt)
+    date.lang = 'de';
+    // Platzhalter als Hinweis auf deutsches Format
+    date.placeholder = 'tt.mm.jjjj';
+    date.addEventListener('keydown', blurOnEnterInput)
+    date.addEventListener('change', () => { pushHistory(); p.date = date.value; setDirty(true) })
+    const dRow = document.createElement('div'); dRow.style.display='flex'; dRow.style.gap='8px'; dRow.style.alignItems='center'
+    // Fälligkeitsfeld für das Projekt: als Textfeld mit deutschem Format
+    const deadline = document.createElement('input');
+    deadline.type = 'text';
+    deadline.className = 'dateInput';
+    // Vorhandenen ISO‑Wert ins deutsche Format konvertieren
+    deadline.value = (function(val){
+      if(!val) return '';
+      const parts = val.split('-');
+      return parts.length===3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : val;
+    })(p.deadline);
+    deadline.placeholder = 'tt.mm.jjjj';
+    deadline.style.display = p.showDeadline ? 'block' : 'none';
+    deadline.addEventListener('keydown', blurOnEnterInput);
+    // Beim Verlassen oder Ändern den Wert parsen
+    const parseGerman = (str) => {
+      const m = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+      if(!m) return '';
+      const [_, dd, mm, yyyy] = m;
+      return `${yyyy.padStart(4,'0')}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
+    };
+    const updateProjectDeadline = () => {
+      const iso = parseGerman(deadline.value.trim());
+      pushHistory();
+      p.deadline = iso;
+      setDirty(true);
+      if(iso){
+        const parts = iso.split('-');
+        deadline.value = `${parts[2]}.${parts[1]}.${parts[0]}`;
+      }
+    };
+    deadline.addEventListener('blur', updateProjectDeadline);
+    deadline.addEventListener('change', updateProjectDeadline);
+    const toggle = document.createElement('button');
+    // Use an icon instead of text for toggling the deadline input
+    toggle.className = 'btn';
+    toggle.innerHTML = `<span class="ms">${p.showDeadline ? 'event_busy' : 'event'}</span>`;
+    toggle.title = p.showDeadline ? 'Deadline ausblenden' : 'Deadline anzeigen';
+    toggle.addEventListener('click', () => {
+      pushHistory();
+      p.showDeadline = !p.showDeadline;
+      // Set a default deadline to today if none exists when enabling
+      if(p.showDeadline && !p.deadline) p.deadline = todayYMD();
+      setDirty(true);
+      render();
+    });
+    dRow.appendChild(deadline);
+    dRow.appendChild(toggle);
+    stack.appendChild(date);
+    stack.appendChild(dRow);
+    // Im Tabellenmodus wird kein Fälligkeits‑Badge unter dem Datum angezeigt. Die Kanban‑Ansicht zeigt Deadlines über dueBadge.
+    // Wenn das Projekt zugeklappt ist, wird nur ein einzelnes Datum dargestellt. Deadline hat Vorrang vor dem Projektdatum.
+    if(p.collapsed){
+      let showVal = '';
+      if(p.deadline && p.deadline.length){ showVal = p.deadline; }
+      else if(p.date && p.date.length){ showVal = p.date; }
+      let display = '';
+      if(showVal){
+        const parts = showVal.split('-');
+        display = parts.length===3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : showVal;
+      }
+      stack.innerHTML = '';
+      const lab = document.createElement('span');
+      lab.textContent = display || '—';
+      lab.style.fontSize = '12px';
+      stack.appendChild(lab);
+    }
+    tdDate.appendChild(stack);
+
+    // To-Dos
+    const tdTodos = document.createElement('td')
+    const todoCol = document.createElement('div'); todoCol.className='todoCol'
+    const stats = progressOf(p)
+    const head = document.createElement('div'); head.className='todoHead'
+    head.innerHTML = `<span>${stats.done} von ${stats.total} erledigt</span><span style="margin-left:auto">${stats.pct}%</span>`
+    const bar = document.createElement('div'); bar.className='progress'
+    const fill = document.createElement('i'); fill.style.background=`linear-gradient(90deg, var(--progress), #34d399)`; fill.style.width=`${stats.pct}%`; bar.appendChild(fill)
+
+    const list = document.createElement('div'); list.className='todoList'
+    // Reorder Todos: dropzone
+    list.addEventListener('dragover', e => e.preventDefault())
+    list.addEventListener('drop', e => {
+      e.preventDefault()
+      const from = +e.dataTransfer.getData('text/todoIndex')
+      const pid  = e.dataTransfer.getData('text/todoProj')
+      if(pid !== p.id || isNaN(from)) return
+      const to = p.todos.length
+      if(from === to) return
+      pushHistory()
+      const [it] = p.todos.splice(from,1); p.todos.splice(to,0,it)
+      setDirty(true); render()
+    })
+
+    p.todos.forEach((t, idx) => list.appendChild(todoItem(p, t, idx)))
+
+    // Für zusammengeklappte Projekte zeigen wir nur die Statistik und den Fortschrittsbalken an.
+    todoCol.appendChild(head);
+    todoCol.appendChild(bar);
+    if(!p.collapsed){
+      // Detaillierte Liste und Eingabe nur im ausgeklappten Zustand hinzufügen
+      todoCol.appendChild(list);
+      const add = document.createElement('div');
+      add.className = 'todoAdd';
+      add.style.display='flex';
+      add.style.gap='8px';
+      // Eingabefeld und Button für neue Aufgaben anlegen. Wir müssen den Button
+      // vor dem Keydown-Handler erstellen, damit der Handler auf das richtige
+      // Element zugreifen kann (siehe Temporal Dead Zone von const).
+      const inTask = document.createElement('input');
+      inTask.type = 'text';
+      inTask.placeholder = 'To-Do hinzufügen';
+      // Button zum Hinzufügen eines neuen To‑Dos
+      const addBtn = document.createElement('button');
+      addBtn.className = 'btnPrimary';
+      addBtn.textContent = '+';
+      // Klick-Handler: fügt das To‑Do hinzu und leert das Eingabefeld
+      addBtn.addEventListener('click', () => {
+        const txt = inTask.value.trim();
+        if(!txt) return;
+        pushHistory();
+        p.todos.push({ text: txt, done: false, due: '' });
+        setDirty(true);
+        render();
+        inTask.value = '';
+      });
+      // Wenn Enter im Eingabefeld gedrückt wird, simulieren wir einen Klick auf
+      // den Button. Damit wird nicht der globale Button (#addBtn im Add‑Formular)
+      // verwendet, sondern der gerade erstellte Button.
+      inTask.addEventListener('keydown', e => {
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          addBtn.click();
+        }
+      });
+      add.appendChild(inTask);
+      add.appendChild(addBtn);
+      todoCol.appendChild(add);
+    } else {
+      // Bei zusammengeklappten Projekten sollen die To‑Do Liste und das Eingabefeld nicht angezeigt werden
+    }
+    tdTodos.appendChild(todoCol)
+
+    // Notizen
+    const tdNote = document.createElement('td')
+    const note = document.createElement('div'); note.className='note'; note.contentEditable='true'; note.innerHTML = p.notes || ''
+    note.addEventListener('keydown', e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); note.blur(); window.getSelection().removeAllRanges() } })
+    note.addEventListener('input', () => { pushHistory(); p.notes = note.innerHTML; setDirty(true) })
+    tdNote.appendChild(note)
+
+    // Pfad (Eingabe + Vorschau + Dialog)
+const tdFolder = document.createElement('td');
+const fold = document.createElement('div'); fold.className='folderWrap';
+
+const fin = document.createElement('input');
+fin.type='text'; fin.className='folderInput';
+fin.placeholder='Pfad oder URL';
+fin.value = p.folder || '';
+fin.addEventListener('keydown', blurOnEnterInput);
+fin.addEventListener('input', () => {
+  pushHistory(); p.folder = fin.value; setDirty(true); updatePathPreview();
+});
+
+fold.appendChild(fin);
+tdFolder.appendChild(fold);
+
+// Vorschau (nur sichtbar, wenn NICHT zugeklappt)
+const preview = document.createElement('div');
+preview.className = 'pathPreview';
+function shorten(s){ s=String(s); return s.length<=44 ? s : (s.slice(0,18)+'…'+s.slice(-22)); }
+function updatePathPreview(){
+  preview.textContent = p.folder ? shorten(p.folder) : '';
+  preview.dataset.full = p.folder || '';
+  preview.style.display = (p.folder && !p.collapsed) ? 'block' : 'none';
+}
+preview.addEventListener('click', () => {
+  const dlg = document.getElementById('pathDlg');
+  document.getElementById('pathFull').textContent = p.folder || '(kein Pfad)';
+  dlg.showModal();
+});
+updatePathPreview();
+tdFolder.appendChild(preview);
+
+  // To-Do Item (draggable)
+  function todoItem(project, t, idx){
+    const wrap = document.createElement('div'); wrap.className='todoItem' + (t.done ? ' done' : '')
+    wrap.draggable = true
+    wrap.addEventListener('dragstart', e => {
+      wrap.classList.add('dragging')
+      e.dataTransfer.setData('text/todoProj', project.id)
+      e.dataTransfer.setData('text/todoIndex', String(idx))
+    })
+    wrap.addEventListener('dragend', ()=> wrap.classList.remove('dragging'))
+
+    const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=!!t.done
+    cb.addEventListener('change', () => { pushHistory(); t.done = cb.checked; setDirty(true); render() })
+
+    const txt = document.createElement('div'); txt.className='todoText editable'; txt.contentEditable='true'; txt.textContent = t.text || ''
+    txt.addEventListener('keydown', blurOnEnter)
+    txt.addEventListener('input', () => { pushHistory(); t.text = txt.textContent.trim(); setDirty(true) })
+
+    // Erstelle das Fälligkeitsfeld als reines Texteingabefeld, damit der Benutzer deutsche Datumsformate frei eingeben kann.
+    // Viele Browser unterstützen lediglich US‑Format (YYYY‑MM‑DD) in <input type="date">, wodurch es beim Tippen zu Problemen kam.
+    const due = document.createElement('input');
+    due.type = 'text';
+    due.className = 'dateInput';
+    // Bei vorhandener Deadline als dd.mm.yyyy darstellen
+    due.value = (function(val){
+      if(!val) return '';
+      const parts = val.split('-');
+      return parts.length===3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : val;
+    })(t.due);
+    due.title = 'Deadline';
+    // Deutsches Datumsformat (tt.mm.jjjj)
+    due.placeholder = 'tt.mm.jjjj';
+    // Beim Drücken der Eingabetaste Eingabe abschließen
+    due.addEventListener('keydown', blurOnEnterInput);
+    // Beim Verlassen des Feldes oder Änderung den Wert parsen und im ISO‑Format speichern
+    const parseGerman = (str) => {
+      const m = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+      if(!m) return '';
+      const [_, dd, mm, yyyy] = m;
+      // Rückgabe als yyyy-mm-dd mit führenden Nullen
+      return `${yyyy.padStart(4,'0')}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
+    };
+    const updateDue = () => {
+      const iso = parseGerman(due.value.trim());
+      pushHistory();
+      t.due = iso;
+      setDirty(true);
+      // Feld ggf. im deutschen Format aktualisieren
+      if(iso){
+        const p = iso.split('-');
+        due.value = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+    };
+    due.addEventListener('blur', updateDue);
+    due.addEventListener('change', updateDue);
+    // Button, um den nativen Date‑Picker zu öffnen (falls unterstützt)
+    const calBtn = document.createElement('button');
+    calBtn.className = 'iconbtn miniCal';
+    calBtn.title = 'Datum auswählen';
+    calBtn.innerHTML = '<span class="ms">event</span>';
+    calBtn.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      // Wir erzeugen ein verborgenes Date‑Eingabefeld nahe dem Kalender‑Icon, damit der native Picker in der Nähe erscheint.
+      const tmp = document.createElement('input');
+      tmp.type = 'date';
+      if(t.due){ tmp.value = t.due; }
+      // Positioniere den temporären Date‑Input direkt unter dem Icon. Wir verwenden eine
+      // fixed‑Position, damit der native Datepicker in der Nähe des Icons erscheint.
+      tmp.style.position = 'fixed';
+      const rect = calBtn.getBoundingClientRect();
+      tmp.style.left = `${rect.left}px`;
+      tmp.style.top  = `${rect.bottom}px`;
+      tmp.style.zIndex = '9999';
+      tmp.style.opacity = '0';
+      document.body.appendChild(tmp);
+      tmp.addEventListener('change', () => {
+        const iso = tmp.value;
+        if(iso){
+          const parts = iso.split('-');
+          due.value = `${parts[2]}.${parts[1]}.${parts[0]}`;
+          updateDue();
+        }
+        document.body.removeChild(tmp);
+      }, { once:true });
+      // Picker öffnen
+      if(typeof tmp.showPicker === 'function'){ tmp.showPicker(); } else { tmp.click(); }
+    });
+
+    const del = document.createElement('button'); del.className='todoDel'; del.innerHTML='✕'; del.title='Aufgabe entfernen'
+    del.addEventListener('click', () => { pushHistory(); project.todos.splice(idx,1); setDirty(true); render() })
+
+    const b = dueBadge(t.due)
+    if(b?.cls === 'b-red') wrap.style.boxShadow = 'inset 0 0 0 2px rgba(239,68,68,.7)'
+    else if(b?.cls === 'b-amber') wrap.style.boxShadow = 'inset 0 0 0 2px rgba(245,158,11,.6)'
+    else if(b?.cls === 'b-yellow') wrap.style.boxShadow = 'inset 0 0 0 2px rgba(234,179,8,.5)'
+    else if(b?.cls === 'b-green') wrap.style.boxShadow = 'inset 0 0 0 2px rgba(16,185,129,.45)'
+
+    // Reihenfolge: Checkbox, Text, Datum, Kalenderbutton, Entfernen
+    wrap.appendChild(cb);
+    wrap.appendChild(txt);
+    wrap.appendChild(due);
+    wrap.appendChild(calBtn);
+    wrap.appendChild(del);
+    return wrap;
+  }
+
+    // Alle aufgebauten Zellen zum Tabellen‑Row hinzufügen und Zeile zurückgeben
+    tr.appendChild(tdCtl);
+    tr.appendChild(tdNr);
+    tr.appendChild(tdName);
+    tr.appendChild(tdDate);
+    tr.appendChild(tdTodos);
+    tr.appendChild(tdNote);
+    tr.appendChild(tdFolder);
+    return tr;
+  }
+
+  // ===== Auswahlabhängige UI =====
+  function updateBulkUi(){
+    selCount.textContent = `${selected.size} ausgewählt`;
+    const allow = state.view === 'table';
+    bulkbar.classList.toggle('show', allow && selected.size > 0);
+  }
+
+  // ===== CSV / Kalender-Export =====
+  function parseCSV(text){
+    const rows=[]; let i=0, field='', row=[], inQ=false
+    while(i<text.length){
+      const ch=text[i]
+      if(inQ){ if(ch === '"'){ if(text[i+1] === '"'){ field+='"'; i+=2 } else { inQ=false; i++ } } else { field+=ch; i++ } }
+      else{
+        if(ch === '"'){ inQ=true; i++ }
+        else if(ch === ',' || ch === ';'){ row.push(field.trim()); field=''; i++ }
+        else if(ch === '\n' || ch === '\r'){ if(field!=='' || row.length){ row.push(field.trim()); rows.push(row); row=[]; field='' } if(ch==='\r' && text[i+1]==='\n') i++; i++ }
+        else { field+=ch; i++ }
+      }
+    }
+    if(field!=='' || row.length){ row.push(field.trim()); rows.push(row) }
+    return rows
+  }
+  function exportCSV(list, name){
+    const rows = [['ID','Projektnummer','Projektname','Datum','Deadline','Deadline sichtbar','ToDos','NotizenHTML','Tab','Pfad','Farbe','Eingeklappt','Sortierung','ProjektJSON']]
+    const manualOrder = (state.order && state.order.length) ? state.order.slice() : (state.projects || []).map(p => p.id)
+    list.forEach(p => {
+      const todos = p.todos.map(t => `${t.done?'[x]':'[ ]'} ${t.text}${t.due?' @'+t.due:''}`).join(' | ')
+      const sortIndex = manualOrder.indexOf(p.id)
+      const serialized = JSON.stringify({
+        ...p,
+        todos: (p.todos || []).map(t => ({...t}))
+      })
+      rows.push([
+        p.id,
+        p.number||'',
+        p.name||'',
+        p.date||'',
+        p.deadline||'',
+        p.showDeadline ? 'true' : 'false',
+        todos,
+        p.notes || '',
+        p.tab || 'Alle',
+        p.folder || '',
+        p.color || '',
+        p.collapsed ? 'true' : 'false',
+        sortIndex >= 0 ? String(sortIndex) : '',
+        serialized
+      ])
+    })
+    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n')
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8'})
+    const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href)
+  }
+  function ymdToICS(ymd){ return ymd.replaceAll('-','') }
+  function foldLine(s){ const out=[]; for(let i=0;i<s.length;i+=70) out.push(s.slice(i,i+70)); return out.join('\r\n ') }
+  function vevent({uid, summary, description, ymdDate}){
+    const dtstamp = new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z'
+    const lines = ['BEGIN:VEVENT',`UID:${uid}`,`DTSTAMP:${dtstamp}`,`DTSTART;VALUE=DATE:${ymdToICS(ymdDate)}`, foldLine(`SUMMARY:${summary}`)]
+    if(description) lines.push(foldLine(`DESCRIPTION:${description}`))
+    lines.push('END:VEVENT'); return lines.join('\r\n')
+  }
+  function exportICS(list, name){
+    const parts=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ProjektToDos//DE','CALSCALE:GREGORIAN','METHOD:PUBLISH']
+    list.forEach(p => {
+      const base = `Projekt ${p.number||''} – ${p.name||''}`.trim()
+      if(p.deadline){ parts.push(vevent({ uid:`${p.id}-deadline@projtodos`, summary:`${base} (Deadline)`, description:`Tab: ${p.tab||'Alle'}`, ymdDate:p.deadline })) }
+      p.todos.filter(t => t.due).forEach((t,i) => {
+        parts.push(vevent({ uid:`${p.id}-todo-${i}@projtodos`, summary:`${t.text} — ${base}`, description:`To-Do ${t.done?'(erledigt)':'(offen)'} · Tab: ${p.tab||'Alle'}`, ymdDate:t.due }))
+      })
+    })
+    parts.push('END:VCALENDAR')
+    const blob = new Blob([parts.join('\r\n')], {type:'text/calendar;charset=utf-8'})
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href)
+  }
+
+  // ===== Kanban =====
+  function applyKanbanStatus(project, column){
+    if(column === 'done'){
+      project.todos.forEach(t => t.done = true)
+    }else if(column === 'open'){
+      project.todos.forEach(t => t.done = false)
+    }else if(column === 'partial'){
+      if(project.todos.length){ project.todos.forEach((t,i) => t.done = i > 0) }
+    }
+  }
+  function renderKanban(){
+    const wrapOpen = document.getElementById('kbOpen')
+    const wrapPart = document.getElementById('kbPartial')
+    const wrapDone = document.getElementById('kbDone')
+    wrapOpen.innerHTML = wrapPart.innerHTML = wrapDone.innerHTML = ''
+    const list = applyFilters(state.projects || [])
+    list.forEach(p => {
+      const st = progressOf(p)
+      const card = document.createElement('div'); card.className='kbCard'; card.draggable = true; card.dataset.id = p.id; card.dataset.col = st.status
+      if(p.color){ card.style.background = `linear-gradient(180deg, color-mix(in srgb, ${p.color} 20%, transparent), rgba(255,255,255,.02))` }
+      const t = document.createElement('div'); t.className='kbTitle'; t.textContent = `${p.number || '—'} · ${p.name || 'Ohne Titel'}`
+      const meta = document.createElement('div'); meta.className='kbMeta'
+      const due = dueBadge(p.deadline); if(due){ const b=document.createElement('span'); b.className=`badge ${due.cls}`; b.textContent=due.label; meta.appendChild(b) }
+      const prog = document.createElement('div'); prog.className='kbProg'; const fill=document.createElement('i'); fill.style.width=`${st.pct}%`; prog.appendChild(fill)
+      card.appendChild(t); card.appendChild(meta); card.appendChild(prog)
+
+      card.addEventListener('dragstart', e => {
+        draggingProjectId = p.id
+        e.dataTransfer.setData('text/proj', p.id)
+        e.dataTransfer.setData('text/plain', p.id)
+        e.dataTransfer.effectAllowed = 'move'
+        card.style.opacity = .6
+        card.classList.add('dragging')
+      })
+      card.addEventListener('dragend',   ()=> {
+        draggingProjectId = null
+        card.style.opacity=''
+        card.classList.remove('drop-before','drop-after','dragging')
+      })
+      card.addEventListener('dragover', e => {
+        const dragId = draggingProjectId
+        if(!dragId || dragId === p.id){
+          card.classList.remove('drop-before','drop-after')
+          return
+        }
+        e.preventDefault()
+        const rect = card.getBoundingClientRect()
+        const before = e.clientY < rect.top + rect.height / 2
+        card.classList.toggle('drop-before', before)
+        card.classList.toggle('drop-after', !before)
+      })
+      card.addEventListener('dragleave', () => card.classList.remove('drop-before','drop-after'))
+      card.addEventListener('drop', e => {
+        e.preventDefault()
+        card.classList.remove('drop-before','drop-after')
+        const dragId = e.dataTransfer.getData('text/proj') || e.dataTransfer.getData('text/plain') || draggingProjectId
+        draggingProjectId = null
+        if(!dragId || dragId === p.id) return
+        const dragged = state.projects.find(x => x.id === dragId)
+        if(!dragged) return
+        pushHistory()
+        const targetCol = card.parentElement?.dataset.col || card.dataset.col
+        applyKanbanStatus(dragged, targetCol)
+        state.filters.sort = 'manual'
+        state.order = state.order || state.projects.map(x => x.id)
+        const from = state.order.indexOf(dragId)
+        if(from >= 0) state.order.splice(from,1)
+        let insertIdx = state.order.indexOf(p.id)
+        if(insertIdx < 0) insertIdx = state.order.length
+        const rect = card.getBoundingClientRect()
+        const before = e.clientY < rect.top + rect.height / 2
+        if(!before) insertIdx += 1
+        if(from >=0 && from < insertIdx) insertIdx--
+        state.order.splice(insertIdx,0,dragId)
+        setDirty(true)
+        render()
+      })
+
+      const targetList = st.status==='done' ? wrapDone : st.status==='partial' ? wrapPart : wrapOpen
+      targetList.appendChild(card)
+    })
+    document.querySelectorAll('.kbCol').forEach(col => {
+      col.ondragover = (e) => {
+        if(!draggingProjectId) return;
+        e.preventDefault();
+      }
+      col.ondrop = (e) => {
+        e.preventDefault()
+        const id = e.dataTransfer.getData('text/proj') || e.dataTransfer.getData('text/plain') || draggingProjectId
+        draggingProjectId = null
+        if(!id) return
+        const proj = state.projects.find(x => x.id === id); if(!proj) return
+        const to = col.dataset.col
+        pushHistory()
+        applyKanbanStatus(proj, to)
+        state.filters.sort = 'manual'
+        state.order = state.order || state.projects.map(x => x.id)
+        const from = state.order.indexOf(id)
+        if(from >= 0) state.order.splice(from,1)
+        const desiredStatus = to === 'done' ? 'done' : to === 'partial' ? 'partial' : 'open'
+        const cards = Array.from(col.querySelectorAll('.kbCard'))
+        let beforeId = null
+        for(const cardEl of cards){
+          if(cardEl.dataset.id === id) continue
+          const rect = cardEl.getBoundingClientRect()
+          if(e.clientY < rect.top + rect.height / 2){
+            beforeId = cardEl.dataset.id
+            break
+          }
+        }
+        let insertIdx
+        if(beforeId){
+          insertIdx = state.order.indexOf(beforeId)
+          if(insertIdx < 0) insertIdx = state.order.length
+        }else{
+          insertIdx = state.order.length
+          for(let i=state.order.length-1; i>=0; i--){
+            const other = state.projects.find(x => x.id === state.order[i])
+            if(other && progressOf(other).status === desiredStatus){ insertIdx = i + 1; break }
+          }
+        }
+        state.order.splice(insertIdx,0,id)
+        document.querySelectorAll('.kbCard').forEach(c => c.classList.remove('drop-before','drop-after'))
+        setDirty(true)
+        render()
+      }
+    })
+  }
+
+  function addDispoWeek(iso){
+    const value = (iso || '').trim()
+    if(!value){ showToast('Bitte eine Kalenderwoche auswählen.'); return }
+    const range = isoWeekToRange(value)
+    if(!range){ showToast('Ungültige Kalenderwoche.'); return }
+    ensureDispoEntries()
+    const existing = state.dispoEntries.find(entry => entry.isoWeek === value)
+    if(existing){
+      existing.collapsed = false
+      pendingDispoFocus = { entryId: existing.id, field: 'notes' }
+      setDirty(true)
+      showToast('Diese Woche existiert bereits.');
+      render()
+      return
+    }
+    pushHistory()
+    const entry = { id: uid(), isoWeek: value, notes:'', title:'', collapsed:false, items:[] }
+    state.dispoEntries.push(entry)
+    pendingDispoFocus = { entryId: entry.id, field: 'notes' }
+    setDirty(true)
+    render()
+  }
+
+  function renderDispo(){
+    if(!dispoView || !dispoWeeksEl || !dispoEmptyEl) return
+    ensureDispoEntries()
+    const entries = [...state.dispoEntries]
+      .filter(Boolean)
+      .sort((a,b) => (a.isoWeek||'').localeCompare(b.isoWeek||''))
+
+    dispoWeeksEl.innerHTML = ''
+    if(entries.length === 0){
+      dispoEmptyEl.style.display = 'block'
+      pendingDispoFocus = null
+      return
+    }
+    dispoEmptyEl.style.display = 'none'
+
+    let focusTarget = null
+
+    entries.forEach(entry => {
+      const section = document.createElement('section')
+      section.className = 'dispoWeek' + (entry.collapsed ? ' collapsed' : '')
+      section.dataset.id = entry.id
+
+      const header = document.createElement('div')
+      header.className = 'dispoWeekHeader'
+
+      const toggle = document.createElement('button')
+      toggle.type = 'button'
+      toggle.className = 'dispoToggle'
+      toggle.innerHTML = `<span class="ms">${entry.collapsed ? 'chevron_right' : 'expand_more'}</span>`
+      toggle.addEventListener('click', () => {
+        pushHistory()
+        entry.collapsed = !entry.collapsed
+        setDirty(true)
+        renderDispo()
+      })
+      header.appendChild(toggle)
+
+      const [yearPart, weekPartRaw] = (entry.isoWeek || '').split('-W')
+      const weekNumber = weekPartRaw ? weekPartRaw.padStart(2,'0') : ''
+      const title = document.createElement('div')
+      title.className = 'dispoWeekTitle'
+      title.textContent = weekNumber ? `KW ${weekNumber}${yearPart ? ' / ' + yearPart : ''}` : 'Kalenderwoche'
+      header.appendChild(title)
+
+      const range = isoWeekToRange(entry.isoWeek)
+      if(range){
+        const rangeEl = document.createElement('div')
+        rangeEl.className = 'dispoWeekRange'
+        rangeEl.textContent = `${germanFromIso(isoDateString(range.start))} – ${germanFromIso(isoDateString(range.end))}`
+        header.appendChild(rangeEl)
+      }
+
+      const actions = document.createElement('div')
+      actions.className = 'dispoWeekActions'
+
+      const addBtn = document.createElement('button')
+      addBtn.type = 'button'
+      addBtn.className = 'btn'
+      addBtn.textContent = 'To-Do hinzufügen'
+      addBtn.addEventListener('click', () => {
+        pushHistory()
+        const item = { id: uid(), text:'', owner:'', notes:'', due:'' }
+        entry.items.push(item)
+        entry.collapsed = false
+        pendingDispoFocus = { entryId: entry.id, itemId: item.id, field: 'text' }
+        setDirty(true)
+        render()
+      })
+      actions.appendChild(addBtn)
+
+      const removeWeek = document.createElement('button')
+      removeWeek.type = 'button'
+      removeWeek.className = 'btn'
+      removeWeek.textContent = 'Woche löschen'
+      removeWeek.addEventListener('click', () => {
+        if(!confirm('Dispo-Woche wirklich löschen?')) return
+        pushHistory()
+        state.dispoEntries = state.dispoEntries.filter(w => w.id !== entry.id)
+        setDirty(true)
+        render()
+      })
+      actions.appendChild(removeWeek)
+
+      header.appendChild(actions)
+      section.appendChild(header)
+
+      const notesWrap = document.createElement('div')
+      notesWrap.className = 'dispoNotes'
+      const notes = document.createElement('textarea')
+      notes.placeholder = 'Protokoll / Notizen zur Woche'
+      notes.value = entry.notes || ''
+      notes.addEventListener('input', () => {
+        if(!notes.dataset.hist){ pushHistory(); notes.dataset.hist = '1' }
+        entry.notes = notes.value
+        setDirty(true)
+      })
+      notes.addEventListener('blur', () => { delete notes.dataset.hist })
+      notesWrap.appendChild(notes)
+      section.appendChild(notesWrap)
+
+      const itemsWrap = document.createElement('div')
+      itemsWrap.className = 'dispoItems'
+      if(!entry.items.length){
+        const empty = document.createElement('div')
+        empty.className = 'dispoItemsEmpty'
+        empty.textContent = 'Noch keine To-Dos für diese Woche erfasst.'
+        itemsWrap.appendChild(empty)
+      }else{
+        entry.items.forEach(item => {
+          const row = document.createElement('div')
+          row.className = 'dispoItem'
+          row.dataset.id = item.id
+
+          const taskInput = document.createElement('input')
+          taskInput.type = 'text'
+          taskInput.placeholder = 'To-Do / Aufgabe'
+          taskInput.value = item.text || ''
+          taskInput.addEventListener('input', () => {
+            if(!taskInput.dataset.hist){ pushHistory(); taskInput.dataset.hist = '1' }
+            item.text = taskInput.value
+            setDirty(true)
+          })
+          taskInput.addEventListener('blur', () => { delete taskInput.dataset.hist })
+          row.appendChild(taskInput)
+
+          const ownerInput = document.createElement('input')
+          ownerInput.type = 'text'
+          ownerInput.placeholder = 'Bearbeiter'
+          ownerInput.value = item.owner || ''
+          ownerInput.addEventListener('input', () => {
+            if(!ownerInput.dataset.hist){ pushHistory(); ownerInput.dataset.hist = '1' }
+            item.owner = ownerInput.value
+            setDirty(true)
+          })
+          ownerInput.addEventListener('blur', () => { delete ownerInput.dataset.hist })
+          row.appendChild(ownerInput)
+
+          const detailArea = document.createElement('textarea')
+          detailArea.placeholder = 'Details / Vorbereitung'
+          detailArea.value = item.notes || ''
+          detailArea.addEventListener('input', () => {
+            if(!detailArea.dataset.hist){ pushHistory(); detailArea.dataset.hist = '1' }
+            item.notes = detailArea.value
+            setDirty(true)
+          })
+          detailArea.addEventListener('blur', () => { delete detailArea.dataset.hist })
+          row.appendChild(detailArea)
+
+          const dueWrap = document.createElement('div')
+          dueWrap.className = 'dispoDue'
+          const dueInput = document.createElement('input')
+          dueInput.type = 'text'
+          dueInput.placeholder = 'tt.mm.jjjj'
+          dueInput.value = item.due ? germanFromIso(item.due) : ''
+          dueInput.addEventListener('change', () => {
+            if(!dueInput.dataset.hist){ pushHistory(); dueInput.dataset.hist = '1' }
+            const raw = dueInput.value.trim()
+            const iso = isoFromGerman(raw) || (/^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : '')
+            item.due = iso
+            dueInput.value = iso ? germanFromIso(iso) : ''
+            setDirty(true)
+          })
+          dueInput.addEventListener('blur', () => { delete dueInput.dataset.hist; if(item.due){ dueInput.value = germanFromIso(item.due) } })
+          dueWrap.appendChild(dueInput)
+
+          const calBtn = document.createElement('button')
+          calBtn.type = 'button'
+          calBtn.className = 'miniCal iconbtn'
+          calBtn.innerHTML = '<span class="ms">event</span>'
+          calBtn.addEventListener('click', ev => {
+            ev.preventDefault()
+            const tmp = document.createElement('input')
+            tmp.type = 'date'
+            if(item.due) tmp.value = item.due
+            const rect = calBtn.getBoundingClientRect()
+            tmp.style.position = 'fixed'
+            tmp.style.left = `${rect.left}px`
+            tmp.style.top = `${rect.bottom}px`
+            tmp.style.opacity = '0'
+            tmp.style.zIndex = '9999'
+            document.body.appendChild(tmp)
+            const cleanup = () => { if(tmp.parentNode) document.body.removeChild(tmp) }
+            tmp.addEventListener('change', () => {
+              pushHistory()
+              item.due = tmp.value || ''
+              dueInput.value = item.due ? germanFromIso(item.due) : ''
+              setDirty(true)
+              cleanup()
+            }, { once:true })
+            tmp.addEventListener('blur', cleanup, { once:true })
+            if(typeof tmp.showPicker === 'function'){ tmp.showPicker() } else { tmp.click() }
+          })
+          dueWrap.appendChild(calBtn)
+          row.appendChild(dueWrap)
+
+          const removeBtn = document.createElement('button')
+          removeBtn.type = 'button'
+          removeBtn.className = 'dispoRemove'
+          removeBtn.innerHTML = '<span class="ms">close</span>'
+          removeBtn.addEventListener('click', () => {
+            if(!confirm('To-Do entfernen?')) return
+            pushHistory()
+            entry.items = entry.items.filter(it => it.id !== item.id)
+            setDirty(true)
+            render()
+          })
+          row.appendChild(removeBtn)
+
+          itemsWrap.appendChild(row)
+
+          if(pendingDispoFocus && pendingDispoFocus.entryId === entry.id && pendingDispoFocus.itemId === item.id){
+            if(pendingDispoFocus.field === 'text'){ focusTarget = taskInput }
+            else if(pendingDispoFocus.field === 'due'){ focusTarget = dueInput }
+          }
+        })
+      }
+
+      section.appendChild(itemsWrap)
+
+      if(pendingDispoFocus && pendingDispoFocus.entryId === entry.id && !pendingDispoFocus.itemId && pendingDispoFocus.field === 'notes'){
+        focusTarget = notes
+      }
+
+      dispoWeeksEl.appendChild(section)
+    })
+
+    pendingDispoFocus = null
+    if(focusTarget){ setTimeout(() => focusTarget.focus(), 0) }
+  }
+
+  // ===== Timeline (Gantt‑ähnliche Ansicht) =====
+  /**
+   * Rendert die Timeline‑Ansicht. Sie sammelt alle To‑Dos mit gesetzter Deadline
+   * und sortiert sie nach dem Fälligkeitsdatum. Für jedes Element wird eine
+   * horizontale Leiste positioniert, deren horizontale Position dem Datum
+   * entspricht. Die heutige Linie wird als rote vertikale Linie dargestellt.
+   */
+
+
+  function renderTimeline(){
+    const timeline = timelineViewEl;
+    if(!timeline) return;
+    timeline.innerHTML = '';
+
+    const timelineStyle = getComputedStyle(timeline);
+    const labelWidth = parseInt(timelineStyle.getPropertyValue('--timeline-label-width'), 10) || 220;
+    const parseDate = (ymd) => {
+      if(!ymd) return null;
+      const parts = ymd.split('-').map(Number);
+      if(parts.length !== 3 || parts.some(n => Number.isNaN(n))) return null;
+      return new Date(Date.UTC(parts[0], parts[1]-1, parts[2]));
+    };
+    const startOfToday = () => {
+      const now = new Date();
+      return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+    };
+    const diffDays = (later, earlier) => Math.floor((later.getTime() - earlier.getTime()) / DAY_MS);
+    const clamp = (val, min, max) => Math.min(max, Math.max(min, val));
+
+    const activeTab = (state.timelineTab && state.tabs?.includes(state.timelineTab)) ? state.timelineTab : 'Alle';
+
+    const tasks = [];
+    (state.projects || []).forEach(p => {
+      const tabName = p.tab || 'Alle';
+      if(activeTab !== 'Alle' && tabName !== activeTab) return;
+      const projectStart = parseDate(p.date);
+      (p.todos || []).forEach(t => {
+        if(!t.due || t.done) return;
+        const dueDate = parseDate(t.due);
+        if(!dueDate) return;
+        const todoStart = parseDate(t.start) || projectStart || dueDate;
+        tasks.push({ project: p, todo: t, dueDate, startDate: todoStart });
+      });
+    });
+
+    tasks.sort((a,b) => (a.dueDate?.getTime() || 0) - (b.dueDate?.getTime() || 0));
+    if(tasks.length === 0){
+      const msg = document.createElement('p');
+      msg.textContent = 'Keine To‑Dos mit Deadline vorhanden';
+      msg.style.color = 'var(--muted)';
+      timeline.appendChild(msg);
+      return;
+    }
+
+    const today = startOfToday();
+    const earliestStart = tasks.reduce((min, task) => Math.min(min, task.startDate.getTime()), today.getTime());
+    const earliestDue = tasks.reduce((min, task) => Math.min(min, task.dueDate.getTime()), today.getTime());
+    const latestDue = tasks.reduce((max, task) => Math.max(max, task.dueDate.getTime()), today.getTime());
+    const maxOverdueDays = tasks.reduce((max, task) => Math.max(max, Math.max(0, diffDays(today, task.dueDate))), 0);
+
+    const baseStart = Math.min(today.getTime(), earliestStart, earliestDue);
+    let startDate = startOfISOWeek(new Date(baseStart));
+    const extraPastWeeks = Math.max(1, Math.ceil((Math.max(7, maxOverdueDays + 2)) / 7));
+    startDate.setUTCDate(startDate.getUTCDate() - extraPastWeeks * 7);
+
+    const futurePaddingDays = 7;
+    const endCandidate = new Date(Math.max(latestDue, today.getTime()) + futurePaddingDays * DAY_MS);
+    const endWeekStart = startOfISOWeek(endCandidate);
+    let endDate = new Date(endWeekStart.getTime() + 6 * DAY_MS);
+    if(endDate < today){ endDate = new Date(today.getTime() + futurePaddingDays * DAY_MS); }
+
+    let rangeDays = Math.max(1, diffDays(endDate, startDate) + 1);
+
+    const baseWidth = Math.max(timeline.clientWidth || timeline.offsetWidth || 0, 960);
+    const targetDays = Math.min(rangeDays, 180);
+    const zoomConfig = TIMELINE_ZOOMS.find(z => z.value === state.timelineZoom) || TIMELINE_ZOOMS[TIMELINE_ZOOMS.length - 1];
+    if(state.timelineZoom !== zoomConfig.value){
+      state.timelineZoom = zoomConfig.value;
+      updateTimelineZoomIndicator(zoomConfig.value);
+    }else{
+      updateTimelineZoomIndicator(zoomConfig.value);
+    }
+    timeline.dataset.zoom = zoomConfig.value;
+    let pxPerDay = Math.floor((baseWidth - labelWidth - 40) / Math.max(1, targetDays));
+    if(!Number.isFinite(pxPerDay) || pxPerDay <= 0) pxPerDay = zoomConfig.min;
+    pxPerDay = clamp(pxPerDay, zoomConfig.min, zoomConfig.max);
+    timeline.style.setProperty('--timeline-px-day', `${pxPerDay}px`);
+    timeline.style.setProperty('--timeline-grid-step', `${pxPerDay * (zoomConfig.unitDays || 1)}px`);
+    const configuredRow = parseInt(timelineStyle.getPropertyValue('--timeline-row-height'), 10) || 40;
+    const rowHeight = Math.max(40, configuredRow);
+    const barHeight = Math.max(12, Math.round(rowHeight * 0.35));
+    timeline.style.setProperty('--timeline-row-height', `${rowHeight}px`);
+    timeline.style.setProperty('--timeline-bar-height', `${barHeight}px`);
+
+    const monthNames = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+    const monthsRow = document.createElement('div');
+    monthsRow.className = 'timelineMonths';
+    let dayCursor = 0;
+    while(dayCursor < rangeDays){
+      const current = new Date(startDate.getTime() + dayCursor * DAY_MS);
+      const monthEnd = new Date(Date.UTC(current.getUTCFullYear(), current.getUTCMonth() + 1, 0));
+      const endOffsetRaw = diffDays(monthEnd, startDate) + 1;
+      const endOffset = Math.min(rangeDays, endOffsetRaw);
+      let daysInSeg = endOffset - dayCursor;
+      if(daysInSeg <= 0) daysInSeg = 1;
+      const mCell = document.createElement('div');
+      mCell.className = 'timeline-month';
+      mCell.style.width = `${daysInSeg * pxPerDay}px`;
+      const y = current.getUTCFullYear();
+      mCell.textContent = `${monthNames[current.getUTCMonth()]} ${String(y).slice(-2)}`;
+      monthsRow.appendChild(mCell);
+      dayCursor += daysInSeg;
+    }
+    timeline.appendChild(monthsRow);
+
+    const weeksRow = document.createElement('div');
+    weeksRow.className = 'timelineWeeks';
+    let weekOffset = 0;
+    while(weekOffset < rangeDays){
+      const current = new Date(startDate.getTime() + weekOffset * DAY_MS);
+      const iso = isoWeekInfo(current);
+      const segDays = Math.min(7, rangeDays - weekOffset);
+      const wCell = document.createElement('div');
+      wCell.className = 'timeline-week';
+      wCell.style.width = `${Math.max(segDays, 1) * pxPerDay}px`;
+      const label = `KW ${String(iso.week).padStart(2,'0')}`;
+      wCell.textContent = label;
+      wCell.title = `${label} / ${iso.year}`;
+      weeksRow.appendChild(wCell);
+      weekOffset += Math.max(segDays, 1);
+    }
+    timeline.appendChild(weeksRow);
+
+    if(zoomConfig.showDays){
+      const daysRow = document.createElement('div');
+      daysRow.className = 'timelineDays';
+      for(let i=0; i<rangeDays; i++){
+        const d = new Date(startDate.getTime() + i * DAY_MS);
+        const cell = document.createElement('div');
+        cell.className = 'timeline-day';
+        cell.style.width = `${pxPerDay}px`;
+        let label = '';
+        if(zoomConfig.value === 'days'){
+          label = d.getUTCDate();
+        }else if(zoomConfig.value === 'compact'){
+          const dow = d.getUTCDay();
+          if(dow === 1){ label = `Mo ${d.getUTCDate()}`; }
+          else if(dow === 3){ label = 'Mi'; }
+          else if(dow === 5){ label = 'Fr'; }
+        }
+        cell.textContent = label;
+        daysRow.appendChild(cell);
+      }
+      timeline.appendChild(daysRow);
+    }
+
+    timeline.setAttribute('data-taskcount', tasks.length);
+
+    const chart = document.createElement('div');
+    chart.className = 'timelineChart';
+    chart.style.height = `${tasks.length * rowHeight}px`;
+    chart.style.width = `${rangeDays * pxPerDay}px`;
+    timeline.appendChild(chart);
+
+    const todayOffsetDays = clamp(diffDays(today, startDate), 0, rangeDays);
+    const todayPixel = todayOffsetDays * pxPerDay;
+    const todayLine = document.createElement('div');
+    todayLine.className = 'today-line';
+    todayLine.style.left = `${todayPixel}px`;
+    todayLine.style.height = `${tasks.length * rowHeight}px`;
+    chart.appendChild(todayLine);
+
+    const formatDate = (d) => `${String(d.getUTCDate()).padStart(2,'0')}.${String(d.getUTCMonth()+1).padStart(2,'0')}.${d.getUTCFullYear()}`;
+
+    tasks.forEach((task, idx) => {
+      const row = document.createElement('div');
+      row.className = 'timeline-row';
+      row.style.top = `${idx * rowHeight}px`;
+
+      const label = document.createElement('div');
+      label.className = 'timeline-label';
+      const projNum = task.project.number || '';
+      label.textContent = `${projNum} – ${task.todo.text}`;
+      label.title = `${projNum ? projNum + ' · ' : ''}${task.project.name || ''}`.trim();
+      row.appendChild(label);
+
+      const { dueDate, startDate: start } = task;
+      const effectiveStart = start <= dueDate ? start : dueDate;
+      const totalSpanDays = diffDays(dueDate, effectiveStart) + 1;
+      const daysToDue = diffDays(dueDate, today);
+      const rangeLabel = totalSpanDays > 1 ? `${totalSpanDays} Tage` : '1 Tag';
+      const tooltip = `${formatDate(effectiveStart)} → ${formatDate(dueDate)} (${rangeLabel})
+` + (daysToDue >= 0 ? `Noch ${daysToDue} Tag${daysToDue===1?'':'e'}` : `Überfällig seit ${Math.abs(daysToDue)} Tag${Math.abs(daysToDue)===1?'':'en'}`);
+
+      if(daysToDue < 0){
+        row.classList.add('is-overdue');
+        const arrow = document.createElement('div');
+        arrow.className = 'timeline-arrow';
+        const overdueDays = Math.abs(daysToDue);
+        const widthPx = Math.max(pxPerDay * 1.25, (overdueDays + 1) * pxPerDay);
+        const arrowLeft = todayPixel - widthPx;
+        arrow.style.width = `${widthPx}px`;
+        arrow.style.left = `${arrowLeft > 0 ? arrowLeft : 0}px`;
+        arrow.style.setProperty('--arrow-head', `${Math.min(40, Math.max(18, pxPerDay * 1.5))}px`);
+        arrow.title = tooltip;
+        row.appendChild(arrow);
+      }else{
+        const bar = document.createElement('div');
+        bar.className = 'timeline-bar';
+        let startOffset = diffDays(effectiveStart, startDate);
+        let spanDays = diffDays(dueDate, effectiveStart) + 1;
+        if(startOffset < 0){
+          spanDays += startOffset;
+          startOffset = 0;
+        }
+        let projectedEnd = startOffset + spanDays;
+        if(projectedEnd > rangeDays){ spanDays -= (projectedEnd - rangeDays); }
+        spanDays = Math.max(1, spanDays);
+        bar.style.left = `${startOffset * pxPerDay}px`;
+        bar.style.width = `${spanDays * pxPerDay}px`;
+        bar.style.background = task.todo.done ? 'var(--muted)' : (task.project.color || 'var(--accent)');
+        bar.title = tooltip;
+        row.appendChild(bar);
+      }
+
+      chart.appendChild(row);
+    });
+
+    const visibleWidth = (timeline.clientWidth || 0) - labelWidth;
+    const scrollTarget = todayPixel - (visibleWidth > 0 ? visibleWidth / 2 : 0);
+    timeline.scrollLeft = scrollTarget > 0 ? scrollTarget : 0;
+  }
+
+  // ===== Warnung für nahe Deadlines =====
+  // Die Warnleiste für nahe Deadlines wurde entfernt. Deadlines werden nun über die Timeline sichtbar gemacht.
+
+  // ===== Farb-Popover (OK/Abbrechen) =====
+  const colorPop = document.getElementById('colorPop')
+  const colorPicker = document.getElementById('colorPicker')
+  const colorCancel = document.getElementById('colorCancel')
+  const colorOk = document.getElementById('colorOk')
+  let colorTarget = { project:null, original:'#7c3aed' }
+
+  function openColorPopover(anchor, project){
+    colorTarget.project = project
+    colorTarget.original = project.color || '#7c3aed'
+    colorPicker.value = colorTarget.original
+    colorPop.style.display='block'
+    // Position neben dem Button
+    const r = anchor.getBoundingClientRect()
+    colorPop.style.left = (r.left) + 'px'
+    colorPop.style.top  = (r.bottom + 8) + 'px'
+  }
+  document.querySelectorAll('.colorPopover .sw').forEach(sw => sw.addEventListener('click', () => colorPicker.value = sw.dataset.v ))
+  colorCancel.addEventListener('click', () => { colorPop.style.display='none' })
+  colorOk.addEventListener('click', () => {
+    if(!colorTarget.project) return
+    const v = colorPicker.value
+    pushHistory(); colorTarget.project.color = v; setDirty(true); colorPop.style.display='none'; render()
+  })
+  window.addEventListener('resize', () => { if(colorPop.style.display==='block') colorPop.style.display='none' })
+  window.addEventListener('scroll', () => { if(colorPop.style.display==='block') colorPop.style.display='none' })
+
+  // ===== Datei Save/Open (mit AutoSave-to-file) =====
+  function buildSelfContainedHTML(){
+    const html = document.documentElement.cloneNode(true)
+    html.querySelector('#APP_STATE').textContent = JSON.stringify(state)
+    try{ localStorage.removeItem(autosaveKey) }catch(e){}
+    return '<!DOCTYPE html>\n' + html.outerHTML
+  }
+  async function saveToHandle(handle, silent=false){
+    const writable = await handle.createWritable()
+    await writable.write(new Blob([buildSelfContainedHTML()], {type:'text/html'}))
+    await writable.close(); setDirty(false); if(!silent) showToast('Gespeichert')
+  }
+  async function save(){
+    if(window.showSaveFilePicker && fileHandle){ await saveToHandle(fileHandle); return }
+    if(window.showSaveFilePicker){
+      const handle = await window.showSaveFilePicker({ suggestedName:'projekte.html', types:[{ description:'HTML', accept:{'text/html':['.html']} }] })
+      fileHandle = handle; await saveToHandle(fileHandle)
+    }else{
+      const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([buildSelfContainedHTML()],{type:'text/html'})); a.download='projekte.html'; a.click(); URL.revokeObjectURL(a.href); setDirty(false); showToast('Datei gespeichert')
+    }
+  }
+  async function saveAs(){
+    if(window.showSaveFilePicker){
+      const handle = await window.showSaveFilePicker({ suggestedName:'projekte.html', types:[{ description:'HTML', accept:{'text/html':['.html']} }] })
+      fileHandle = handle; await saveToHandle(fileHandle)
+    }else{
+      const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([buildSelfContainedHTML()],{type:'text/html'})); a.download='projekte.html'; a.click(); URL.revokeObjectURL(a.href); setDirty(false); showToast('Datei gespeichert')
+    }
+  }
+  async function openFile(){
+    if(!window.showOpenFilePicker){ alert('Öffnen erfordert einen aktuellen Chromium-Browser'); return }
+    const [handle] = await window.showOpenFilePicker({ types:[{ description:'HTML oder JSON', accept:{ 'text/html':['.html'], 'application/json':['.json'] } }] })
+    const file = await handle.getFile(); const text = await file.text()
+    let loaded=null
+    if(file.type==='application/json' || file.name.endsWith('.json')) loaded=JSON.parse(text)
+    else{ const tmp=document.createElement('div'); tmp.innerHTML=text; const tag=tmp.querySelector('#APP_STATE'); if(tag) loaded=JSON.parse(tag.textContent||'{}') }
+    if(loaded){ fileHandle=handle; pushHistory(); state={...state,...loaded}; setDirty(false); render(); showToast('Datei geladen') }
+    else alert('Kein eingebetteter Zustand gefunden')
+  }
+  // Auto-Save-to-file (wenn Handle vorhanden)
+  setInterval(async () => {
+    if(!unsaved) return
+    if(fileHandle && 'createWritable' in fileHandle){ try{ await saveToHandle(fileHandle, true); showToast('Automatisch gespeichert') }catch(e){} }
+  }, 20000)
+
+  // ===== Events =====
+  document.getElementById('saveBtn').addEventListener('click', save)
+  document.getElementById('saveFab').addEventListener('click', save)
+  document.getElementById('printBtn').addEventListener('click', () => window.print())
+  document.getElementById('undoBtn').addEventListener('click', undo)
+  document.getElementById('redoBtn').addEventListener('click', redo)
+  document.getElementById('backupBtn').addEventListener('click', () => {
+    const fname = 'projekte-backup-' + new Date().toISOString().replace(/[:.]/g,'-') + '.json'
+    const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'})
+    if(window.showSaveFilePicker){
+      window.showSaveFilePicker({ suggestedName: fname, types:[{description:'JSON', accept:{'application/json':['.json']}}]})
+      .then(async handle => {
+        const w = await handle.createWritable();
+        await w.write(blob);
+        await w.close();
+        showToast('Backup gespeichert');
+      })
+      .catch(()=>{ /* Abbruch ignorieren */ });
+    } else {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = fname;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('Backup gespeichert');
+    }
+  });
+
+  // Datei öffnen/speichern (Buttons)
+  // Die "Datei öffnen"‑Schaltfläche wurde entfernt, daher darf kein Event mehr gebunden werden.
+  // Wir binden lediglich die "Speichern unter"‑Funktion an die vorhandene Schaltfläche.
+  document.getElementById('saveAsBtn').addEventListener('click', saveAs);
+
+  // CSV Import
+  document.getElementById('csvImportBtn').addEventListener('click', () => {
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = '.csv,text/csv';
+    inp.onchange = () => {
+      const f = inp.files[0]; if(!f) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const rows = parseCSV(String(reader.result));
+        if(!rows.length){ alert('CSV leer.'); return; }
+        const header = rows[0].map(h => (h||'').toLowerCase());
+        const idx = {
+          id: header.findIndex(h => h === 'id' || h.includes('projekt-id')),
+          nr: header.findIndex(h => h.includes('projektnummer') || h === 'nr'),
+          name: header.findIndex(h => h.includes('projektname') || h === 'name'),
+          date: header.findIndex(h => h === 'datum' || (h.includes('datum') && !h.includes('deadline'))),
+          deadline: header.findIndex(h => h.includes('deadline') || h.includes('fälligkeit')),
+          showDeadline: header.findIndex(h => h.includes('sichtbar') || h.includes('showdeadline')),
+          todos: header.findIndex(h => h.includes('todo') || h.includes('aufgaben')),
+          notes: header.findIndex(h => h.includes('notiz') || h.includes('notes')),
+          tab: header.findIndex(h => h === 'tab' || h.includes('gruppe')),
+          folder: header.findIndex(h => h.includes('pfad') || h.includes('ordner')),
+          color: header.findIndex(h => h.includes('farbe')),
+          collapsed: header.findIndex(h => h.includes('eingeklappt') || h.includes('collapsed')),
+          order: header.findIndex(h => h.includes('sort')),
+          projectJson: header.findIndex(h => h.includes('projektjson'))
+        };
+        const boolFrom = (val) => {
+          const v = (val || '').toString().trim().toLowerCase();
+          return ['true','1','ja','yes','wahr','on'].includes(v);
+        };
+        pushHistory();
+        const initialOrder = state.order && state.order.length ? state.order.slice() : state.projects.map(p => p.id);
+        const importedOrder = [];
+        for(let r=1; r<rows.length; r++){
+          const c = rows[r] || [];
+          if(!c.length || c.every(x => !x)) continue;
+          const todosRaw = idx.todos>=0 ? (c[idx.todos]||'') : '';
+          const todosFromCsv = todosRaw.split('|')
+            .map(s => s.trim()).filter(Boolean)
+            .map(item => {
+              const done = item.startsWith('[x]');
+              const text = item.replace(/^\[(x| )\]\s*/i,'');
+              const m = text.match(/^(.*)\s@(\d{4}-\d{2}-\d{2})$/);
+              return { text: (m?m[1]:text).trim(), done, due: m?m[2]:'' };
+            });
+
+          const rawProjectJson = idx.projectJson>=0 ? (c[idx.projectJson]||'') : '';
+          let parsedProject = null;
+          if(rawProjectJson){
+            try{ parsedProject = JSON.parse(rawProjectJson); }catch(e){ parsedProject = null; }
+          }
+
+          let projectId = idx.id>=0 ? (c[idx.id]||'').trim() : '';
+          if(!projectId && parsedProject && parsedProject.id){ projectId = String(parsedProject.id).trim(); }
+          if(!projectId) projectId = uid();
+          if(state.projects.some(x => x.id === projectId)) projectId = uid();
+
+          let p;
+          if(parsedProject && typeof parsedProject === 'object'){
+            p = { ...parsedProject };
+            p.number = typeof p.number === 'string' ? p.number : (idx.nr>=0 ? (c[idx.nr]||'') : '');
+            p.name = typeof p.name === 'string' ? p.name : (idx.name>=0 ? (c[idx.name]||'') : '');
+            p.notes = typeof p.notes === 'string' ? p.notes : (idx.notes>=0 ? (c[idx.notes]||'') : '');
+            p.tab = p.tab || ((idx.tab>=0 && c[idx.tab]) ? c[idx.tab] : (state.currentTab||'Alle'));
+            p.folder = p.folder || (idx.folder>=0 ? (c[idx.folder]||'') : '');
+            p.color = p.color || (idx.color>=0 ? (c[idx.color]||'') : '');
+            p.collapsed = !!p.collapsed;
+            p.showDeadline = !!p.showDeadline;
+            if(typeof p.deadline !== 'string') p.deadline = p.deadline || '';
+            if(typeof p.date !== 'string') p.date = p.date || '';
+            const baseTodos = Array.isArray(parsedProject.todos) ? parsedProject.todos : todosFromCsv;
+            p.todos = Array.isArray(baseTodos) ? baseTodos.map(t => ({
+              text: t && t.text ? t.text : '',
+              done: !!(t && t.done),
+              due: (t && t.due) || '',
+              start: (t && t.start) || ''
+            })) : [];
+          }else{
+            p = {
+              number: idx.nr>=0 ? (c[idx.nr]||'') : '',
+              name: idx.name>=0 ? (c[idx.name]||'') : '',
+              date: idx.date>=0 ? (c[idx.date]||'') : '',
+              deadline: idx.deadline>=0 ? (c[idx.deadline]||'') : '',
+              showDeadline: idx.showDeadline>=0 ? boolFrom(c[idx.showDeadline]) : !!(idx.deadline>=0 && c[idx.deadline]),
+              todos: todosFromCsv,
+              notes: idx.notes>=0 ? (c[idx.notes]||'') : '',
+              tab: (idx.tab>=0 && c[idx.tab]) ? c[idx.tab] : (state.currentTab||'Alle'),
+              folder: idx.folder>=0 ? (c[idx.folder]||'') : '',
+              color: idx.color>=0 ? (c[idx.color]||'') : '',
+              collapsed: idx.collapsed>=0 ? boolFrom(c[idx.collapsed]) : false
+            };
+          }
+          p.id = projectId;
+          p.todos = Array.isArray(p.todos) ? p.todos.map(t => ({
+            text: t && t.text ? t.text : '',
+            done: !!(t && t.done),
+            due: (t && t.due) || '',
+            start: (t && t.start) || ''
+          })) : [];
+
+          state.projects.push(p);
+          if(p.tab && !state.tabs.includes(p.tab) && p.tab!=='Alle') state.tabs.push(p.tab);
+          if(idx.order>=0){
+            const sortToken = Number((c[idx.order]||'').trim());
+            if(Number.isFinite(sortToken)) importedOrder.push({ id: p.id, order: sortToken });
+          }
+        }
+        if(importedOrder.length){
+          importedOrder.sort((a,b) => a.order - b.order);
+          const orderedIds = importedOrder.map(o => o.id);
+          const merged = initialOrder.filter(id => !orderedIds.includes(id));
+          importedOrder.forEach(({id}) => merged.push(id));
+          state.order = merged;
+          state.filters.sort = 'manual';
+        }else{
+          const merged = initialOrder.slice();
+          state.projects.forEach(proj => { if(!merged.includes(proj.id)) merged.push(proj.id); });
+          state.order = merged;
+        }
+        setDirty(true); render(); showToast('CSV importiert');
+      };
+      reader.readAsText(f);
+    };
+    inp.click();
+  });
+
+  // CSV Export / Kalender-Export
+  document.getElementById('csvExportBtn')
+    .addEventListener('click', () => exportCSV(applyFilters(state.projects),'projekte.csv'));
+  document.getElementById('calendarExportBtn')
+    .addEventListener('click', () => exportICS(applyFilters(state.projects),'projekte.ics'));
+  if(dispoWeekInput && !dispoWeekInput.value){
+    dispoWeekInput.value = isoWeekStringFromDate(new Date())
+  }
+  if(dispoAddWeekBtn){
+    dispoAddWeekBtn.addEventListener('click', () => addDispoWeek(dispoWeekInput ? dispoWeekInput.value : ''))
+  }
+  if(dispoAddCurrentBtn){
+    dispoAddCurrentBtn.addEventListener('click', () => {
+      const iso = isoWeekStringFromDate(new Date())
+      if(dispoWeekInput) dispoWeekInput.value = iso
+      addDispoWeek(iso)
+    })
+  }
+  if(printTodosToggle){
+    printTodosToggle.addEventListener('change', () => {
+      pushHistory()
+      state.printShowTodos = !!printTodosToggle.checked
+      setDirty(true)
+      document.body.classList.toggle('print-show-todos', state.printShowTodos)
+    })
+  }
+
+  // Projekt hinzufügen
+  const inNr = document.getElementById('inNr'),
+        inName = document.getElementById('inName'),
+        inDate = document.getElementById('inDate'),
+        inDateCalBtn = document.getElementById('inDateCalBtn'),
+        inFolder = document.getElementById('inFolder'),
+        inTodos = document.getElementById('inTodos');
+
+  // Kalenderbutton für das Projektdatum: öffnet einen nativen Date‑Picker direkt unter dem Icon
+  if(inDateCalBtn){
+    inDateCalBtn.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      const tmp = document.createElement('input');
+      tmp.type = 'date';
+      // ISO‑Wert zurück in Datepicker, falls vorhanden
+      const cur = inDate.value.trim();
+      const m = cur.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+      if(m){ const [_, dd, mm, yyyy] = m; tmp.value = `${yyyy.padStart(4,'0')}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`; }
+      tmp.style.position = 'fixed';
+      const rect = inDateCalBtn.getBoundingClientRect();
+      tmp.style.left = `${rect.left}px`;
+      tmp.style.top  = `${rect.bottom}px`;
+      tmp.style.opacity = '0';
+      tmp.style.zIndex = '9999';
+      document.body.appendChild(tmp);
+      tmp.addEventListener('change', () => {
+        const iso = tmp.value;
+        if(iso){
+          const parts = iso.split('-');
+          inDate.value = `${parts[2]}.${parts[1]}.${parts[0]}`;
+        }
+        document.body.removeChild(tmp);
+      }, { once:true });
+      if(typeof tmp.showPicker === 'function'){ tmp.showPicker(); } else { tmp.click(); }
+    });
+  }
+
+  document.getElementById('addBtn').addEventListener('click', () => {
+    const number = inNr.value.trim(),
+          name   = inName.value.trim(),
+          // Datum aus dem Eingabefeld (tt.mm.jjjj) in ISO‑Format umwandeln
+          date   = (function(raw){
+            const m = (raw||'').trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+            if(!m) return '';
+            const [_, dd, mm, yyyy] = m;
+            return `${yyyy.padStart(4,'0')}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
+          })(inDate.value),
+          folder = inFolder.value.trim();
+    const todos = (inTodos.value||'').split(';').map(s=>s.trim()).filter(Boolean)
+                   .map(s => ({text:s, done:false, due:''}));
+    if(!number && !name){ alert('Bitte Projektnummer oder Projektnamen eingeben.'); return; }
+    pushHistory();
+    const p = { id:uid(), number, name, date, deadline:'', showDeadline:false,
+                todos, notes:'', tab: state.currentTab || 'Alle', folder, color:'', collapsed:false };
+    state.projects.unshift(p);
+    if(state.filters.sort==='manual'){ state.order = state.order || []; state.order.unshift(p.id); }
+    setDirty(true); render();
+    inNr.value=''; inName.value=''; inDate.value=''; inFolder.value=''; inTodos.value='';
+    inNr.focus();
+  });
+
+  // Filter
+  const q = document.getElementById('q'),
+        status = document.getElementById('status'),
+        sort = document.getElementById('sort'),
+        pctMin = document.getElementById('pctMin'),
+        pctMax = document.getElementById('pctMax');
+  // Hinweis: Der Warnzeitraum für Deadlines wurde entfernt. Es gibt daher kein alertInput mehr.
+
+  // Kein Warnzeitraum mehr – Deadlines werden über die Timeline verwaltet.
+
+  function updateFilters(){
+    state.filters.q = q.value;
+    state.filters.status = status.value;
+    state.filters.sort = sort.value;
+    state.filters.pctMin = clampPct(pctMin.value);
+    state.filters.pctMax = clampPct(pctMax.value);
+    render();
+  }
+  q.addEventListener('input', updateFilters);
+  status.addEventListener('change', updateFilters);
+  sort.addEventListener('change', updateFilters);
+  pctMin.addEventListener('change', updateFilters);
+  pctMax.addEventListener('change', updateFilters);
+
+  // Auswahl / Bulk
+  document.getElementById('selectAllBtn').addEventListener('click', ()=>{
+    selected.clear();
+    applyFilters(state.projects).forEach(p=>selected.add(p.id));
+    render();
+  });
+  document.getElementById('clearSelBtn').addEventListener('click', ()=>{ selected.clear(); render(); });
+
+  // Alle Projekte ausklappen / zuklappen
+  const expandAllBtn  = document.getElementById('expandAllBtn');
+  const collapseAllBtn = document.getElementById('collapseAllBtn');
+  if(expandAllBtn) expandAllBtn.addEventListener('click', () => {
+    pushHistory();
+    (state.projects || []).forEach(p => { p.collapsed = false; });
+    setDirty(true);
+    render();
+  });
+  if(collapseAllBtn) collapseAllBtn.addEventListener('click', () => {
+    pushHistory();
+    (state.projects || []).forEach(p => { p.collapsed = true; });
+    setDirty(true);
+    render();
+  });
+  document.getElementById('bulkAction').addEventListener('change', e=>{
+    document.getElementById('bulkTarget').style.display = e.target.value==='move' ? 'inline-block' : 'none';
+  });
+  document.getElementById('bulkGo').addEventListener('click', ()=>{
+    const action = document.getElementById('bulkAction').value;
+    if(!action){ alert('Bitte Aktion wählen.'); return; }
+    if(selected.size===0){ alert('Keine Projekte ausgewählt.'); return; }
+    const ids = [...selected];
+    if(action==='delete'){
+      if(confirm('Ausgewählte Projekte in den Papierkorb verschieben?')){
+        pushHistory();
+        state.trash = state.trash || [];
+        ids.forEach(id=>{
+          const p = state.projects.find(x=>x.id===id);
+          if(p) state.trash.unshift({...p, deletedAt: new Date().toISOString()});
+        });
+        state.projects = state.projects.filter(x=>!selected.has(x.id));
+        if(state.order) state.order = state.order.filter(id=>!selected.has(id));
+        selected.clear(); setDirty(true); render();
+      }
+    }else if(action==='move'){
+      const target = document.getElementById('bulkTarget').value || 'Alle';
+      pushHistory();
+      ids.forEach(id=>{ const p = state.projects.find(x=>x.id===id); if(p) p.tab = target; });
+      selected.clear(); setDirty(true); render();
+    }else if(action==='export_csv'){
+      exportCSV(state.projects.filter(p=>ids.includes(p.id)),'projekte_auswahl.csv');
+    }else if(action==='export_ics'){
+      exportICS(state.projects.filter(p=>ids.includes(p.id)),'projekte_auswahl.ics');
+    }
+  });
+
+  // Papierkorb
+  const trashDlg = document.getElementById('trashDlg'),
+        trashList = document.getElementById('trashList');
+  document.getElementById('trashOpenBtn').addEventListener('click', ()=>{ renderTrash(); trashDlg.showModal(); });
+  document.getElementById('trashClose').addEventListener('click', ()=> trashDlg.close());
+  document.getElementById('trashEmpty').addEventListener('click', ()=>{
+    if(confirm('Papierkorb wirklich endgültig leeren?')){
+      state.trash = []; setDirty(true); renderTrash();
+    }
+  });
+  function renderTrash(){
+    trashList.innerHTML = '';
+    const items = state.trash || [];
+    if(!items.length){
+      const p=document.createElement('p'); p.textContent='Papierkorb ist leer'; p.style.color='var(--muted)';
+      trashList.appendChild(p); return;
+    }
+    items.forEach((it,i)=>{
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;justify-content:space-between;gap:10px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:10px;background:var(--chip)';
+      const left=document.createElement('div'); left.textContent=`${it.number||'—'} · ${it.name||'Ohne Titel'} · gelöscht ${new Date(it.deletedAt).toLocaleString()}`;
+      const right=document.createElement('div'); right.style.display='flex'; right.style.gap='8px';
+      const restore=document.createElement('button'); restore.className='btn'; restore.textContent='Wiederherstellen';
+      restore.addEventListener('click',()=>{
+        pushHistory(); state.projects.unshift({...it}); state.trash.splice(i,1); setDirty(true); render(); renderTrash();
+      });
+      const drop=document.createElement('button'); drop.className='btn'; drop.textContent='Endgültig löschen';
+      drop.addEventListener('click',()=>{
+        if(confirm('Endgültig löschen?')){ state.trash.splice(i,1); setDirty(true); renderTrash(); }
+      });
+      right.appendChild(restore); right.appendChild(drop); row.appendChild(left); row.appendChild(right); trashList.appendChild(row);
+    });
+  }
+
+  // Ansicht umschalten
+  document.getElementById('viewTable').addEventListener('click', ()=>{ state.view='table'; render(); });
+  document.getElementById('viewKanban').addEventListener('click', ()=>{ state.view='kanban'; render(); });
+  const viewTimelineBtn = document.getElementById('viewTimeline');
+  if(viewTimelineBtn){
+    viewTimelineBtn.addEventListener('click', () => { state.view = 'timeline'; render(); });
+  }
+  if(viewDispoBtn){
+    viewDispoBtn.addEventListener('click', () => { state.view = 'dispo'; render(); });
+  }
+  if(timelineTabSelect){
+    timelineTabSelect.addEventListener('change', (e) => {
+      state.timelineTab = e.target.value || 'Alle';
+      setDirty(true);
+      if(state.view === 'timeline'){ renderTimeline(); }
+    });
+  }
+  if(timelineZoomInput){
+    timelineZoomInput.addEventListener('input', () => {
+      const idx = Math.max(0, Math.min(TIMELINE_ZOOMS.length - 1, parseInt(timelineZoomInput.value, 10) || 0));
+      const next = TIMELINE_ZOOMS[idx]?.value || 'days';
+      state.timelineZoom = next;
+      updateTimelineZoomIndicator(next);
+      setDirty(true);
+      if(state.view === 'timeline'){ renderTimeline(); }
+    });
+  }
+
+  // Light/Dark Regler
+  const modeToggle = document.getElementById('modeToggle');
+  modeToggle.addEventListener('change', e=>{
+    pushHistory();
+    state.theme = e.target.checked ? 'light' : 'dark';
+    setDirty(true); render();
+  });
+
+  // Titel bearbeiten + Placeholder für contenteditable
+  const titleEl = document.getElementById('titleText');
+  // CSS-Regel für Placeholder (falls noch nicht vorhanden)
+ (function ensureCEPlaceholderRule(){
+  if (!document.getElementById('ce-placeholder-rule')) {
+    const st = document.createElement('style');
+    st.id = 'ce-placeholder-rule';
+    st.textContent = '.title [contenteditable]:empty::before{content:attr(data-placeholder); color:var(--muted);}';
+    document.head.appendChild(st);
+  }
+})();
+  titleEl.setAttribute('data-placeholder','Titel hier ändern …');
+  titleEl.addEventListener('input', ()=>{
+    pushHistory();
+    state.title = (titleEl.textContent || '').trim();
+  document.title = state.title || 'XY-To-Dos';   // ← Tab-Titel live setzen
+  setDirty(true);
+  });
+
+  // Shortcuts
+  document.addEventListener('keydown', e=>{
+    if(e.ctrlKey && e.key.toLowerCase()==='s'){ e.preventDefault(); save(); }
+    if(e.ctrlKey && e.key.toLowerCase()==='z'){ e.preventDefault(); if(e.shiftKey) redo(); else undo(); }
+    if(e.ctrlKey && e.key.toLowerCase()==='y'){ e.preventDefault(); redo(); }
+    if(e.ctrlKey && e.key.toLowerCase()==='p'){ /* Druck: Standard */ }
+  });
+
+  // Initiale Anzeige
+  // Beim ersten Laden wird die komplette Anzeige aufgebaut (inkl. Filter, Tabelle, Kanban oder Timeline).
+  applyTheme(); setTitle(); render();
+</script>
+
+
+
+</body></html>
