@@ -346,14 +346,9 @@ tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand v
 
   /* Filter-Bar */
   .filterbar{
-    /* Grid-Aufteilung: Suchfeld, Status, Prozentbereich, Sortierung
-       sowie vier kleine Aktionsbuttons (Auswählen, Abwählen, Alle ausklappen, Alle zuklappen).
-
-       Um Platz für die zusätzlichen Buttons zu schaffen, wurden die Breiten der Status‑
-       und Sortierfelder leicht reduziert. Das Suchfeld behält flexible Breite. */
     display:grid;
-    grid-template-columns: 1fr .7fr .7fr .8fr auto auto auto auto;
-    gap:10px;
+    grid-template-columns: minmax(220px, 1.6fr) minmax(150px, .8fr) minmax(210px, 1fr) minmax(150px, .9fr) repeat(4, max-content);
+    gap:8px 12px;
     padding:12px 14px;
     border-bottom:1px solid var(--border);
     background:rgba(255,255,255,.02);
@@ -367,6 +362,8 @@ tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand v
     background:#0c1630;
     color:var(--text);
   }
+  .filterbar .pct{display:flex; align-items:center; gap:6px; white-space:nowrap;}
+  .filterbar .pct input[type="number"]{width:68px; padding:8px 10px;}
   body.light .filterbar input[type="text"],
   body.light .filterbar select{
     background:#ffffff;
@@ -376,8 +373,9 @@ tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand v
     background:var(--card);
     color:var(--text);
     border-radius:10px;
-    padding:8px 10px;
+    padding:8px 12px;
     cursor:pointer;
+    white-space:nowrap;
   }
   .assigneeFilterControl{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
   #tableAssigneeFilter{min-width:110px; max-width:150px; padding:6px 8px; border-radius:10px; border:1px solid var(--border); background:var(--card); color:var(--text); max-height:150px; overflow-y:auto;}
@@ -469,6 +467,24 @@ tbody tr.row-selected.colored{
   .repeatWeekdays label{display:flex; align-items:center; gap:6px; font-weight:500;}
   .repeatWeekdays.show{display:flex;}
   #repeatDlg .dialogButtons{display:flex; justify-content:flex-end; gap:8px; margin-top:6px;}
+  #calendarDlg form{display:flex; flex-direction:column; gap:14px; min-width:340px; padding:16px 20px; background:var(--card); border-radius:14px; border:1px solid var(--border);}
+  #calendarDlg h3{margin:0; font-size:18px;}
+  .calendarHint{margin:0; font-size:13px; color:var(--muted);}
+  .calendarToolbar{display:flex; justify-content:space-between; align-items:center; gap:12px;}
+  .calendarToolbarLeft{display:flex; gap:8px;}
+  .calendarSelectionCount{font-size:13px; color:var(--muted);}
+  .calendarList{max-height:360px; overflow:auto; display:flex; flex-direction:column; gap:10px; padding-right:4px;}
+  .calendarGroup{border:1px solid var(--border); border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; gap:8px; background:color-mix(in srgb, var(--chip) 90%, transparent);}
+  body.light .calendarGroup{background:color-mix(in srgb, #ffffff 88%, transparent);}
+  .calendarGroupHeader{font-weight:600; font-size:14px; display:flex; justify-content:space-between; align-items:center; gap:10px; color:var(--text);}
+  .calendarGroupHeader span{font-size:12px; color:var(--muted); font-weight:400;}
+  .calendarTodos{display:flex; flex-direction:column; gap:6px;}
+  .calendarTodo{display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--text);}
+  .calendarTodo input{margin-top:2px;}
+  .calendarTodoDetails{display:flex; flex-direction:column; gap:2px;}
+  .calendarTodoSummary{font-weight:600;}
+  .calendarTodoMeta{font-size:12px; color:var(--muted);}
+  .calendarEmpty{margin:0; font-size:13px; color:var(--muted);}
   .colorRow{display:flex; gap:8px; margin:8px 0}
   .sw{width:20px; height:20px; border-radius:6px; border:1px solid var(--border); cursor:pointer}
   .popBtns{display:flex; gap:8px; justify-content:flex-end}
@@ -520,7 +536,7 @@ tbody tr.row-selected.colored{
   .moreBtn{margin-left:auto; background:transparent; border:1px solid var(--border); border-radius:999px; padding:2px 10px; colo
 r:var(--muted); cursor:pointer}
   .moreBtn:hover, .moreBtn:focus{color:var(--text); border-color:var(--accent)}
-  .todoMore{grid-column:1 / span 2; display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-left:24px}
+  .todoMore{grid-column:1 / span 2; display:flex; flex-direction:column; gap:10px; align-items:stretch; margin-left:24px}
   .todoMore.hidden{display:none}
   .repeatBadge{display:inline-flex; align-items:center; gap:4px; padding:2px 6px; border-radius:999px; background:color-mix(in srgb, var(--accent) 18%, transparent); color:var(--text); font-size:12px; font-weight:600; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   body.light .repeatBadge{background:color-mix(in srgb, var(--accent) 16%, transparent);}
@@ -595,10 +611,24 @@ r:var(--muted); cursor:pointer}
     background:var(--card);
     color:var(--text);
   }
+  .todoAdd .todoDueInput{
+    width:140px;
+    padding:6px 10px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+  }
   .todoAdd .todoCustom:focus{
     outline:2px solid var(--accent);
     outline-offset:1px;
   }
+  .todoMetaRow{display:grid; grid-template-columns:minmax(0,1fr) max-content; align-items:center; gap:10px;}
+  .todoMetaRow .todoAssignee{flex:1 1 160px; max-width:220px; min-width:0;}
+  .todoMetaRow .todoAssigneeSelect{min-width:0;}
+  .todoDueWrap{display:flex; align-items:center; gap:6px; min-width:0;}
+  .todoDueWrap .dateInput{width:140px;}
+  .todoMoreActions{display:flex; justify-content:flex-end; gap:10px;}
   .todoItem .todoAssignee,
   .todoAdd .todoAssignee,
   .subItem .todoAssignee{
@@ -607,16 +637,17 @@ r:var(--muted); cursor:pointer}
     border:1px solid var(--border);
     background:var(--card);
     color:var(--text);
-    min-width:54px;
-    max-width:90px;
+    min-width:70px;
+    max-width:180px;
   }
   body.light .todoItem .todoAssignee,
   body.light .todoAdd .todoAssignee,
   body.light .subItem .todoAssignee{background:#ffffff;}
+  body.light .todoAdd .todoDueInput{background:#ffffff;}
   .subList{margin-left:36px; display:flex; flex-direction:column; gap:4px;}
   .subItem{
     display:grid;
-    grid-template-columns: 16px minmax(0,1fr) 110px 28px minmax(140px,auto) 24px;
+    grid-template-columns: 16px minmax(0,1fr) minmax(86px,auto) 28px minmax(130px,auto) 24px;
     grid-auto-flow: column;
     align-items:center;
     gap:6px;
@@ -636,9 +667,10 @@ r:var(--muted); cursor:pointer}
     border:1px solid var(--border);
     background:var(--card);
     color:var(--text);
-    min-width:54px;
-    max-width:90px;
+    min-width:70px;
+    max-width:140px;
   }
+  .dateInput--compact{width:82px; padding:6px 8px;}
   body.light .subItem .todoAssignee{background:#ffffff;}
   .collapsed .todoEmptyToggle{
     display:none;
@@ -1008,7 +1040,6 @@ r:var(--muted); cursor:pointer}
   .assigneeTodoList{display:flex; flex-direction:column; gap:8px;}
   .assigneeTodoRow{position:relative; display:flex; align-items:flex-start; gap:12px; border:1px solid var(--border); border-radius:10px; background:var(--chip); padding:10px 12px;}
   .assigneeTodoRow.unacknowledged{border-color:#facc15; box-shadow:0 0 0 1px color-mix(in srgb, #facc15 45%, transparent);}
-  .assigneeTodoRow.unacknowledged::before{content:""; width:10px; height:10px; border-radius:999px; background:#facc15; position:absolute; inset-block-start:10px; inset-inline-start:-18px;}
   .assigneeTodoRow.is-subtask{padding-left:24px;}
   .assigneeTodoRow input[type="checkbox"]{margin-top:2px;}
   .assigneeTodoBody{display:flex; flex-direction:column; gap:6px; font-size:13px; flex:1;}
@@ -1079,29 +1110,61 @@ r:var(--muted); cursor:pointer}
 
   /* Print */
   @media print{
-    @page{ size:A4 landscape; margin:12mm; }
+    @page view-table{ size:A4 portrait; margin:12mm; }
+    @page view-kanban{ size:A4 portrait; margin:12mm; }
+    @page view-assignees{ size:A4 portrait; margin:12mm; }
+    @page view-dispo{ size:A4 portrait; margin:12mm; }
+    @page view-timeline{ size:A4 landscape; margin:12mm; }
+    body{ background:#ffffff; color:#0f172a; font-size:11px; }
+    body.view-table{ page:view-table; }
+    body.view-kanban{ page:view-kanban; }
+    body.view-assignees{ page:view-assignees; }
+    body.view-dispo{ page:view-dispo; }
+    body.view-timeline{ page:view-timeline; }
     header, .barTop, .viewToggle, .toolbar, .filterbar, .bulkbar, .footer, .fab, .actions-right,
     .caret, .leftCell .selectCb, .colorBtn, .todoDel, .miniCal { display:none !important; }
-    body{ background:#ffffff; color:#0f172a; font-size:11px; }
     .container{ margin:0; max-width:100%; padding:0 12mm; }
-    .tableView, .kanban, .dispo{ display:none !important; }
-    .timelineShell{ display:block !important; padding:0 !important; }
-    #timelineView{ overflow:visible !important; padding-bottom:0 !important; }
-    .timelineControls{ display:none !important; }
-    .timeline{ --timeline-label-width:240px; }
-    .timelineMonths, .timelineWeeks, .timelineDays{ display:none !important; }
-    .timelineChart{ margin-left:0; background-image:none; border:1px solid #d1d5db; border-radius:10px; padding:12px 16px 16px; }
-    .timeline-row{ position:relative !important; top:auto !important; height:auto !important; padding:14px 0; page-break-inside:avoid; }
-    .timeline-row::after{ left:0 !important; right:0 !important; }
-    .timeline-label{ position:relative; left:auto; top:auto; bottom:auto; margin:0 0 8px; width:auto; padding:0; background:none !important; border:none !important; font-size:12px; font-weight:700; color:#0f172a; }
-    .timeline-bar{ position:relative !important; top:auto !important; height:14px; margin-top:6px; border-radius:6px; box-shadow:none; }
-    .timeline-bar.overdue{ padding-right:10px; }
-    .timeline-bar.overdue span{ font-size:10px; }
-    .today-line{ display:none !important; }
+    body.view-table .kanban,
+    body.view-table .timelineShell,
+    body.view-table #assigneeView,
+    body.view-table #dispoView{ display:none !important; }
+    body.view-kanban #tableView,
+    body.view-kanban .timelineShell,
+    body.view-kanban #assigneeView,
+    body.view-kanban #dispoView{ display:none !important; }
+    body.view-assignees #tableView,
+    body.view-assignees .kanban,
+    body.view-assignees .timelineShell,
+    body.view-assignees #dispoView{ display:none !important; }
+    body.view-dispo #tableView,
+    body.view-dispo .kanban,
+    body.view-dispo .timelineShell,
+    body.view-dispo #assigneeView{ display:none !important; }
+    body.view-timeline #tableView,
+    body.view-timeline .kanban,
+    body.view-timeline #assigneeView,
+    body.view-timeline #dispoView{ display:none !important; }
+    body.view-timeline .timelineShell{ display:block !important; padding:0 !important; }
+    body.view-timeline #timelineView{ overflow:visible !important; padding-bottom:0 !important; }
+    body.view-timeline .timelineControls{ display:none !important; }
+    body.view-timeline .timeline{ --timeline-label-width:200px; --timeline-row-height:32px; --timeline-bar-height:10px; }
+    body.view-timeline .timelineMonths,
+    body.view-timeline .timelineWeeks,
+    body.view-timeline .timelineDays{ display:flex !important; gap:0; }
+    body.view-timeline .timelineChart{ margin-left:0; background-image:none; border:1px solid #d1d5db; border-radius:10px; padding:12px 16px 16px; }
+    body.view-timeline .timeline-row{ position:relative !important; top:auto !important; height:auto !important; padding:10px 0; page-break-inside:avoid; break-inside:avoid; }
+    body.view-timeline .timeline-row.project-start:not(:first-child){ break-before:page; }
+    body.view-timeline .timeline-row::after{ left:0 !important; right:0 !important; }
+    body.view-timeline .timeline-label{ position:relative; left:auto; top:auto; bottom:auto; margin:0 0 8px; width:auto; padding:0; background:none !important; border:none !important; font-size:11px; font-weight:700; color:#0f172a; }
+    body.view-timeline .timeline-bar{ position:relative !important; top:auto !important; height:10px; margin-top:4px; border-radius:5px; box-shadow:none; }
+    body.view-timeline .timeline-bar.overdue{ padding-right:8px; }
+    body.view-timeline .timeline-bar.overdue span{ font-size:9px; }
+    body.view-timeline .today-line{ display:none !important; }
     table{ width:100%; table-layout:auto; border-collapse:collapse; }
     thead th, tbody td{ white-space:normal; word-break:break-word; padding:4px 6px; font-size:11px; border:none !important; }
     tbody tr{ page-break-inside:avoid; border-bottom:1px solid #d1d5db; }
     tbody tr::after{ display:none !important; }
+    tbody tr[data-id]{ break-inside:avoid; }
     .progress{ height:4px; }
     input[type="date"], input[type="text"], .folderInput{ border:none !important; padding:0 !important; background:none !important; color:#0f172a !important; width:auto !important; }
     .todoAdd{ display:none !important; }
@@ -1123,6 +1186,8 @@ r:var(--muted); cursor:pointer}
     body.print-detailed .pathPreview::after{ font-weight:700; }
     .dispoControls, .dispoSummaryActions{ display:none !important; }
   }
+
+
 </style>
 <style id="ce-placeholder-rule">.title [contenteditable]:empty::before{content:attr(data-placeholder); color:var(--muted);}</style></head>
 <body class="light">
@@ -1430,10 +1495,10 @@ r:var(--muted); cursor:pointer}
         <option value="yearly">Jährlich</option>
       </select>
     </label>
-    <label for="repeatInterval">Intervall (Anzahl)
+    <label for="repeatInterval">Intervall <span id="repeatIntervalLabelText">(Anzahl)</span>
       <input id="repeatInterval" type="number" min="1" value="1">
     </label>
-    <div id="repeatWeekdayWrap" class="repeatWeekdays show">
+    <div id="repeatWeekdayWrap" class="repeatWeekdays">
       <span>Wochentage</span>
       <div class="weekdayGrid">
         <label><input type="checkbox" value="1">Mo</label>
@@ -1455,6 +1520,25 @@ r:var(--muted); cursor:pointer}
       <button type="button" class="btn" id="repeatRemove" disabled="">Entfernen</button>
       <button type="button" class="btn" id="repeatCancel">Abbrechen</button>
       <button type="submit" class="btnPrimary" id="repeatApply">Übernehmen</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="calendarDlg">
+  <form method="dialog" id="calendarForm">
+    <h3>To-Dos für Kalender-Export</h3>
+    <p class="calendarHint">Wähle die To-Dos mit Fälligkeitsdatum aus, die in eine Kalenderdatei übernommen werden sollen.</p>
+    <div class="calendarToolbar">
+      <div class="calendarToolbarLeft">
+        <button type="button" class="miniBtn" id="calendarSelectAll">Alle wählen</button>
+        <button type="button" class="miniBtn" id="calendarSelectNone">Keine</button>
+      </div>
+      <span id="calendarSelectionCount" class="calendarSelectionCount">0 ausgewählt</span>
+    </div>
+    <div class="calendarList" id="calendarList"></div>
+    <div class="dialogButtons">
+      <button type="button" class="btn" id="calendarCancel">Abbrechen</button>
+      <button type="submit" class="btnPrimary" id="calendarExportConfirm">Exportieren</button>
     </div>
   </form>
 </dialog>
@@ -1488,6 +1572,80 @@ r:var(--muted); cursor:pointer}
   }
   const embedded = document.getElementById('APP_STATE').textContent
   let state = { ...createDefaultState(), ...JSON.parse(embedded || '{}') }
+
+  const normalizeRepeatDays = (raw) => {
+    if(!raw) return []
+    let list = []
+    if(Array.isArray(raw)) list = raw.slice()
+    else if(typeof raw === 'string') list = raw.split(/[;,\s]+/).filter(Boolean)
+    const map = {
+      mo:1, montag:1, monday:1,
+      di:2, dienstag:2, tuesday:2,
+      mi:3, mittwoch:3, wednesday:3,
+      do:4, donnerstag:4, thursday:4,
+      fr:5, freitag:5, friday:5,
+      sa:6, samstag:6, saturday:6,
+      so:7, sonntag:7, sunday:7
+    }
+    const out = new Set()
+    list.forEach(entry => {
+      if(entry == null) return
+      if(typeof entry === 'number' && Number.isFinite(entry)){
+        const num = Math.floor(entry)
+        if(num >= 1 && num <= 7) out.add(num)
+        return
+      }
+      const str = String(entry).trim()
+      if(!str) return
+      const num = Number(str)
+      if(Number.isFinite(num)){
+        const value = Math.floor(num)
+        if(value >= 1 && value <= 7) out.add(value)
+        return
+      }
+      const key = str.toLowerCase()
+      if(map[key]) out.add(map[key])
+    })
+    return Array.from(out).sort((a,b) => a - b)
+  }
+
+  const isoWeekday = (date) => {
+    if(!(date instanceof Date) || Number.isNaN(date.getTime())) return null
+    return ((date.getUTCDay() + 6) % 7) + 1
+  }
+
+  const normalizeRepeatSpec = (raw, ctx = {}) => {
+    if(!raw || typeof raw !== 'object') return null
+    const freq = typeof raw.freq === 'string' ? raw.freq.trim().toLowerCase() : ''
+    if(!['daily','weekly','monthly','yearly'].includes(freq)) return null
+    const intervalNum = Number(raw.interval)
+    const interval = Number.isFinite(intervalNum) && intervalNum > 0 ? Math.floor(intervalNum) : 1
+    const countNum = Number(raw.count)
+    const count = Number.isFinite(countNum) && countNum > 0 ? Math.floor(countNum) : null
+    const untilStr = typeof raw.until === 'string' ? raw.until.trim() : ''
+    const until = untilStr && parseIsoDate(untilStr) ? untilStr : ''
+    let dueDate = null
+    if(ctx && ctx.dueDate){
+      if(ctx.dueDate instanceof Date){
+        dueDate = ctx.dueDate
+      }else if(typeof ctx.dueDate === 'string'){
+        dueDate = parseIsoDate(ctx.dueDate)
+      }
+    }
+    const defaultDay = dueDate ? isoWeekday(dueDate) : null
+    const spec = { freq, interval }
+    if(count) spec.count = count
+    if(until) spec.until = until
+    if(freq === 'weekly' || freq === 'monthly'){
+      const cleaned = normalizeRepeatDays(raw.days)
+      if(cleaned.length){
+        spec.days = cleaned
+      }else if(defaultDay){
+        spec.days = [defaultDay]
+      }
+    }
+    return spec
+  }
   function applyLoadedState(raw, { markDirty = true, preserveFilters = true } = {}){
     if(!raw || typeof raw !== 'object') throw new Error('Ungültiger Zustand')
     let parsed
@@ -1539,35 +1697,6 @@ r:var(--muted); cursor:pointer}
   function normalizeState(){
     if(!state || typeof state !== 'object') state = createDefaultState()
     const defaults = createDefaultState()
-
-  const normalizeRepeatSpec = (raw) => {
-      if(!raw || typeof raw !== 'object') return null
-      const freq = typeof raw.freq === 'string' ? raw.freq.trim().toLowerCase() : ''
-      if(!['daily','weekly','monthly','yearly'].includes(freq)) return null
-      const intervalNum = Number(raw.interval)
-      const interval = Number.isFinite(intervalNum) && intervalNum > 0 ? Math.floor(intervalNum) : 1
-      const countNum = Number(raw.count)
-      const count = Number.isFinite(countNum) && countNum > 0 ? Math.floor(countNum) : null
-      const untilStr = typeof raw.until === 'string' ? raw.until.trim() : ''
-      const until = untilStr && parseIsoDate(untilStr) ? untilStr : ''
-      const spec = { freq, interval }
-      if(count) spec.count = count
-      if(until) spec.until = until
-      if(freq === 'weekly'){
-        const rawDays = Array.isArray(raw.days) ? raw.days : []
-        const cleaned = []
-        rawDays.forEach(val => {
-          const num = parseInt(val, 10)
-          if(!Number.isFinite(num)) return
-          if(num < 1 || num > 7) return
-          if(cleaned.includes(num)) return
-          cleaned.push(num)
-        })
-        cleaned.sort((a,b) => a - b)
-        if(cleaned.length) spec.days = cleaned
-      }
-      return spec
-    }
 
     if(!Array.isArray(state.team)) state.team = []
     else state.team = uniqueCaseInsensitive(state.team)
@@ -1663,7 +1792,7 @@ r:var(--muted); cursor:pointer}
                   if(todo.due && !parseIsoDate(todo.due)) todo.due = ''
                   const rawAssignee = typeof t.assignee === 'string' ? t.assignee.trim() : ''
                   if(rawAssignee && teamSet.has(rawAssignee)) todo.assignee = rawAssignee
-                  const repeatSpec = normalizeRepeatSpec(t.repeat)
+                  const repeatSpec = normalizeRepeatSpec(t.repeat, { dueDate: todo.due })
                   if(repeatSpec) todo.repeat = repeatSpec
                   todo.subtasks.forEach(sub => { if(sub.due && !parseIsoDate(sub.due)) sub.due = '' })
                   return todo
@@ -1798,6 +1927,7 @@ normalizeState()
   let virtualScrollScheduled = false
   let currentFileHandle = null
   let repeatTarget = null
+  const calendarDialogState = { tasks: [], fileName: 'todos.ics' }
   const TAB_COLOR_PRESETS = [
     '#7C3AED', '#6366F1', '#8B5CF6', '#A855F7', '#EC4899', '#FB7185',
     '#F97316', '#F59E0B', '#FACC15', '#22C55E', '#10B981', '#0EA5E9',
@@ -1923,10 +2053,12 @@ normalizeState()
     }
   }
   const storedHandlePromise = loadHandle(locationKey).catch(() => null)
-  storedHandlePromise.then(async handle => {
-    if(handle && await ensureHandlePermission(handle)){
+  storedHandlePromise.then(handle => {
+    if(handle){
       currentFileHandle = handle
-      updateFileLocationDisplay(handle.name || location.href)
+      try{
+        updateFileLocationDisplay(handle.name || location.href)
+      }catch(e){ /* ignore */ }
     }
   })
   if('launchQueue' in window && typeof window.launchQueue.setConsumer === 'function'){
@@ -1945,26 +2077,62 @@ normalizeState()
     }catch(e){ /* optional */ }
   }
   async function ensureFileHandle(){
-    if(currentFileHandle && await ensureHandlePermission(currentFileHandle)){
-      return currentFileHandle
+    if(currentFileHandle){
+      if(await ensureHandlePermission(currentFileHandle)){
+        return currentFileHandle
+      }
+      currentFileHandle = null
+      updateFileLocationDisplay()
     }
     const stored = await storedHandlePromise
-    if(stored && await ensureHandlePermission(stored)){
-      currentFileHandle = stored
-      return currentFileHandle
+    if(stored){
+      if(await ensureHandlePermission(stored)){
+        currentFileHandle = stored
+        updateFileLocationDisplay(stored.name || location.href)
+        return currentFileHandle
+      }
+    }
+    if(window.showSaveFilePicker){
+      try{
+        const handle = await window.showSaveFilePicker({
+          suggestedName: inferFileName(),
+          types: [{ description: 'HTML', accept: { 'text/html': ['.html', '.htm'] } }],
+          excludeAcceptAllOption: true
+        })
+        if(handle){
+          currentFileHandle = handle
+          updateFileLocationDisplay(handle.name || location.href)
+          try{
+            await storeHandle(locationKey, handle)
+          }catch(e){ /* ignore */ }
+          return handle
+        }
+      }catch(err){
+        if(err && err.name === 'AbortError') return null
+        throw err
+      }
+      return null
     }
     if(window.showOpenFilePicker){
-      const [handle] = await window.showOpenFilePicker({
-        multiple: false,
-        types: [{ description:'HTML-Dateien', accept:{ 'text/html':['.html','.htm'] } }],
-        excludeAcceptAllOption: true
-      })
-      if(handle){
-        currentFileHandle = handle
-        storeHandle(locationKey, handle).catch(()=>{})
-        updateFileLocationDisplay(handle.name || location.href)
-        return handle
+      try{
+        const [handle] = await window.showOpenFilePicker({
+          multiple: false,
+          types: [{ description:'HTML-Dateien', accept:{ 'text/html':['.html','.htm'] } }],
+          excludeAcceptAllOption: true
+        })
+        if(handle && await ensureHandlePermission(handle)){
+          currentFileHandle = handle
+          updateFileLocationDisplay(handle.name || location.href)
+          try{
+            await storeHandle(locationKey, handle)
+          }catch(e){ /* ignore */ }
+          return handle
+        }
+      }catch(err){
+        if(err && err.name === 'AbortError') return null
+        throw err
       }
+      return null
     }
     showToast('Datei-Zugriff nicht möglich. Bitte im kompatiblen Browser erneut öffnen.')
     return null
@@ -2992,12 +3160,20 @@ normalizeState()
   const repeatForm = document.getElementById('repeatForm')
   const repeatFreqInput = document.getElementById('repeatFreq')
   const repeatIntervalInput = document.getElementById('repeatInterval')
+  const repeatIntervalLabelText = document.getElementById('repeatIntervalLabelText')
   const repeatCountInput = document.getElementById('repeatCount')
   const repeatUntilInput = document.getElementById('repeatUntil')
   const repeatCancelBtn = document.getElementById('repeatCancel')
   const repeatRemoveBtn = document.getElementById('repeatRemove')
   const repeatWeekdayWrap = document.getElementById('repeatWeekdayWrap')
   const repeatWeekdayInputs = repeatWeekdayWrap ? Array.from(repeatWeekdayWrap.querySelectorAll('input[type="checkbox"]')) : []
+  const calendarDialogEl = document.getElementById('calendarDlg')
+  const calendarForm = document.getElementById('calendarForm')
+  const calendarListEl = document.getElementById('calendarList')
+  const calendarSelectAllBtn = document.getElementById('calendarSelectAll')
+  const calendarSelectNoneBtn = document.getElementById('calendarSelectNone')
+  const calendarSelectionCountEl = document.getElementById('calendarSelectionCount')
+  const calendarCancelBtn = document.getElementById('calendarCancel')
   const dispoView = document.getElementById('dispoView')
     const dispoListEl = document.getElementById('dispoList')
     const dispoBreadcrumbsEl = document.getElementById('dispoBreadcrumbs')
@@ -3093,7 +3269,7 @@ normalizeState()
         if(Number.isFinite(countVal) && countVal > 0) spec.count = countVal
         const untilVal = repeatUntilInput && repeatUntilInput.value ? repeatUntilInput.value : ''
         if(untilVal && parseIsoDate(untilVal)) spec.until = untilVal
-        if(freq === 'weekly' && repeatWeekdayInputs.length){
+        if((freq === 'weekly' || freq === 'monthly') && repeatWeekdayInputs.length){
           const selectedDays = repeatWeekdayInputs
             .filter(cb => cb.checked)
             .map(cb => parseInt(cb.value, 10))
@@ -3110,13 +3286,14 @@ normalizeState()
             spec.days = unique
           }
         }
-        if(spec.freq === 'weekly' && Array.isArray(spec.days) && spec.days.length){
+        if((spec.freq === 'weekly' || spec.freq === 'monthly') && Array.isArray(spec.days) && spec.days.length){
           const dueIso = parseIsoDate(todo.due)
           if(dueIso){
             const sortedDays = spec.days.map(n => Math.min(7, Math.max(1, Number(n) || 0))).filter(Boolean).sort((a,b) => a - b)
             if(sortedDays.length){
               const isoOfDue = ((dueIso.getUTCDay() + 6) % 7) + 1
-              const intervalWeeks = Number.isFinite(spec.interval) && spec.interval > 0 ? Math.floor(spec.interval) : 1
+              const intervalWeeksBase = Number.isFinite(spec.interval) && spec.interval > 0 ? Math.floor(spec.interval) : 1
+              const intervalWeeks = spec.freq === 'monthly' ? intervalWeeksBase * 4 : intervalWeeksBase
               const baseWeekStart = startOfIsoWeek(dueIso)
               const baseMs = baseWeekStart.getTime()
               let targetDay = sortedDays.find(d => d >= isoOfDue)
@@ -3178,9 +3355,103 @@ normalizeState()
     })
   }
 
+  if(calendarSelectAllBtn){
+    calendarSelectAllBtn.addEventListener('click', () => {
+      if(!calendarListEl) return
+      calendarListEl.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = true })
+      updateCalendarSelectionCount()
+    })
+  }
+  if(calendarSelectNoneBtn){
+    calendarSelectNoneBtn.addEventListener('click', () => {
+      if(!calendarListEl) return
+      calendarListEl.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false })
+      updateCalendarSelectionCount()
+    })
+  }
+  if(calendarCancelBtn){
+    calendarCancelBtn.addEventListener('click', () => {
+      if(calendarDialogEl) calendarDialogEl.close()
+    })
+  }
+  if(calendarListEl){
+    calendarListEl.addEventListener('change', e => {
+      if(e.target && e.target.matches('input[type="checkbox"]')) updateCalendarSelectionCount()
+    })
+  }
+  if(calendarForm){
+    calendarForm.addEventListener('submit', e => {
+      e.preventDefault()
+      if(!calendarDialogState.tasks.length){
+        if(calendarDialogEl) calendarDialogEl.close()
+        return
+      }
+      const selected = []
+      if(calendarListEl){
+        calendarListEl.querySelectorAll('input[type="checkbox"]:checked').forEach(input => {
+          const idx = Number(input.dataset.index)
+          if(Number.isFinite(idx) && calendarDialogState.tasks[idx]) selected.push(calendarDialogState.tasks[idx])
+        })
+      }
+      if(!selected.length){
+        showToast('Bitte mindestens ein To-Do auswählen.')
+        return
+      }
+      exportTodosToICS(selected, calendarDialogState.fileName || 'todos.ics')
+      if(calendarDialogEl) calendarDialogEl.close()
+    })
+  }
+  if(calendarDialogEl){
+    calendarDialogEl.addEventListener('close', () => {
+      calendarDialogState.tasks = []
+      if(calendarListEl) calendarListEl.innerHTML = ''
+      updateCalendarSelectionCount()
+    })
+  }
+
+  function updateRepeatIntervalUi(freq){
+    if(repeatIntervalLabelText){
+      let label = '(Anzahl)'
+      switch(freq){
+        case 'daily': label = '(Tage)'; break
+        case 'weekly': label = '(Wochen)'; break
+        case 'monthly': label = '(Monate)'; break
+        case 'yearly': label = '(Jahre)'; break
+        default: label = '(Anzahl)'; break
+      }
+      repeatIntervalLabelText.textContent = label
+    }
+    if(repeatIntervalInput){
+      switch(freq){
+        case 'weekly':
+          repeatIntervalInput.placeholder = 'z. B. 2 für alle 2 Wochen'
+          repeatIntervalInput.title = '1 = jede Woche, 2 = alle 2 Wochen'
+          break
+        case 'monthly':
+          repeatIntervalInput.placeholder = 'z. B. 3 für alle 3 Monate (4‑Wochen)'
+          repeatIntervalInput.title = '1 = alle 4 Wochen, 3 = alle 12 Wochen'
+          break
+        case 'daily':
+          repeatIntervalInput.placeholder = 'z. B. 2 für jeden 2. Tag'
+          repeatIntervalInput.title = 'Anzahl der Tage zwischen den Terminen'
+          break
+        case 'yearly':
+          repeatIntervalInput.placeholder = 'z. B. 1 für jedes Jahr'
+          repeatIntervalInput.title = 'Anzahl der Jahre zwischen den Terminen'
+          break
+        default:
+          repeatIntervalInput.placeholder = ''
+          repeatIntervalInput.title = ''
+          break
+      }
+    }
+  }
+
   function updateRepeatWeekdayVisibility(freq){
-    if(!repeatWeekdayWrap) return
-    repeatWeekdayWrap.classList.toggle('show', freq === 'weekly')
+    if(repeatWeekdayWrap){
+      repeatWeekdayWrap.classList.toggle('show', freq === 'weekly' || freq === 'monthly')
+    }
+    updateRepeatIntervalUi(freq)
   }
 
   function scheduleVirtualRerender(){
@@ -4292,6 +4563,16 @@ normalizeState()
     const isTimeline = state.view === 'timeline';
     const isAssignees = state.view === 'assignees';
     const isDispo = state.view === 'dispo';
+    const viewClassMap = {
+      table: 'view-table',
+      kanban: 'view-kanban',
+      timeline: 'view-timeline',
+      assignees: 'view-assignees',
+      dispo: 'view-dispo'
+    };
+    const activeViewClass = viewClassMap[state.view] || 'view-table';
+    const viewClasses = Object.values(viewClassMap);
+    viewClasses.forEach(cls => document.body.classList.toggle(cls, cls === activeViewClass));
     // Toggle view buttons
     document.getElementById('viewTable').classList.toggle('on', !isKanban && !isTimeline && !isAssignees && !isDispo);
     document.getElementById('viewKanban').classList.toggle('on', isKanban);
@@ -4582,6 +4863,11 @@ function rowFor(p){
       inTask.type = 'text';
       inTask.className = 'todoCustom';
       inTask.placeholder = 'To-Do hinzufügen';
+      const addDue = document.createElement('input');
+      addDue.type = 'date';
+      addDue.className = 'todoDueInput';
+      addDue.title = 'Fälligkeitsdatum';
+      addDue.placeholder = '';
       let addAssigneeSelect = null;
       if(Array.isArray(state.team) && state.team.length){
         addAssigneeSelect = document.createElement('select');
@@ -4608,9 +4894,12 @@ function rowFor(p){
         const assignee = addAssigneeSelect && state.team.includes(addAssigneeSelect.value)
           ? addAssigneeSelect.value
           : '';
+        const dueValue = addDue.value && parseIsoDate(addDue.value)
+          ? addDue.value
+          : '';
         pushHistory();
         tokens.forEach(text => {
-          p.todos.push({ text, done:false, due:'', assignee, repeat:null, acknowledged:false, subtasks:[] });
+          p.todos.push({ text, done:false, due:dueValue, assignee, repeat:null, acknowledged:false, subtasks:[] });
         });
         setDirty(true);
         render();
@@ -4619,6 +4908,7 @@ function rowFor(p){
           if(nextInput) nextInput.focus();
         });
         inTask.value = '';
+        addDue.value = '';
         if(addAssigneeSelect) addAssigneeSelect.value = '';
       };
       addBtn.addEventListener('click', () => {
@@ -4632,6 +4922,7 @@ function rowFor(p){
       });
       add.appendChild(inTask);
       if(addAssigneeSelect) add.appendChild(addAssigneeSelect);
+      add.appendChild(addDue);
       add.appendChild(addBtn);
       todoCol.appendChild(add);
     } else {
@@ -4690,6 +4981,7 @@ tdFolder.appendChild(preview);
     repeatTarget = { project, todo }
     const freqValue = (todo.repeat && todo.repeat.freq) || ''
     if(repeatFreqInput) repeatFreqInput.value = freqValue
+    updateRepeatIntervalUi(freqValue)
     const intervalVal = todo.repeat && Number.isFinite(Number(todo.repeat.interval)) && Number(todo.repeat.interval) > 0
       ? Math.floor(Number(todo.repeat.interval))
       : 1
@@ -4710,7 +5002,7 @@ tdFolder.appendChild(preview);
         const val = parseInt(cb.value, 10)
         cb.checked = selected.includes(val)
       })
-      if(freqValue === 'weekly' && !repeatWeekdayInputs.some(cb => cb.checked)){
+      if((freqValue === 'weekly' || freqValue === 'monthly') && !repeatWeekdayInputs.some(cb => cb.checked)){
         const dueIso = parseIsoDate(todo.due)
         if(dueIso){
           const isoDay = ((dueIso.getUTCDay() + 6) % 7) + 1
@@ -4936,12 +5228,24 @@ tdFolder.appendChild(preview);
     }
     moreBtn.addEventListener('click', () => toggleMore())
 
-    todoMore.appendChild(due)
-    todoMore.appendChild(calBtn)
-    if(assigneeSelect) todoMore.appendChild(assigneeSelect)
+    const metaRow = document.createElement('div')
+    metaRow.className = 'todoMetaRow'
+    const dueWrap = document.createElement('div')
+    dueWrap.className = 'todoDueWrap'
+    dueWrap.appendChild(due)
+    dueWrap.appendChild(calBtn)
+    metaRow.appendChild(dueWrap)
+    if(assigneeSelect){
+      assigneeSelect.classList.add('todoAssigneeSelect')
+      metaRow.appendChild(assigneeSelect)
+    }
+    todoMore.appendChild(metaRow)
     todoMore.appendChild(repeatInfo)
-    todoMore.appendChild(subBtn)
-    todoMore.appendChild(del)
+    const moreActions = document.createElement('div')
+    moreActions.className = 'todoMoreActions'
+    moreActions.appendChild(subBtn)
+    moreActions.appendChild(del)
+    todoMore.appendChild(moreActions)
 
     wrap.appendChild(cb)
     wrap.appendChild(main)
@@ -5004,7 +5308,7 @@ tdFolder.appendChild(preview);
 
       const subDue = document.createElement('input')
       subDue.type = 'text'
-      subDue.className = 'dateInput'
+      subDue.className = 'dateInput dateInput--compact'
       const subDueDate = parseIsoDate(sub.due)
       subDue.value = subDueDate ? formatGermanDate(subDueDate) : ''
       subDue.placeholder = 'tt.mm.jjjj'
@@ -5147,8 +5451,8 @@ tdFolder.appendChild(preview);
   function exportCSV(list, name){
     const header = [
       'ProjektID','Projektnummer','Projektname','Tab','ProjektNotizenHTML','ProjektPfad','ProjektFarbe','ProjektEingeklappt',
-      'ProjektDeadline','ProjektDeadlineSichtbar','ProjektDatum','ProjektSortierung',
-      'TodoTyp','TodoIndex','SubtaskIndex','TodoText','TodoDone','TodoDue','TodoAssignee','TodoAcknowledged',
+      'ProjektDeadline','ProjektDeadlineSichtbar','ProjektLeerErledigt','ProjektDatum','ProjektSortierung',
+      'TodoTyp','TodoIndex','SubtaskIndex','TodoText','TodoDone','TodoStart','TodoDue','TodoAssignee','TodoAcknowledged',
       'TodoRepeatFreq','TodoRepeatInterval','TodoRepeatCount','TodoRepeatUntil','TodoRepeatDays','ParentTodoText'
     ]
     const rows = [header]
@@ -5175,6 +5479,7 @@ tdFolder.appendChild(preview);
         project.collapsed ? 'true' : 'false',
         project.deadline || '',
         project.showDeadline ? 'true' : 'false',
+        project.emptyDone ? 'true' : 'false',
         project.date || '',
         (() => { const idx = manualOrder.indexOf(project.id); return idx >= 0 ? String(idx) : '' })(),
         todoType,
@@ -5182,6 +5487,7 @@ tdFolder.appendChild(preview);
         subIndex != null ? String(subIndex) : '',
         todo?.text || '',
         todo?.done ? 'true' : 'false',
+        todo?.start || '',
         todo?.due || '',
         todo?.assignee || '',
         todo?.acknowledged ? 'true' : 'false',
@@ -5394,18 +5700,191 @@ tdFolder.appendChild(preview);
     if(description) lines.push(foldLine(`DESCRIPTION:${description}`))
     lines.push('END:VEVENT'); return lines.join('\r\n')
   }
-  function exportICS(list, name){
+  function exportTodosToICS(entries, name){
+    const tasks = Array.isArray(entries) ? entries.filter(entry => entry && entry.due && parseIsoDate(entry.due)) : []
+    if(!tasks.length){
+      showToast('Keine To-Dos mit Fälligkeitsdatum ausgewählt.')
+      return
+    }
     const parts=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ProjektToDos//DE','CALSCALE:GREGORIAN','METHOD:PUBLISH']
-    list.forEach(p => {
-      const base = `Projekt ${p.number||''} – ${p.name||''}`.trim()
-      if(p.deadline){ parts.push(vevent({ uid:`${p.id}-deadline@projtodos`, summary:`${base} (Deadline)`, description:`Tab: ${p.tab||'Alle'}`, ymdDate:p.deadline })) }
-      p.todos.filter(t => t.due).forEach((t,i) => {
-        parts.push(vevent({ uid:`${p.id}-todo-${i}@projtodos`, summary:`${t.text} — ${base}`, description:`To-Do ${t.done?'(erledigt)':'(offen)'} · Tab: ${p.tab||'Alle'}`, ymdDate:t.due }))
-      })
+    tasks.forEach(entry => {
+      const dueDate = parseIsoDate(entry.due)
+      if(!dueDate) return
+      const project = entry.project || {}
+      const todo = entry.todo || {}
+      const parent = entry.parent || null
+      const projectLabelParts = []
+      if(project.number) projectLabelParts.push(project.number)
+      if(project.name) projectLabelParts.push(project.name)
+      const projectLabel = projectLabelParts.join(' · ').trim()
+      const baseText = todo.text || 'To-Do'
+      let summaryText = baseText
+      if(entry.type === 'subtask' && parent){
+        summaryText = `${parent.text || 'To-Do'} → ${baseText}`
+      }
+      const fullSummary = projectLabel ? `${summaryText} — ${projectLabel}` : summaryText
+      const descriptionParts = []
+      if(entry.type === 'subtask') descriptionParts.push('Unter-Aufgabe')
+      descriptionParts.push(`Projekt: ${projectLabel || '—'}`)
+      if(todo.assignee) descriptionParts.push(`Bearbeiter: ${todo.assignee}`)
+      descriptionParts.push(`Status: ${todo.done ? 'Erledigt' : 'Offen'}`)
+      if(project.tab) descriptionParts.push(`Tab: ${project.tab}`)
+      const uid = `${project.id || 'proj'}-${entry.type || 'todo'}-${entry.todoIndex ?? 0}-${entry.subIndex ?? 0}@projtodos`
+      const summary = fullSummary.replace(/\r?\n/g, '\\n')
+      const description = descriptionParts.join('\n').replace(/\r?\n/g, '\\n')
+      parts.push(vevent({ uid, summary, description, ymdDate: entry.due }))
     })
     parts.push('END:VCALENDAR')
     const blob = new Blob([parts.join('\r\n')], {type:'text/calendar;charset=utf-8'})
     const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href)
+  }
+
+  function buildCalendarTasks(projects){
+    const list = Array.isArray(projects) ? projects : []
+    const tasks = []
+    list.forEach(project => {
+      if(!project || typeof project !== 'object') return
+      const todos = Array.isArray(project.todos) ? project.todos : []
+      todos.forEach((todo, todoIndex) => {
+        if(!todo || !todo.due) return
+        const dueDate = parseIsoDate(todo.due)
+        if(!dueDate) return
+        tasks.push({ project, todo, todoIndex, subIndex:null, parent:null, type:'todo', due:todo.due, dueDate })
+        const subs = Array.isArray(todo.subtasks) ? todo.subtasks : []
+        subs.forEach((sub, subIndex) => {
+          if(!sub || !sub.due) return
+          const subDue = parseIsoDate(sub.due)
+          if(!subDue) return
+          tasks.push({ project, todo:sub, parent:todo, todoIndex, subIndex, type:'subtask', due:sub.due, dueDate:subDue })
+        })
+      })
+    })
+    tasks.sort((a,b) => {
+      const aTime = a.dueDate ? a.dueDate.getTime() : Number.MAX_SAFE_INTEGER
+      const bTime = b.dueDate ? b.dueDate.getTime() : Number.MAX_SAFE_INTEGER
+      if(aTime !== bTime) return aTime - bTime
+      const aProj = `${a.project?.number || ''} ${a.project?.name || ''}`.toLowerCase()
+      const bProj = `${b.project?.number || ''} ${b.project?.name || ''}`.toLowerCase()
+      if(aProj !== bProj) return aProj.localeCompare(bProj, 'de')
+      const aLabel = (a.todo?.text || '').toLowerCase()
+      const bLabel = (b.todo?.text || '').toLowerCase()
+      return aLabel.localeCompare(bLabel, 'de')
+    })
+    return tasks
+  }
+
+  function updateCalendarSelectionCount(){
+    if(!calendarSelectionCountEl){
+      return
+    }
+    const total = calendarDialogState.tasks.length
+    if(!calendarListEl){
+      calendarSelectionCountEl.textContent = '0 ausgewählt'
+      return
+    }
+    const checked = calendarListEl.querySelectorAll('input[type="checkbox"]:checked').length
+    if(total){
+      calendarSelectionCountEl.textContent = `${checked} von ${total} ausgewählt`
+    }else{
+      calendarSelectionCountEl.textContent = '0 ausgewählt'
+    }
+  }
+
+  function openCalendarExportDialog(projects, { fileName = 'todos.ics' } = {}){
+    const tasks = buildCalendarTasks(projects).filter(entry => entry && entry.dueDate)
+    if(!calendarDialogEl || typeof calendarDialogEl.showModal !== 'function'){
+      if(!tasks.length){
+        showToast('Keine To-Dos mit Fälligkeitsdatum vorhanden.')
+        return
+      }
+      exportTodosToICS(tasks, fileName)
+      return
+    }
+    calendarDialogState.tasks = tasks
+    calendarDialogState.fileName = fileName
+    if(calendarListEl){
+      calendarListEl.innerHTML = ''
+      if(!tasks.length){
+        const empty = document.createElement('p')
+        empty.className = 'calendarEmpty'
+        empty.textContent = 'Keine To-Dos mit Fälligkeitsdatum vorhanden.'
+        calendarListEl.appendChild(empty)
+      }else{
+        const groups = new Map()
+        tasks.forEach((task, index) => {
+          const project = task.project || {}
+          const key = project.id || `${project.number || ''}::${project.name || ''}`
+          if(!groups.has(key)) groups.set(key, { project, entries: [] })
+          groups.get(key).entries.push({ task, index })
+        })
+        const orderedGroups = Array.from(groups.values()).map(group => {
+          const minTime = Math.min(...group.entries.map(entry => entry.task.dueDate?.getTime() ?? Number.MAX_SAFE_INTEGER))
+          return { ...group, minTime }
+        }).sort((a,b) => a.minTime - b.minTime)
+        orderedGroups.forEach(group => {
+          group.entries.sort((a,b) => {
+            const aTime = a.task.dueDate?.getTime() ?? Number.MAX_SAFE_INTEGER
+            const bTime = b.task.dueDate?.getTime() ?? Number.MAX_SAFE_INTEGER
+            if(aTime !== bTime) return aTime - bTime
+            const aLabel = (a.task.todo?.text || '').toLowerCase()
+            const bLabel = (b.task.todo?.text || '').toLowerCase()
+            return aLabel.localeCompare(bLabel, 'de')
+          })
+          const wrapper = document.createElement('div')
+          wrapper.className = 'calendarGroup'
+          const header = document.createElement('div')
+          header.className = 'calendarGroupHeader'
+          const labelParts = []
+          if(group.project.number) labelParts.push(group.project.number)
+          if(group.project.name) labelParts.push(group.project.name)
+          header.textContent = labelParts.join(' · ') || 'Projekt'
+          if(group.project.tab){
+            const tabSpan = document.createElement('span')
+            tabSpan.textContent = group.project.tab
+            header.appendChild(tabSpan)
+          }
+          wrapper.appendChild(header)
+          const listEl = document.createElement('div')
+          listEl.className = 'calendarTodos'
+          group.entries.forEach(({ task, index }) => {
+            const row = document.createElement('label')
+            row.className = 'calendarTodo'
+            const cb = document.createElement('input')
+            cb.type = 'checkbox'
+            cb.checked = true
+            cb.dataset.index = String(index)
+            row.appendChild(cb)
+            const details = document.createElement('div')
+            details.className = 'calendarTodoDetails'
+            const summary = document.createElement('div')
+            summary.className = 'calendarTodoSummary'
+            const baseText = task.todo?.text || 'To-Do'
+            if(task.type === 'subtask' && task.parent){
+              summary.textContent = `${task.parent.text || 'To-Do'} → ${baseText}`
+            }else{
+              summary.textContent = baseText
+            }
+            details.appendChild(summary)
+            const meta = document.createElement('div')
+            meta.className = 'calendarTodoMeta'
+            const metaParts = []
+            if(task.dueDate) metaParts.push(`Fällig am ${formatGermanDate(task.dueDate)}`)
+            metaParts.push(task.todo?.done ? 'Erledigt' : 'Offen')
+            if(task.todo?.assignee) metaParts.push(`Bearbeiter: ${task.todo.assignee}`)
+            meta.textContent = metaParts.join(' · ')
+            details.appendChild(meta)
+            row.appendChild(details)
+            listEl.appendChild(row)
+          })
+          wrapper.appendChild(listEl)
+          calendarListEl.appendChild(wrapper)
+        })
+      }
+    }
+    if(calendarSelectAllBtn) calendarSelectAllBtn.disabled = !tasks.length
+    if(calendarSelectNoneBtn) calendarSelectNoneBtn.disabled = !tasks.length
+    updateCalendarSelectionCount()
+    calendarDialogEl.showModal()
   }
 
   // ===== Kanban =====
@@ -5732,6 +6211,18 @@ tdFolder.appendChild(preview);
             render();
           });
         }else{
+          const undoBtn = document.createElement('button');
+          undoBtn.type = 'button';
+          undoBtn.className = 'miniBtn';
+          undoBtn.textContent = 'Rückgängig';
+          undoBtn.title = 'Als neu markieren';
+          undoBtn.addEventListener('click', () => {
+            pushHistory();
+            task.todo.acknowledged = false;
+            setDirty(true);
+            render();
+          });
+          actions.appendChild(undoBtn);
           ackBtn.textContent = 'Bestätigt';
           ackBtn.disabled = true;
         }
@@ -5805,10 +6296,12 @@ tdFolder.appendChild(preview);
       return 24;
     };
     const generateOccurrences = (baseDate, spec, windowStartMs, windowEndMs) => {
-      if(!spec || !spec.freq || !(baseDate instanceof Date)) return [];
-      const untilMs = spec.until ? (parseDate(spec.until)?.getTime() ?? null) : null;
-      const interval = Number.isFinite(spec.interval) && spec.interval > 0 ? Math.floor(spec.interval) : 1;
-      const cap = Math.max(1, repeatLimit(spec));
+      if(!(baseDate instanceof Date)) return [];
+      const normalized = normalizeRepeatSpec(spec, { dueDate: baseDate });
+      if(!normalized) return [];
+      const untilMs = normalized.until ? (parseDate(normalized.until)?.getTime() ?? null) : null;
+      const interval = Number.isFinite(normalized.interval) && normalized.interval > 0 ? Math.floor(normalized.interval) : 1;
+      const cap = Math.max(1, repeatLimit(normalized));
       const occurrences = [];
       let produced = 0;
       const pushOccurrence = (occMs) => {
@@ -5817,35 +6310,31 @@ tdFolder.appendChild(preview);
         if((!windowStartMs || occMs >= windowStartMs) && (!windowEndMs || occMs <= windowEndMs)){
           occurrences.push(new Date(occMs));
         }
-        if(Number.isFinite(spec.count) && spec.count > 0 && produced >= spec.count) return false;
+        if(Number.isFinite(normalized.count) && normalized.count > 0 && produced >= normalized.count) return false;
         if(produced >= cap) return false;
         return true;
       };
-      if(spec.freq === 'weekly'){
-        const days = Array.isArray(spec.days) && spec.days.length
-          ? spec.days
-              .map(val => Math.min(7, Math.max(1, Number(val) || 0)))
-              .filter(Boolean)
-              .sort((a,b) => a - b)
-          : [isoDay(baseDate)];
-        if(!days.length) days.push(isoDay(baseDate));
+      if(normalized.freq === 'weekly' || normalized.freq === 'monthly'){
+        let days = normalizeRepeatDays(normalized.days);
+        if(!days.length) days = [isoDay(baseDate)];
         const baseWeekStart = startOfIsoWeek(baseDate);
+        const weekSpan = normalized.freq === 'monthly' ? interval * 4 : interval;
         let weekIndex = 0;
         while(produced < cap){
-          const weekStartMs = baseWeekStart.getTime() + weekIndex * interval * 7 * dayMs;
+          const weekStartMs = baseWeekStart.getTime() + weekIndex * weekSpan * 7 * dayMs;
           for(const day of days){
             const occMs = weekStartMs + (day - 1) * dayMs;
             if(weekIndex === 0 && occMs < baseDate.getTime()) continue;
             if(!pushOccurrence(occMs)) return occurrences;
           }
           weekIndex++;
-          if(untilMs && (baseWeekStart.getTime() + weekIndex * interval * 7 * dayMs) > untilMs) break;
+          if(untilMs && (baseWeekStart.getTime() + weekIndex * weekSpan * 7 * dayMs) > untilMs) break;
         }
       }else{
         let current = new Date(baseDate.getTime());
         while(produced < cap){
           if(!pushOccurrence(current.getTime())) break;
-          const next = addInterval(current, spec.freq, interval);
+          const next = addInterval(current, normalized.freq, interval);
           if(!next || next.getTime() === current.getTime()) break;
           current = next;
         }
@@ -5878,9 +6367,8 @@ tdFolder.appendChild(preview);
           const dueDate = parseDate(t.due);
           if(dueDate){
             if(!(assigneeFilterActive && !matchesAssignee(todoAssignee))){
-              const repeatSpec = t.repeat && typeof t.repeat === 'object' ? { ...t.repeat } : null;
+              const repeatSpec = normalizeRepeatSpec(t.repeat, { dueDate: t.due });
               if(repeatSpec?.freq){
-                if(Array.isArray(repeatSpec.days)) repeatSpec.days = repeatSpec.days.slice();
                 tasks.push({
                   type: 'milestone',
                   project: p,
@@ -6140,10 +6628,17 @@ tdFolder.appendChild(preview);
     todayLine.style.height = `${renderTasks.length * rowHeight}px`;
     chart.appendChild(todayLine);
 
+    let lastProjectId = null
     renderTasks.forEach((task, idx) => {
       const row = document.createElement('div');
       row.className = 'timeline-row' + (task.type === 'milestone' ? ' milestone-row' : '');
       row.style.top = `${idx * rowHeight}px`;
+      const projectId = task.project?.id || '';
+      if(projectId){
+        row.dataset.projectId = projectId;
+        if(projectId !== lastProjectId) row.classList.add('project-start');
+      }
+      lastProjectId = projectId;
 
       const label = document.createElement('div');
       label.className = 'timeline-label';
@@ -6822,6 +7317,303 @@ tdFolder.appendChild(preview);
     })
   }
 
+  function importProjectsFromLegacyCsv(rows, headerLower){
+    const idx = {
+      id: headerLower.findIndex(h => h === 'id' || h.includes('projekt-id')),
+      nr: headerLower.findIndex(h => h.includes('projektnummer') || h === 'nr'),
+      name: headerLower.findIndex(h => h.includes('projektname') || h === 'name'),
+      date: headerLower.findIndex(h => h === 'datum' || (h.includes('datum') && !h.includes('deadline'))),
+      deadline: headerLower.findIndex(h => h.includes('deadline') || h.includes('fälligkeit')),
+      showDeadline: headerLower.findIndex(h => h.includes('sichtbar') || h.includes('showdeadline')),
+      todos: headerLower.findIndex(h => h.includes('todo') || h.includes('aufgaben')),
+      notes: headerLower.findIndex(h => h.includes('notiz') || h.includes('notes')),
+      tab: headerLower.findIndex(h => h === 'tab' || h.includes('gruppe')),
+      folder: headerLower.findIndex(h => h.includes('pfad') || h.includes('ordner')),
+      color: headerLower.findIndex(h => h.includes('farbe')),
+      collapsed: headerLower.findIndex(h => h.includes('eingeklappt') || h.includes('collapsed')),
+      order: headerLower.findIndex(h => h.includes('sort'))
+    }
+    const boolFrom = (val) => parseCsvBoolean(val)
+    pushHistory()
+    const initialOrder = state.order && state.order.length ? state.order.slice() : (state.projects || []).map(p => p.id)
+    const importedOrder = []
+    for(let r=1; r<rows.length; r++){
+      const c = rows[r] || []
+      if(!c.length || c.every(x => !x)) continue
+      const todosRaw = idx.todos>=0 ? (c[idx.todos]||'') : ''
+      const todos = todosRaw.split('|')
+        .map(s => s.trim()).filter(Boolean)
+        .map(item => {
+          const done = item.startsWith('[x]')
+          const text = item.replace(/^\[(x| )\]\s*/i,'')
+          const m = text.match(/^(.*)\s@(\d{4}-\d{2}-\d{2})$/)
+          return { text: (m?m[1]:text).trim(), done, due: m?m[2]:'' }
+        })
+
+      let projectId = idx.id>=0 ? (c[idx.id]||'').trim() : ''
+      if(!projectId) projectId = uid()
+      if(state.projects.some(x => x.id === projectId)) projectId = uid()
+
+      const p = {
+        id: projectId,
+        number: idx.nr>=0 ? (c[idx.nr]||'') : '',
+        name: idx.name>=0 ? (c[idx.name]||'') : '',
+        date: idx.date>=0 ? (c[idx.date]||'') : '',
+        deadline: idx.deadline>=0 ? (c[idx.deadline]||'') : '',
+        showDeadline: idx.showDeadline>=0 ? boolFrom(c[idx.showDeadline]) : !!(idx.deadline>=0 && c[idx.deadline]),
+        todos,
+        notes: idx.notes>=0 ? (c[idx.notes]||'') : '',
+        tab: (idx.tab>=0 && c[idx.tab]) ? c[idx.tab] : (state.currentTab||'Alle'),
+        folder: idx.folder>=0 ? (c[idx.folder]||'') : '',
+        color: idx.color>=0 ? (c[idx.color]||'') : '',
+        collapsed: idx.collapsed>=0 ? boolFrom(c[idx.collapsed]) : false,
+        emptyDone: false
+      }
+      state.projects.push(p)
+      if(p.tab && !state.tabs.includes(p.tab) && p.tab!=='Alle') state.tabs.push(p.tab)
+      if(idx.order>=0){
+        const sortToken = Number((c[idx.order]||'').trim())
+        if(Number.isFinite(sortToken)) importedOrder.push({ id: p.id, order: sortToken })
+      }
+    }
+    if(importedOrder.length){
+      importedOrder.sort((a,b) => a.order - b.order)
+      const orderedIds = importedOrder.map(o => o.id)
+      const merged = initialOrder.filter(id => !orderedIds.includes(id))
+      importedOrder.forEach(({id}) => merged.push(id))
+      state.order = merged
+      state.orderByTab['Alle'] = merged.slice()
+      state.filters.sort = 'manual'
+    }else{
+      const merged = initialOrder.slice()
+      state.projects.forEach(proj => { if(!merged.includes(proj.id)) merged.push(proj.id) })
+      state.order = merged
+      state.orderByTab['Alle'] = merged.slice()
+    }
+    setDirty(true); render(); showToast('CSV importiert')
+  }
+
+  function importProjectsFromDetailedCsv(rows, header, headerLower){
+    const findIndex = (keywords) => {
+      for(let i=0; i<headerLower.length; i++){
+        const name = headerLower[i]
+        for(const keyword of keywords){
+          if(name === keyword || name.includes(keyword)) return i
+        }
+      }
+      return -1
+    }
+    const idx = {
+      projectId: findIndex(['projektid','projectid','projekt-id','project-id','id']),
+      projectNumber: findIndex(['projektnummer','projectnumber','nummer','nr']),
+      projectName: findIndex(['projektname','projectname','name']),
+      projectTab: findIndex(['tab','gruppe']),
+      projectNotes: findIndex(['projektnotizenhtml','projectnotes','notizen','notes','beschreibung']),
+      projectFolder: findIndex(['projektpfad','projectpath','pfad','ordner','folder']),
+      projectColor: findIndex(['projektfarbe','projectcolor','farbe','color']),
+      projectCollapsed: findIndex(['projekteingeklappt','collapsed']),
+      projectDeadline: findIndex(['projektdeadline','deadline']),
+      projectShowDeadline: findIndex(['projektdeadlinesichtbar','showdeadline','deadlinesichtbar']),
+      projectEmptyDone: findIndex(['projektleererledigt','emptydone','leer erledigt']),
+      projectDate: findIndex(['projektdatum','projectdate','startdatum']),
+      projectSort: findIndex(['projektsortierung','sortierung','sort'])
+    }
+    const todoIdx = {
+      type: findIndex(['todotyp','todo typ','todotype']),
+      todoIndex: findIndex(['todoindex','todo index']),
+      subIndex: findIndex(['subtaskindex','subindex','subtask index']),
+      text: findIndex(['todotext','todo text','aufgabe']),
+      done: findIndex(['tododone','todo done','erledigt']),
+      start: findIndex(['todostart']),
+      due: findIndex(['tododue','todo due','fällig']),
+      assignee: findIndex(['todoassignee','bearbeiter','assignee']),
+      ack: findIndex(['todoacknowledged','acknowledged','gelesen']),
+      repeatFreq: findIndex(['todorepeatfreq','repeatfreq','frequenz']),
+      repeatInterval: findIndex(['todorepeatinterval','repeatinterval','intervall']),
+      repeatCount: findIndex(['todorepeatcount','repeatcount']),
+      repeatUntil: findIndex(['todorepeatuntil','repeatuntil','enddatum']),
+      repeatDays: findIndex(['todorepeatdays','repeatdays']),
+      parentText: findIndex(['parenttodotext','parenttodo','parent'])
+    }
+    const boolFrom = (val) => parseCsvBoolean(val)
+    const projectRecords = new Map()
+    const createdProjects = []
+    const sortEntries = []
+
+    for(let r=1; r<rows.length; r++){
+      const rawCells = rows[r] || []
+      if(!rawCells.length || rawCells.every(cell => !cell)) continue
+      const cells = rawCells.map(val => val == null ? '' : String(val))
+      const projectIdRaw = idx.projectId >= 0 ? cells[idx.projectId].trim() : ''
+      const key = projectIdRaw || `auto-${r}`
+      let record = projectRecords.get(key)
+      if(!record){
+        const project = {
+          id: projectIdRaw || uid(),
+          number: '',
+          name: '',
+          tab: 'Alle',
+          notes: '',
+          folder: '',
+          color: '',
+          collapsed: false,
+          deadline: '',
+          showDeadline: false,
+          emptyDone: false,
+          date: '',
+          todos: []
+        }
+        record = { project, todoEntries: new Map(), todoOrder: [], sortCaptured:false }
+        projectRecords.set(key, record)
+        createdProjects.push(project)
+      }
+
+      const project = record.project
+      if(idx.projectNumber >=0 && cells[idx.projectNumber] !== undefined) project.number = cells[idx.projectNumber]
+      if(idx.projectName >=0 && cells[idx.projectName] !== undefined) project.name = cells[idx.projectName]
+      if(idx.projectTab >=0 && cells[idx.projectTab] !== undefined){
+        const tabValue = cells[idx.projectTab].trim()
+        project.tab = tabValue || 'Alle'
+      }
+      if(idx.projectNotes >=0 && cells[idx.projectNotes] !== undefined) project.notes = cells[idx.projectNotes]
+      if(idx.projectFolder >=0 && cells[idx.projectFolder] !== undefined) project.folder = cells[idx.projectFolder]
+      if(idx.projectColor >=0 && cells[idx.projectColor] !== undefined) project.color = cells[idx.projectColor]
+      if(idx.projectCollapsed >=0 && cells[idx.projectCollapsed] !== undefined) project.collapsed = boolFrom(cells[idx.projectCollapsed])
+      if(idx.projectDeadline >=0 && cells[idx.projectDeadline] !== undefined) project.deadline = cells[idx.projectDeadline]
+      if(idx.projectShowDeadline >=0 && cells[idx.projectShowDeadline] !== undefined) project.showDeadline = boolFrom(cells[idx.projectShowDeadline])
+      if(idx.projectEmptyDone >=0 && cells[idx.projectEmptyDone] !== undefined) project.emptyDone = boolFrom(cells[idx.projectEmptyDone])
+      if(idx.projectDate >=0 && cells[idx.projectDate] !== undefined) project.date = cells[idx.projectDate]
+      if(idx.projectSort >=0 && !record.sortCaptured){
+        const orderVal = parseInteger(cells[idx.projectSort], null)
+        if(orderVal !== null){
+          sortEntries.push({ id: project.id, order: orderVal })
+          record.sortCaptured = true
+        }
+      }
+
+      const rawType = todoIdx.type >=0 ? cells[todoIdx.type].toLowerCase().trim() : ''
+      const inferredType = rawType
+        ? (rawType.startsWith('sub') ? 'subtask' : rawType.startsWith('proj') ? 'project' : 'todo')
+        : ((todoIdx.text >=0 && cells[todoIdx.text].trim()) ? 'todo' : 'project')
+      if(inferredType === 'project') continue
+
+      const parseMaybeIso = (value) => {
+        const raw = String(value || '').trim()
+        if(!raw) return ''
+        if(parseIsoDate(raw)) return raw
+        const german = parseGermanDate(raw)
+        return german ? formatIsoDate(german) : raw
+      }
+
+      if(inferredType === 'todo'){
+        const idxValue = todoIdx.todoIndex >=0 ? parseInteger(cells[todoIdx.todoIndex], null) : null
+        const entryIndex = idxValue !== null ? idxValue : record.todoOrder.length
+        const existing = record.todoEntries.get(entryIndex)
+        const todo = existing && existing.__placeholder ? existing : { text:'', done:false, due:'', assignee:'', acknowledged:false, repeat:null, subtasks:[] }
+        todo.__placeholder = false
+        if(todoIdx.text >=0 && cells[todoIdx.text] !== undefined) todo.text = cells[todoIdx.text]
+        todo.done = todoIdx.done >=0 ? boolFrom(cells[todoIdx.done]) : false
+        if(todoIdx.start >=0 && cells[todoIdx.start] !== undefined){
+          todo.start = parseMaybeIso(cells[todoIdx.start])
+        }
+        todo.due = todoIdx.due >=0 ? parseMaybeIso(cells[todoIdx.due]) : ''
+        todo.assignee = todoIdx.assignee >=0 ? cells[todoIdx.assignee].trim() : ''
+        todo.acknowledged = todoIdx.ack >=0 ? boolFrom(cells[todoIdx.ack]) : false
+        if(!Array.isArray(todo.subtasks)) todo.subtasks = []
+        const repeatRaw = {}
+        if(todoIdx.repeatFreq >=0 && cells[todoIdx.repeatFreq]) repeatRaw.freq = cells[todoIdx.repeatFreq]
+        if(todoIdx.repeatInterval >=0 && cells[todoIdx.repeatInterval]) repeatRaw.interval = cells[todoIdx.repeatInterval]
+        if(todoIdx.repeatCount >=0 && cells[todoIdx.repeatCount]) repeatRaw.count = cells[todoIdx.repeatCount]
+        if(todoIdx.repeatUntil >=0 && cells[todoIdx.repeatUntil]) repeatRaw.until = cells[todoIdx.repeatUntil]
+        if(todoIdx.repeatDays >=0 && cells[todoIdx.repeatDays]) repeatRaw.days = normalizeRepeatDays(cells[todoIdx.repeatDays])
+        const normalizedRepeat = normalizeRepeatSpec(repeatRaw, { dueDate: todo.due })
+        todo.repeat = normalizedRepeat
+        if(existing && existing !== todo && existing.subtasks && existing.subtasks.length && (!todo.subtasks || !todo.subtasks.length)){
+          todo.subtasks = existing.subtasks
+        }
+        record.todoEntries.set(entryIndex, todo)
+        if(!record.todoOrder.includes(entryIndex)) record.todoOrder.push(entryIndex)
+        continue
+      }
+
+      if(inferredType === 'subtask'){
+        const parentIndex = todoIdx.todoIndex >=0 ? parseInteger(cells[todoIdx.todoIndex], null) : null
+        const parentKey = parentIndex !== null ? parentIndex : record.todoOrder.length
+        let parent = record.todoEntries.get(parentKey)
+        if(!parent){
+          parent = { text: todoIdx.parentText>=0 ? cells[todoIdx.parentText] : '', done:false, due:'', assignee:'', acknowledged:false, repeat:null, subtasks:[], __placeholder:true }
+          record.todoEntries.set(parentKey, parent)
+          if(!record.todoOrder.includes(parentKey)) record.todoOrder.push(parentKey)
+        }else if(parent.__placeholder && todoIdx.parentText>=0 && cells[todoIdx.parentText]){
+          parent.text = cells[todoIdx.parentText]
+        }
+        if(!Array.isArray(parent.subtasks)) parent.subtasks = []
+        const subtask = {
+          text: todoIdx.text>=0 ? cells[todoIdx.text] : '',
+          done: todoIdx.done>=0 ? boolFrom(cells[todoIdx.done]) : false,
+          due: todoIdx.due>=0 ? parseMaybeIso(cells[todoIdx.due]) : '',
+          assignee: todoIdx.assignee>=0 ? cells[todoIdx.assignee].trim() : '',
+          acknowledged: todoIdx.ack>=0 ? boolFrom(cells[todoIdx.ack]) : false
+        }
+        const subIndex = todoIdx.subIndex>=0 ? parseInteger(cells[todoIdx.subIndex], parent.subtasks.length) : parent.subtasks.length
+        subtask.__index = subIndex === null ? parent.subtasks.length : subIndex
+        parent.subtasks.push(subtask)
+        continue
+      }
+    }
+
+    projectRecords.forEach(record => {
+      const order = record.todoOrder.slice().sort((a,b) => a - b)
+      const todos = []
+      order.forEach(index => {
+        const todo = record.todoEntries.get(index)
+        if(!todo) return
+        if(todo.__placeholder){
+          if(Array.isArray(todo.subtasks) && todo.subtasks.length){
+            todo.__placeholder = false
+            todo.text = todo.text || 'To-Do'
+          }else{
+            return
+          }
+        }
+        if(Array.isArray(todo.subtasks)){
+          todo.subtasks.sort((a,b) => {
+            const ai = Number.isFinite(a.__index) ? a.__index : 0
+            const bi = Number.isFinite(b.__index) ? b.__index : 0
+            return ai - bi
+          })
+          todo.subtasks.forEach(sub => delete sub.__index)
+        }
+        delete todo.__placeholder
+        todos.push(todo)
+      })
+      record.project.todos = todos
+    })
+
+    pushHistory()
+    createdProjects.forEach(project => {
+      state.projects.push(project)
+      if(project.tab && !state.tabs.includes(project.tab) && project.tab !== 'Alle') state.tabs.push(project.tab)
+    })
+
+    if(sortEntries.length){
+      sortEntries.sort((a,b) => a.order - b.order)
+      const orderedIds = sortEntries.map(entry => entry.id)
+      const merged = Array.isArray(state.order) ? state.order.filter(id => !orderedIds.includes(id)) : []
+      orderedIds.forEach(id => merged.push(id))
+      state.order = merged
+      state.orderByTab['Alle'] = merged.slice()
+      state.filters.sort = 'manual'
+    }else{
+      const merged = Array.isArray(state.order) ? state.order.slice() : []
+      createdProjects.forEach(project => { if(!merged.includes(project.id)) merged.push(project.id) })
+      state.order = merged
+      state.orderByTab['Alle'] = merged.slice()
+    }
+
+    setDirty(true); render(); showToast('CSV importiert')
+  }
+
   // CSV Import
   document.getElementById('csvImportBtn').addEventListener('click', () => {
     const inp = document.createElement('input');
@@ -6832,82 +7624,19 @@ tdFolder.appendChild(preview);
       reader.onload = () => {
         const rows = parseCSV(String(reader.result));
         if(!rows.length){ alert('CSV leer.'); return; }
-        const header = rows[0].map(h => (h||'').toLowerCase());
-        const idx = {
-          id: header.findIndex(h => h === 'id' || h.includes('projekt-id')),
-          nr: header.findIndex(h => h.includes('projektnummer') || h === 'nr'),
-          name: header.findIndex(h => h.includes('projektname') || h === 'name'),
-          date: header.findIndex(h => h === 'datum' || (h.includes('datum') && !h.includes('deadline'))),
-          deadline: header.findIndex(h => h.includes('deadline') || h.includes('fälligkeit')),
-          showDeadline: header.findIndex(h => h.includes('sichtbar') || h.includes('showdeadline')),
-          todos: header.findIndex(h => h.includes('todo') || h.includes('aufgaben')),
-          notes: header.findIndex(h => h.includes('notiz') || h.includes('notes')),
-          tab: header.findIndex(h => h === 'tab' || h.includes('gruppe')),
-          folder: header.findIndex(h => h.includes('pfad') || h.includes('ordner')),
-          color: header.findIndex(h => h.includes('farbe')),
-          collapsed: header.findIndex(h => h.includes('eingeklappt') || h.includes('collapsed')),
-          order: header.findIndex(h => h.includes('sort'))
-        };
-        const boolFrom = (val) => {
-          const v = (val || '').toString().trim().toLowerCase();
-          return ['true','1','ja','yes','wahr','on'].includes(v);
-        };
-        pushHistory();
-        const initialOrder = state.order && state.order.length ? state.order.slice() : state.projects.map(p => p.id);
-        const importedOrder = [];
-        for(let r=1; r<rows.length; r++){
-          const c = rows[r] || [];
-          if(!c.length || c.every(x => !x)) continue;
-          const todosRaw = idx.todos>=0 ? (c[idx.todos]||'') : '';
-          const todos = todosRaw.split('|')
-            .map(s => s.trim()).filter(Boolean)
-            .map(item => {
-              const done = item.startsWith('[x]');
-              const text = item.replace(/^\[(x| )\]\s*/i,'');
-              const m = text.match(/^(.*)\s@(\d{4}-\d{2}-\d{2})$/);
-              return { text: (m?m[1]:text).trim(), done, due: m?m[2]:'' };
-            });
-
-          let projectId = idx.id>=0 ? (c[idx.id]||'').trim() : '';
-          if(!projectId) projectId = uid();
-          if(state.projects.some(x => x.id === projectId)) projectId = uid();
-
-          const p = {
-            id: projectId,
-            number: idx.nr>=0 ? (c[idx.nr]||'') : '',
-            name: idx.name>=0 ? (c[idx.name]||'') : '',
-            date: idx.date>=0 ? (c[idx.date]||'') : '',
-            deadline: idx.deadline>=0 ? (c[idx.deadline]||'') : '',
-            showDeadline: idx.showDeadline>=0 ? boolFrom(c[idx.showDeadline]) : !!(idx.deadline>=0 && c[idx.deadline]),
-            todos,
-            notes: idx.notes>=0 ? (c[idx.notes]||'') : '',
-            tab: (idx.tab>=0 && c[idx.tab]) ? c[idx.tab] : (state.currentTab||'Alle'),
-            folder: idx.folder>=0 ? (c[idx.folder]||'') : '',
-            color: idx.color>=0 ? (c[idx.color]||'') : '',
-            collapsed: idx.collapsed>=0 ? boolFrom(c[idx.collapsed]) : false
-          };
-          state.projects.push(p);
-          if(p.tab && !state.tabs.includes(p.tab) && p.tab!=='Alle') state.tabs.push(p.tab);
-          if(idx.order>=0){
-            const sortToken = Number((c[idx.order]||'').trim());
-            if(Number.isFinite(sortToken)) importedOrder.push({ id: p.id, order: sortToken });
+        const headerRaw = rows[0].map(h => String(h ?? ''));
+        const headerLower = headerRaw.map(h => h.trim().toLowerCase());
+        try{
+          const hasDetailed = headerLower.some(name => name.includes('todotyp') || name.includes('todoindex') || name.includes('todorepeatfreq'));
+          if(hasDetailed){
+            importProjectsFromDetailedCsv(rows, headerRaw, headerLower);
+          }else{
+            importProjectsFromLegacyCsv(rows, headerLower);
           }
+        }catch(err){
+          console.error(err);
+          alert('CSV konnte nicht importiert werden: ' + (err && err.message ? err.message : err));
         }
-        if(importedOrder.length){
-          importedOrder.sort((a,b) => a.order - b.order);
-          const orderedIds = importedOrder.map(o => o.id);
-          const merged = initialOrder.filter(id => !orderedIds.includes(id));
-          importedOrder.forEach(({id}) => merged.push(id));
-          state.order = merged;
-          state.orderByTab['Alle'] = merged.slice();
-          state.filters.sort = 'manual';
-        }else{
-          const merged = initialOrder.slice();
-          state.projects.forEach(proj => { if(!merged.includes(proj.id)) merged.push(proj.id); });
-          state.order = merged;
-          state.orderByTab['Alle'] = merged.slice();
-        }
-        setDirty(true); render(); showToast('CSV importiert');
       };
       reader.readAsText(f);
     };
@@ -6923,7 +7652,7 @@ tdFolder.appendChild(preview);
   document.getElementById('calendarExportBtn')
     .addEventListener('click', () => {
       const list = gatherProjectsForExport();
-      exportICS(list, 'projekte.ics');
+      openCalendarExportDialog(list, { fileName: 'todos.ics' });
     });
   const dispoCsvExportBtn = document.getElementById('dispoCsvExportBtn')
   if(dispoCsvExportBtn){
@@ -7128,7 +7857,7 @@ tdFolder.appendChild(preview);
     }else if(action==='export_csv'){
       exportCSV(state.projects.filter(p=>ids.includes(p.id)),'projekte_auswahl.csv');
     }else if(action==='export_ics'){
-      exportICS(state.projects.filter(p=>ids.includes(p.id)),'projekte_auswahl.ics');
+      openCalendarExportDialog(state.projects.filter(p=>ids.includes(p.id)), { fileName: 'todos_auswahl.ics' });
     }
   });
 
