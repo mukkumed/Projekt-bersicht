@@ -6,6 +6,10 @@
 
 <!-- Google Material Symbols (Icons) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+<script type="module">
+  import { get, set, del } from 'https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm';
+  window.idbKeyval = { get, set, del };
+</script>
 <style>
   :root{
     --bg:#0f172a; --card:#0b1225; --muted:#94a3b8; --text:#e6eaf3;
@@ -48,7 +52,7 @@ tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand v
   .dirty.on{display:inline-block}
   .sub{color:var(--muted); font-size:13px}
   .muted{color:var(--muted)}
-  #fileLocation{font-size:.9rem; opacity:.75; margin:.25rem 0}
+  #fileLocation,#csvLocationInfo{font-size:.9rem; opacity:.75; margin:.25rem 0}
 
   .card{
     background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
@@ -1190,9 +1194,9 @@ r:var(--muted); cursor:pointer}
 
 </style>
 <style id="ce-placeholder-rule">.title [contenteditable]:empty::before{content:attr(data-placeholder); color:var(--muted);}</style></head>
-<body class="light">
+<body class="light view-dispo">
   <!-- eingebetteter Zustand -->
-  <script id="APP_STATE" type="application/json">{"title":"Team","projects":[{"id":"rxr924s","number":"3004529","name":"DN GS Birkesdorf Fassadensanierung","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Nachfrage bei Firma Vlasman bezüglich Restarbeiten (WMe)","done":false,"due":"2025-10-15","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Kurzbewertung Beprobung","done":false,"due":"2025-10-17","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"WMe","folder":"","color":"","collapsed":true},{"id":"h29264e","number":"3002224","name":"LH Haupthaus","date":"","deadline":"","showDeadline":false,"todos":[{"text":"LV Versand (BlM)","done":false,"due":"2025-10-10","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"BlM","folder":"","color":"","collapsed":true},{"id":"66ceq5y","number":"3005201","name":"Rückbau Systemzentrale 4","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Einpflegen von Korrekturvorschlägen(BlM)","done":false,"due":"2025-10-22","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"BlM","folder":"","color":"","collapsed":true},{"id":"tqwx1a4","number":"3005182","name":"Aurubis Gebäude 101","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Fotodoku (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Versand Schimmelgutachten (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":false},{"id":"dlvvdxu","number":"3004955","name":"Dalli Rückbau Seifenhaus","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Aktenvermerk (CVa)","done":false,"due":"2025-10-14","assignee":"","repeat":{"freq":"weekly","interval":1,"until":"2025-12-26","days":[2]},"acknowledged":false,"subtasks":[]},{"text":"Baustellenmail (CVa)","done":false,"due":"2025-10-14","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Abstimmung Statik Gerüstaufstellung (CVa)","done":false,"due":"2025-10-16","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Abstimmung Lohmer Pumpen (CVa)","done":false,"due":"2025-10-16","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":false},{"id":"jsozik2","number":"3004604","name":"Aurubis Dachsanierung Gebäude 109","date":"","deadline":"","showDeadline":false,"todos":[],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"ed56c6e","number":"3004559","name":"UKA Angiographie","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Fachgutachterliche Begleitung (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"5zbee8o","number":"3004489","name":"SSK Düsseldorf - Sanierung TG","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Prüfung LV (CVa)","done":false,"due":"2025-10-15","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Versand LV (CVa)","done":false,"due":"2025-10-16","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"d924wn9","number":"3004336","name":"UKA Spüllüftung C5 + B4","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Anpassung Konzept B4 (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"88a65dg","number":"3004141","name":"Otto Junker","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Abstimmung Schimmel (CVa)","done":false,"due":"2026-01-05","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Abfrage und Zusammenstellung Messergebnis (CVa)","done":false,"due":"2025-10-17","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"im8s6o1","number":"3003956","name":"Regionetz KMF","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Zusammenstellung Messergebnisse (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Weiteres Vorgehen klären (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"x7ool21","number":"3003315","name":"LP DN Einlaufbauwerk","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Abfrage Status Raumluftmessung (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"71mkt4q","number":"3003295","name":"BLB BSK-Tausch","date":"","deadline":"","showDeadline":false,"todos":[],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"s5fr3cn","number":"3001606","name":"RWTH IBAC","date":"","deadline":"","showDeadline":false,"todos":[],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"lnxl3kg","number":"3000077","name":"LVR Rückbau Haus 13+14","date":"","deadline":"","showDeadline":false,"todos":[],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"t342n54","number":"3004622","name":"LH - Bestands-ITS","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Angebot weitere Beprobung (WMe)","done":false,"due":"2025-10-15","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"WMe","folder":"","color":"","collapsed":true},{"id":"llbzm0o","number":"3004309","name":"LH - Wöchnerinnenstation","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Baustellenbegehung mit Firma (WMe)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Planungs jourfixe (CVa)","done":false,"due":"2025-10-15","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"WMe","folder":"","color":"","collapsed":true},{"id":"weovyir","number":"3003940-2","name":"UKA BSK, LV Freimessung","date":"2025-09-00","deadline":"","showDeadline":false,"todos":[{"text":"Vergabeempfehlung schreiben","done":true,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Versand","done":true,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"Vorher Aleksandrova erreichen","tab":"Har","folder":"P:\\PLA\\300\\3940\\05_AVA, Baul\\BA01\\LV151_BA1_Freimessung","color":"","collapsed":true},{"id":"5zlr9e1","number":"3003940-1","name":"UKA Brandschutzklappentausch","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Abnahme PB519 B8 09:00 + Nachbearbeitung (WMe)","done":false,"due":"2025-10-16","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Freimessbeauftragung","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"Har","folder":"","color":"","collapsed":true},{"id":"fth7szo","number":"3003896","name":"Luisenhospital - Erweiterung CBG","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Analytik anschauen (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"OTE Bericht (Har)","done":true,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Rücksprache Jan zu Ergbnissen (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Timo anrufen (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"Har","folder":"P:\\PLA\\300\\3896","color":"","collapsed":false},{"id":"ntlr180","number":"3005047","name":"Landtag Dus - Leitungsumverlegung; Baufeldfreimachung","date":"","deadline":"","showDeadline":false,"todos":[{"text":"OTE Bericht schreiben (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Termin mit Grünflächenamt zu Baumfällantrag (WMe)","done":false,"due":"2025-10-14","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Baustellenordnung d. SiGeKo an Bauherr (WMe)","done":false,"due":"2025-10-14","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Klärung des Deckblattes mit Projektsteuerer (WMe)","done":false,"due":"2025-10-15","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"LV Baufeldfreimachung (WMe)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"Har","folder":"P:\\PLA\\300\\5047\\05_Antraege_Berichte\\07_IDR","color":"","collapsed":true},{"id":"6k5vst8","number":"3005328","name":"UKA Systemzentrale Vorabreinigung","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Sanierungskonzept schreiben (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Dominik Konzept schicken (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Christoph Bescheid geben (HAr)","done":true,"due":"2025-10-09","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"Christoph will wissen, wenn das Sanierungskonzept fertig ist.&nbsp;","tab":"Har","folder":"P:\\PLA\\300\\5328\\03_Plan","color":"","collapsed":true}],"filters":{"q":"","status":"all","sort":"manual","pctMin":0,"pctMax":100},"trash":[],"tabs":["Alle","WMe","CVa","UKA","BlM","Har"],"currentTab":"Alle","theme":"light","view":"table","timelineTab":"Alle","timelineZoom":"weeks","timelineAssignees":[],"kanbanTab":"Alle","assigneeFilter":[],"order":["tqwx1a4","dlvvdxu","jsozik2","ed56c6e","5zbee8o","d924wn9","88a65dg","im8s6o1","x7ool21","71mkt4q","s5fr3cn","lnxl3kg","t342n54","llbzm0o","ntlr180","weovyir","5zlr9e1","6k5vst8","fth7szo","rxr924s","h29264e","66ceq5y"],"orderByTab":{"3005047":[],"Alle":["tqwx1a4","dlvvdxu","jsozik2","ed56c6e","5zbee8o","d924wn9","88a65dg","im8s6o1","x7ool21","71mkt4q","s5fr3cn","lnxl3kg","t342n54","llbzm0o","ntlr180","weovyir","5zlr9e1","6k5vst8","fth7szo","rxr924s","h29264e","66ceq5y"],"UKA":["weovyir","5zlr9e1"],"WMe":["t342n54","llbzm0o","ntlr180","5zlr9e1"],"CVa":["tqwx1a4","dlvvdxu","jsozik2","ed56c6e","5zbee8o","d924wn9","88a65dg","im8s6o1","x7ool21","71mkt4q","s5fr3cn","lnxl3kg"]},"dispo":[{"id":"eytkq47","title":"","notes":"-Wiederholungstermine einfügen\n-","year":2025,"month":null,"week":42,"items":[]},{"id":"7jkbqdd","title":"","notes":"","year":2025,"month":null,"week":23,"items":[]}],"tabGroups":[],"tabOrder":["tab:WMe","tab:CVa","tab:UKA","tab:BlM","tab:Har"],"tabMeta":{"UKA":{"groupId":"","color":""},"WMe":{"color":"","groupId":""},"CVa":{"color":"","groupId":""},"BlM":{"color":"","groupId":""},"Har":{"color":"","groupId":""},"Alle":{}},"team":["JHi","WMe","CVa","Har","BlM"]}</script>
+  <script id="APP_STATE" type="application/json">{"title":"Team","projects":[{"id":"jvqopv1","number":"3004266","name":"UKA Ambulanzaufzüge","date":"","deadline":"","showDeadline":false,"todos":[{"text":"SanKonz erstellen","done":false,"due":"","assignee":"BlM","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Ergebnisse MBS in Projektordner ablegen","done":false,"due":"2025-10-27","assignee":"Har","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"Alle","folder":"","color":"","collapsed":false},{"id":"rxr924s","number":"3004529","name":"DN GS Birkesdorf Fassadensanierung","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Nachfrage bei Firma Vlasman bezüglich Restarbeiten (WMe)","done":false,"due":"2025-10-15","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Kurzbewertung Beprobung","done":false,"due":"2025-10-17","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"WMe","folder":"","color":"","collapsed":true},{"id":"h29264e","number":"3002224","name":"LH Haupthaus","date":"","deadline":"","showDeadline":false,"todos":[{"text":"LV Versand (BlM)","done":false,"due":"2025-10-10","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"BlM","folder":"","color":"","collapsed":true},{"id":"66ceq5y","number":"3005201","name":"Rückbau Systemzentrale 4","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Einpflegen von Korrekturvorschlägen(BlM)","done":false,"due":"2025-10-22","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"BlM","folder":"","color":"","collapsed":true},{"id":"tqwx1a4","number":"3005182","name":"Aurubis Gebäude 101","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Fotodoku (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Versand Schimmelgutachten (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"dlvvdxu","number":"3004955","name":"Dalli Rückbau Seifenhaus","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Aktenvermerk (CVa)","done":false,"due":"2025-11-18","assignee":"","repeat":{"freq":"monthly","interval":1,"start":"2025-11-18","end":"2025-12-26","until":"2025-12-26","days":[2]},"acknowledged":false,"subtasks":[]},{"text":"Baustellenmail (CVa)","done":false,"due":"2025-10-14","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Abstimmung Statik Gerüstaufstellung (CVa)","done":false,"due":"2025-10-16","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Abstimmung Lohmer Pumpen (CVa)","done":false,"due":"2025-10-16","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Prüfung Nachträge","done":false,"due":"","assignee":"CVa","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"jsozik2","number":"3004604","name":"Aurubis Dachsanierung Gebäude 109","date":"","deadline":"","showDeadline":false,"todos":[],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"ed56c6e","number":"3004559","name":"UKA Angiographie","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Fachgutachterliche Begleitung (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"5zbee8o","number":"3004489","name":"SSK Düsseldorf - Sanierung TG","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Prüfung LV (CVa)","done":false,"due":"2025-10-15","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Versand LV (CVa)","done":false,"due":"2025-10-16","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Ortstermin und Begehung EnDeSa","done":false,"due":"2025-10-30","assignee":"CVa","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"d924wn9","number":"3004336","name":"UKA Spüllüftung C5 + B4","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Anpassung Konzept B4 (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"88a65dg","number":"3004141","name":"Otto Junker","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Abstimmung Schimmel (CVa)","done":false,"due":"2026-01-05","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Abfrage und Zusammenstellung Messergebnis (CVa)","done":false,"due":"2025-10-17","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"im8s6o1","number":"3003956","name":"Regionetz KMF","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Zusammenstellung Messergebnisse (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Weiteres Vorgehen klären (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"x7ool21","number":"3003315","name":"LP DN Einlaufbauwerk","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Abfrage Status Raumluftmessung (CVa)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"71mkt4q","number":"3003295","name":"BLB BSK-Tausch","date":"","deadline":"","showDeadline":false,"todos":[],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"s5fr3cn","number":"3001606","name":"RWTH IBAC","date":"","deadline":"","showDeadline":false,"todos":[],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"lnxl3kg","number":"3000077","name":"LVR Rückbau Haus 13+14","date":"","deadline":"","showDeadline":false,"todos":[],"notes":"","tab":"CVa","folder":"","color":"","collapsed":true},{"id":"t342n54","number":"3004622","name":"LH - Bestands-ITS","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Angebot weitere Beprobung (WMe)","done":false,"due":"2025-10-15","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"WMe","folder":"","color":"","collapsed":true},{"id":"llbzm0o","number":"3004309","name":"LH - Wöchnerinnenstation","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Baustellenbegehung mit Firma (WMe)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Planungs jourfixe (CVa)","done":false,"due":"2025-10-15","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Angebot Fa. STEG anschauen","done":false,"due":"","assignee":"WMe","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"WMe","folder":"","color":"","collapsed":true},{"id":"weovyir","number":"3003940-2","name":"UKA BSK, LV Freimessung","date":"2025-09-00","deadline":"","showDeadline":false,"todos":[{"text":"Vergabeempfehlung schreiben","done":true,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Versand","done":true,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Pflichtenliste für Freimesser erstellen","done":false,"due":"","assignee":"Har","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"Vorher Aleksandrova erreichen","tab":"Har","folder":"P:\\PLA\\300\\3940\\05_AVA, Baul\\BA01\\LV151_BA1_Freimessung","color":"","collapsed":true},{"id":"5zlr9e1","number":"3003940-1","name":"UKA Brandschutzklappentausch","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Abnahme PB519 B8 09:00 + Nachbearbeitung (WMe)","done":true,"due":"2025-10-16","assignee":"","repeat":null,"acknowledged":true,"subtasks":[]},{"text":"Freimessbeauftragung","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Termin mit Freimesser für Mittwoch absprechen","done":false,"due":"2025-10-27","assignee":"Har","repeat":null,"acknowledged":false,"subtasks":[{"text":"Alex die Kontaktinfos schicken","done":false,"due":"2025-10-27","assignee":"Har","acknowledged":false}]}],"notes":"","tab":"Har","folder":"","color":"","collapsed":true},{"id":"fth7szo","number":"3003896","name":"Luisenhospital - Erweiterung CBG","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Analytik anschauen (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"OTE Bericht (Har)","done":true,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Rücksprache Jan zu Ergbnissen (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Timo anrufen (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Nachbeprobung CBG","done":false,"due":"2025-10-29","assignee":"Har","repeat":null,"acknowledged":false,"subtasks":[{"text":"E-Mail mit Ankündigung an Schröder","done":false,"due":"2025-10-27","assignee":"Har","acknowledged":false},{"text":"Proben abschicken","done":false,"due":"2025-10-30","assignee":"Har","acknowledged":false}]},{"text":"OTE und DTE Bericht schreiben","done":false,"due":"","assignee":"Har","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"SanKonz vorbereiten","done":false,"due":"","assignee":"BlM","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"Har","folder":"P:\\PLA\\300\\3896","color":"","collapsed":true},{"id":"ntlr180","number":"3005047","name":"Landtag Dus - Leitungsumverlegung; Baufeldfreimachung","date":"","deadline":"","showDeadline":false,"todos":[{"text":"OTE Bericht schreiben (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Termin mit Grünflächenamt zu Baumfällantrag (WMe)","done":true,"due":"2025-10-14","assignee":"","repeat":null,"acknowledged":true,"subtasks":[]},{"text":"Baustellenordnung d. SiGeKo an Bauherr (WMe)","done":true,"due":"2025-10-14","assignee":"","repeat":null,"acknowledged":true,"subtasks":[]},{"text":"Klärung des Deckblattes mit Projektsteuerer (WMe)","done":true,"due":"2025-10-15","assignee":"","repeat":null,"acknowledged":true,"subtasks":[]},{"text":"LV Baufeldfreimachung (WMe)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"LV Baumfällarbeiten","done":false,"due":"2025-10-29","assignee":"WMe","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"OTE Bericht zur Korrektur abschicken","done":false,"due":"2025-10-27","assignee":"Har","repeat":null,"acknowledged":false,"subtasks":[{"text":"Melanie Korrekturlesen","done":false,"due":"2025-10-27","assignee":"WMe","acknowledged":false}]},{"text":"To-Dos absprechen","done":false,"due":"2025-11-03","assignee":"JHi","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"","tab":"Har","folder":"P:\\PLA\\300\\5047\\05_Antraege_Berichte\\07_IDR","color":"","collapsed":true},{"id":"6k5vst8","number":"3005328","name":"UKA Systemzentrale Vorabreinigung","date":"","deadline":"","showDeadline":false,"todos":[{"text":"Sanierungskonzept schreiben (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Dominik Konzept schicken (Har)","done":false,"due":"","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]},{"text":"Christoph Bescheid geben (HAr)","done":true,"due":"2025-10-09","assignee":"","repeat":null,"acknowledged":false,"subtasks":[]}],"notes":"Christoph will wissen, wenn das Sanierungskonzept fertig ist.&nbsp;","tab":"Har","folder":"P:\\PLA\\300\\5328\\03_Plan","color":"","collapsed":true}],"filters":{"q":"","status":"all","sort":"manual","pctMin":0,"pctMax":100},"trash":[],"tabs":["Alle","WMe","CVa","UKA","BlM","Har"],"currentTab":"Alle","theme":"light","view":"dispo","timelineTab":"Alle","timelineZoom":"days","timelineAssignees":[],"kanbanTab":"Alle","assigneeFilter":[],"order":["jvqopv1","tqwx1a4","dlvvdxu","jsozik2","ed56c6e","5zbee8o","d924wn9","88a65dg","im8s6o1","x7ool21","71mkt4q","s5fr3cn","lnxl3kg","t342n54","llbzm0o","ntlr180","weovyir","5zlr9e1","6k5vst8","fth7szo","rxr924s","h29264e","66ceq5y"],"orderByTab":{"3005047":[],"Alle":["jvqopv1","tqwx1a4","dlvvdxu","jsozik2","ed56c6e","5zbee8o","d924wn9","88a65dg","im8s6o1","x7ool21","71mkt4q","s5fr3cn","lnxl3kg","t342n54","llbzm0o","ntlr180","weovyir","5zlr9e1","6k5vst8","fth7szo","rxr924s","h29264e","66ceq5y"],"UKA":["weovyir","5zlr9e1"],"WMe":["t342n54","llbzm0o","ntlr180","5zlr9e1"],"CVa":["tqwx1a4","dlvvdxu","jsozik2","ed56c6e","5zbee8o","d924wn9","88a65dg","im8s6o1","x7ool21","71mkt4q","s5fr3cn","lnxl3kg"]},"dispo":[{"id":"dg5zyp1","title":"","notes":"4955 - Wiederholungstermin AV steht noch\n\n3940 Freimessungen:\n-Kontaktperson angeben\n-Tageszeit definieren\n\n3896:\nCBG geht in Stufe 2 und SanKonz wird bis 20.11.25 gefordert\nNach der Beprobung am 29.10 wird die OTE und die DTE in einen Bericht zusammengefasst","year":2025,"month":null,"week":44,"items":[{"id":"4r2ib5u","project":"3005047 · Landtag Dus - Leitungsumverlegung; Baufeldfreimachung","assignee":"WMe","todo":"LV Baumfällarbeiten","due":"2025-10-29"},{"id":"qg6lsa3","project":"3004309 · LH - Wöchnerinnenstation","assignee":"WMe","todo":"Angebot Fa. STEG anschauen","due":""},{"id":"jmlb29f","project":"3005047 · Landtag Dus - Leitungsumverlegung; Baufeldfreimachung","assignee":"Har","todo":"OTE Bericht zur Korrektur abschicken","due":"2025-10-27"},{"id":"1qd7eri","project":"3003940-1 · UKA Brandschutzklappentausch","assignee":"Har","todo":"Termin mit Freimesser für Mittwoch absprechen","due":"2025-10-27"},{"id":"na51k5q","project":"3003896 · Luisenhospital - Erweiterung CBG","assignee":"Har","todo":"Nachbeprobung CBG","due":"2025-10-29"},{"id":"ai9ihwh","project":"3004955 · Dalli Rückbau Seifenhaus","assignee":"CVa","todo":"Prüfung Nachträge","due":""},{"id":"iv8gxtr","project":"3004489 · SSK Düsseldorf - Sanierung TG","assignee":"CVa","todo":"Ortstermin und Begehung EnDeSa","due":"2025-10-30"},{"id":"3uwm7m6","project":"3003940-2 · UKA BSK, LV Freimessung","assignee":"Har","todo":"Pflichtenliste für Freimesser erstellen","due":""},{"id":"bqtb78o","project":"3005047 · Landtag Dus - Leitungsumverlegung; Baufeldfreimachung","assignee":"JHi","todo":"To-Dos absprechen","due":"2025-11-03"},{"id":"jy4k9dc","project":"3003896 · Luisenhospital - Erweiterung CBG","assignee":"Har","todo":"OTE und DTE Bericht schreiben","due":""},{"id":"hq0wcef","project":"3003896 · Luisenhospital - Erweiterung CBG","assignee":"BlM","todo":"SanKonz vorbereiten","due":""},{"id":"2chphcw","project":"3004266 · UKA Ambulanzaufzüge","assignee":"BlM","todo":"SanKonz erstellen","due":""},{"id":"l63es8k","project":"3004266 · UKA Ambulanzaufzüge","assignee":"Har","todo":"Ergebnisse MBS in Projektordner ablegen","due":"2025-10-27"}],"collapsed":false},{"id":"eytkq47","title":"","notes":"-Wiederholungstermine einfügen\n-","year":2025,"month":null,"week":42,"items":[],"collapsed":false},{"id":"7jkbqdd","title":"","notes":"","year":2025,"month":null,"week":23,"items":[]}],"tabGroups":[],"tabOrder":["tab:WMe","tab:CVa","tab:UKA","tab:BlM","tab:Har"],"tabMeta":{"UKA":{"groupId":"","color":""},"WMe":{"color":"","groupId":""},"CVa":{"color":"","groupId":""},"BlM":{"color":"","groupId":""},"Har":{"color":"","groupId":""},"Alle":{}},"team":["JHi","WMe","CVa","Har","BlM"]}</script>
 
   <script>
   // Fehlerdiagnose: Alle JavaScript-Fehler im Fenster auf der Seite anzeigen.
@@ -1220,7 +1224,7 @@ r:var(--muted); cursor:pointer}
   </script>
 
   <!-- Autosave Toast -->
-  <div class="toast show" id="toast">Gespeichert</div>
+  <div class="toast" id="toast">Backup importiert – Filter zurückgesetzt</div>
 
   <!-- Floating Save -->
   <div class="fab">
@@ -1231,11 +1235,12 @@ r:var(--muted); cursor:pointer}
     <header>
       <div>
         <div class="title">
-          <span class="dirty" id="dirtyDot"></span>
+          <span class="dirty on" id="dirtyDot"></span>
           <span id="titleText" contenteditable="true" spellcheck="false" data-placeholder="Titel hier ändern …">Team</span>
         </div>
         <div class="sub"></div>
         <div id="fileLocation" class="muted">Projektübersicht_FINAL.html</div>
+        <div id="csvLocationInfo" class="muted" title="Team.csv">CSV-Speicher: Team.csv (Berechtigung erforderlich)</div>
       </div>
       <div class="actions-right" role="toolbar" aria-label="Aktionen">
         <!-- Nur Icons (ohne Text) -->
@@ -1261,30 +1266,33 @@ r:var(--muted); cursor:pointer}
       <div class="barTop">
         <div class="leftTop">
           <div class="tabs-container">
-            <div class="tabs-scroll" id="tabsScroll">
+            <div class="tabs-scroll is-overflowing" id="tabsScroll">
               <div class="tabs" id="tabs"><div class="tab active" data-name="Alle" role="button" tabindex="0"><span class="name">Alle</span></div><div class="tab" data-name="WMe" role="button" tabindex="0" draggable="true"><span class="name">WMe</span><button type="button" class="tab-more"><span class="ms">more_vert</span></button></div><div class="tab" data-name="CVa" role="button" tabindex="0" draggable="true"><span class="name">CVa</span><button type="button" class="tab-more"><span class="ms">more_vert</span></button></div><div class="tab" data-name="UKA" role="button" tabindex="0" draggable="true"><span class="name">UKA</span><button type="button" class="tab-more"><span class="ms">more_vert</span></button></div><div class="tab" data-name="BlM" role="button" tabindex="0" draggable="true"><span class="name">BlM</span><button type="button" class="tab-more"><span class="ms">more_vert</span></button></div><div class="tab" data-name="Har" role="button" tabindex="0" draggable="true"><span class="name">Har</span><button type="button" class="tab-more"><span class="ms">more_vert</span></button></div><button type="button" class="tab-add" title="Tab oder Gruppe hinzufügen"><span class="ms">add</span></button></div>
             </div>
-            <div class="tabs-scrollbar" id="tabsScrollbar">
-              <div class="tabs-thumb" id="tabsThumb" style="transform: translateX(0px);"></div>
+            <div class="tabs-scrollbar show" id="tabsScrollbar">
+              <div class="tabs-thumb" id="tabsThumb" style="transform: translateX(0px); width: 89px;"></div>
             </div>
           </div>
         </div>
         <div class="rightTop">
           <div class="viewToggle">
-            <button id="viewTable" class="on">Tabelle</button>
+            <button id="viewTable" class="">Tabelle</button>
             <button id="viewKanban">Kanban</button>
             <button id="viewTimeline">Timeline</button>
-            <button id="viewAssignees">Bearbeiter</button>
-            <button id="viewDispo">Dispo</button>
+            <button id="viewAssignees" class="">Bearbeiter</button>
+            <button id="viewDispo" class="on">Dispo</button>
           </div>
           <button class="btn" id="csvImportBtn" title="CSV importieren">CSV import</button>
           <button class="btn" id="csvExportBtn" title="CSV exportieren">CSV export</button>
+          <button class="btn" id="csvSaveBtn" title="Zentralen CSV-Speicher aktualisieren">Speichern als CSV</button>
+          <button class="btn" id="csvChangeBtn" title="Zentralen CSV-Speicher auswählen oder ändern">CSV Speicher wählen</button>
+          <button class="btn" id="csvResetBtn" title="Verknüpfung zum CSV-Speicher entfernen">CSV Speicher zurücksetzen</button>
           <button class="btn" id="calendarExportBtn" title="Export für Kalender">Export für Kalender</button>
         </div>
       </div>
 
       <!-- Eingabezeile -->
-      <div class="toolbar" id="addForm" style="display: grid;">
+      <div class="toolbar" id="addForm" style="display: none;">
         <input id="inNr" type="text" placeholder="Projektnummer">
         <input id="inName" type="text" placeholder="Projektname">
         <input id="inFolder" type="text" placeholder="Pfad (file://, C:\\..., /mnt/...)">
@@ -1297,7 +1305,7 @@ r:var(--muted); cursor:pointer}
       </div>
 
       <!-- Filter -->
-      <div class="filterbar" style="display: grid;">
+      <div class="filterbar" style="display: none;">
         <input id="q" type="text" placeholder="Suchen in Nr. und Name">
         <select id="status">
           <option value="all">Status Alle</option>
@@ -1350,7 +1358,7 @@ r:var(--muted); cursor:pointer}
       <!-- Hinweisleiste für kommende Deadlines entfernt -->
 
       <!-- Tabellenansicht -->
-      <div id="tableView" style="display: block;">
+      <div id="tableView" style="display: none;">
         <table>
           <colgroup><col><col><col><col><col><col></colgroup>
           <thead>
@@ -1363,7 +1371,7 @@ r:var(--muted); cursor:pointer}
               <th>Pfad</th>
             </tr>
           </thead>
-          <tbody id="tbody"><tr data-id="tqwx1a4"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3005182</div></td><td><div class="editable" contenteditable="true">Aurubis Gebäude 101</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"><div class="todoBlock"><div class="todoItem" data-project-id="tqwx1a4" data-todo-index="0" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Fotodoku (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><div class="repeatInfo" style="display: none;"></div><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="tqwx1a4" data-todo-index="1" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Versand Schimmelgutachten (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><div class="repeatInfo" style="display: none;"></div><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="subList" style="display: none;"></div></div></div><div class="todoAdd"><input type="text" class="todoCustom" placeholder="To-Do hinzufügen"><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="dlvvdxu"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004955</div></td><td><div class="editable" contenteditable="true">Dalli Rückbau Seifenhaus</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 4 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"><div class="todoBlock"><div class="todoItem" data-project-id="dlvvdxu" data-todo-index="0" draggable="true" style="box-shadow: rgba(239, 68, 68, 0.7) 0px 0px 0px 2px inset;"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Aktenvermerk (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: inline-flex;">Wöchentlich (Di)</span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><div class="repeatInfo" style="display: block;">Wöchentlich · Di · bis 26.12.2025</div><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="dlvvdxu" data-todo-index="1" draggable="true" style="box-shadow: rgba(239, 68, 68, 0.7) 0px 0px 0px 2px inset;"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Baustellenmail (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><div class="repeatInfo" style="display: none;"></div><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="dlvvdxu" data-todo-index="2" draggable="true" style="box-shadow: rgba(239, 68, 68, 0.7) 0px 0px 0px 2px inset;"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Abstimmung Statik Gerüstaufstellung (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><div class="repeatInfo" style="display: none;"></div><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="dlvvdxu" data-todo-index="3" draggable="true" style="box-shadow: rgba(239, 68, 68, 0.7) 0px 0px 0px 2px inset;"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Abstimmung Lohmer Pumpen (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><div class="repeatInfo" style="display: none;"></div><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="subList" style="display: none;"></div></div></div><div class="todoAdd"><input type="text" class="todoCustom" placeholder="To-Do hinzufügen"><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="jsozik2" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004604</div></td><td><div class="editable" contenteditable="true">Aurubis Dachsanierung Gebäude 109</div></td><td><div class="todoCol"><div class="todoHead"><span>Keine To-Dos erfasst</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="ed56c6e" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004559</div></td><td><div class="editable" contenteditable="true">UKA Angiographie</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="5zbee8o" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004489</div></td><td><div class="editable" contenteditable="true">SSK Düsseldorf - Sanierung TG</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="d924wn9" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004336</div></td><td><div class="editable" contenteditable="true">UKA Spüllüftung C5 + B4</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="88a65dg" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004141</div></td><td><div class="editable" contenteditable="true">Otto Junker</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="im8s6o1" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003956</div></td><td><div class="editable" contenteditable="true">Regionetz KMF</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="x7ool21" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003315</div></td><td><div class="editable" contenteditable="true">LP DN Einlaufbauwerk</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="71mkt4q" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003295</div></td><td><div class="editable" contenteditable="true">BLB BSK-Tausch</div></td><td><div class="todoCol"><div class="todoHead"><span>Keine To-Dos erfasst</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="s5fr3cn" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3001606</div></td><td><div class="editable" contenteditable="true">RWTH IBAC</div></td><td><div class="todoCol"><div class="todoHead"><span>Keine To-Dos erfasst</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="lnxl3kg" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3000077</div></td><td><div class="editable" contenteditable="true">LVR Rückbau Haus 13+14</div></td><td><div class="todoCol"><div class="todoHead"><span>Keine To-Dos erfasst</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="t342n54" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004622</div></td><td><div class="editable" contenteditable="true">LH - Bestands-ITS</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="llbzm0o" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004309</div></td><td><div class="editable" contenteditable="true">LH - Wöchnerinnenstation</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="ntlr180" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3005047</div></td><td><div class="editable" contenteditable="true">Landtag Dus - Leitungsumverlegung; Baufeldfreimachung</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 5 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="P:\PLA\300\5047\05_Antraege_Berichte\07_IDR" style="display: none;">P:\PLA\300\5047\05_Antraege_Berichte\07_IDR</div></td></tr><tr data-id="weovyir" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003940-2</div></td><td><div class="editable" contenteditable="true">UKA BSK, LV Freimessung</div></td><td><div class="todoCol"><div class="todoHead"><span>2 von 2 erledigt</span><span style="margin-left: auto;">100%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 100%;"></i></div></div></td><td><div class="note" contenteditable="true">Vorher Aleksandrova erreichen</div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="P:\PLA\300\3940\05_AVA, Baul\BA01\LV151_BA1_Freimessung" style="display: none;">P:\PLA\300\3940\05…\LV151_BA1_Freimessung</div></td></tr><tr data-id="5zlr9e1" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003940-1</div></td><td><div class="editable" contenteditable="true">UKA Brandschutzklappentausch</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="6k5vst8" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3005328</div></td><td><div class="editable" contenteditable="true">UKA Systemzentrale Vorabreinigung</div></td><td><div class="todoCol"><div class="todoHead"><span>1 von 3 erledigt</span><span style="margin-left: auto;">33%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 33%;"></i></div></div></td><td><div class="note" contenteditable="true">Christoph will wissen, wenn das Sanierungskonzept fertig ist.&nbsp;</div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="P:\PLA\300\5328\03_Plan" style="display: none;">P:\PLA\300\5328\03_Plan</div></td></tr><tr data-id="fth7szo"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003896</div></td><td><div class="editable" contenteditable="true">Luisenhospital - Erweiterung CBG</div></td><td><div class="todoCol"><div class="todoHead"><span>1 von 4 erledigt</span><span style="margin-left: auto;">25%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 25%;"></i></div><div class="todoList"><div class="todoBlock"><div class="todoItem" data-project-id="fth7szo" data-todo-index="0" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Analytik anschauen (Har)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><div class="repeatInfo" style="display: none;"></div><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem done" data-project-id="fth7szo" data-todo-index="1" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">OTE Bericht (Har)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><div class="repeatInfo" style="display: none;"></div><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="fth7szo" data-todo-index="2" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Rücksprache Jan zu Ergbnissen (Har)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><div class="repeatInfo" style="display: none;"></div><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="fth7szo" data-todo-index="3" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Timo anrufen (Har)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><div class="repeatInfo" style="display: none;"></div><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div><div class="subList" style="display: none;"></div></div></div><div class="todoAdd"><input type="text" class="todoCustom" placeholder="To-Do hinzufügen"><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="P:\PLA\300\3896" style="display: block;">P:\PLA\300\3896</div></td></tr><tr data-id="rxr924s" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004529</div></td><td><div class="editable" contenteditable="true">DN GS Birkesdorf Fassadensanierung</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="h29264e" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3002224</div></td><td><div class="editable" contenteditable="true">LH Haupthaus</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="66ceq5y" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3005201</div></td><td><div class="editable" contenteditable="true">Rückbau Systemzentrale 4</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr></tbody>
+          <tbody id="tbody"><tr data-id="tqwx1a4"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3005182</div></td><td><div class="editable" contenteditable="true">Aurubis Gebäude 101</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"><div class="todoBlock"><div class="todoItem" data-project-id="tqwx1a4" data-todo-index="0" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Fotodoku (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><div class="todoMetaRow"><div class="todoDueWrap"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button></div><select class="todoAssignee todoAssigneeSelect"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select></div><div class="repeatInfo" style="display: none;"></div><div class="todoMoreActions"><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="tqwx1a4" data-todo-index="1" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Versand Schimmelgutachten (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><div class="todoMetaRow"><div class="todoDueWrap"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button></div><select class="todoAssignee todoAssigneeSelect"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select></div><div class="repeatInfo" style="display: none;"></div><div class="todoMoreActions"><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div></div><div class="subList" style="display: none;"></div></div></div><div class="todoAdd"><input type="text" class="todoCustom" placeholder="To-Do hinzufügen"><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><input type="date" class="todoDueInput" title="Fälligkeitsdatum" placeholder=""><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="dlvvdxu"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004955</div></td><td><div class="editable" contenteditable="true">Dalli Rückbau Seifenhaus</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 4 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div><div class="todoList"><div class="todoBlock"><div class="todoItem" data-project-id="dlvvdxu" data-todo-index="0" draggable="true" style="box-shadow: rgba(239, 68, 68, 0.7) 0px 0px 0px 2px inset;"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Aktenvermerk (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: inline-flex;">Wöchentlich (Di)</span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><div class="todoMetaRow"><div class="todoDueWrap"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button></div><select class="todoAssignee todoAssigneeSelect"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select></div><div class="repeatInfo" style="display: block;">Wöchentlich · Di · ab 14.10.2025 · bis 26.12.2025</div><div class="todoMoreActions"><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="dlvvdxu" data-todo-index="1" draggable="true" style="box-shadow: rgba(239, 68, 68, 0.7) 0px 0px 0px 2px inset;"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Baustellenmail (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><div class="todoMetaRow"><div class="todoDueWrap"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button></div><select class="todoAssignee todoAssigneeSelect"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select></div><div class="repeatInfo" style="display: none;"></div><div class="todoMoreActions"><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="dlvvdxu" data-todo-index="2" draggable="true" style="box-shadow: rgba(239, 68, 68, 0.7) 0px 0px 0px 2px inset;"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Abstimmung Statik Gerüstaufstellung (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><div class="todoMetaRow"><div class="todoDueWrap"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button></div><select class="todoAssignee todoAssigneeSelect"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select></div><div class="repeatInfo" style="display: none;"></div><div class="todoMoreActions"><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="dlvvdxu" data-todo-index="3" draggable="true" style="box-shadow: rgba(239, 68, 68, 0.7) 0px 0px 0px 2px inset;"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Abstimmung Lohmer Pumpen (CVa)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><div class="todoMetaRow"><div class="todoDueWrap"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button></div><select class="todoAssignee todoAssigneeSelect"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select></div><div class="repeatInfo" style="display: none;"></div><div class="todoMoreActions"><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div></div><div class="subList" style="display: none;"></div></div></div><div class="todoAdd"><input type="text" class="todoCustom" placeholder="To-Do hinzufügen"><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><input type="date" class="todoDueInput" title="Fälligkeitsdatum" placeholder=""><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="jsozik2" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004604</div></td><td><div class="editable" contenteditable="true">Aurubis Dachsanierung Gebäude 109</div></td><td><div class="todoCol"><div class="todoHead"><span>Keine To-Dos erfasst</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="ed56c6e" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004559</div></td><td><div class="editable" contenteditable="true">UKA Angiographie</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="5zbee8o" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004489</div></td><td><div class="editable" contenteditable="true">SSK Düsseldorf - Sanierung TG</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="d924wn9" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004336</div></td><td><div class="editable" contenteditable="true">UKA Spüllüftung C5 + B4</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="88a65dg" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004141</div></td><td><div class="editable" contenteditable="true">Otto Junker</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="im8s6o1" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003956</div></td><td><div class="editable" contenteditable="true">Regionetz KMF</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="x7ool21" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003315</div></td><td><div class="editable" contenteditable="true">LP DN Einlaufbauwerk</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="71mkt4q" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003295</div></td><td><div class="editable" contenteditable="true">BLB BSK-Tausch</div></td><td><div class="todoCol"><div class="todoHead"><span>Keine To-Dos erfasst</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="s5fr3cn" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3001606</div></td><td><div class="editable" contenteditable="true">RWTH IBAC</div></td><td><div class="todoCol"><div class="todoHead"><span>Keine To-Dos erfasst</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="lnxl3kg" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3000077</div></td><td><div class="editable" contenteditable="true">LVR Rückbau Haus 13+14</div></td><td><div class="todoCol"><div class="todoHead"><span>Keine To-Dos erfasst</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="t342n54" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004622</div></td><td><div class="editable" contenteditable="true">LH - Bestands-ITS</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="llbzm0o" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004309</div></td><td><div class="editable" contenteditable="true">LH - Wöchnerinnenstation</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="ntlr180" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3005047</div></td><td><div class="editable" contenteditable="true">Landtag Dus - Leitungsumverlegung; Baufeldfreimachung</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 5 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="P:\PLA\300\5047\05_Antraege_Berichte\07_IDR" style="display: none;">P:\PLA\300\5047\05_Antraege_Berichte\07_IDR</div></td></tr><tr data-id="weovyir" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003940-2</div></td><td><div class="editable" contenteditable="true">UKA BSK, LV Freimessung</div></td><td><div class="todoCol"><div class="todoHead"><span>2 von 2 erledigt</span><span style="margin-left: auto;">100%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 100%;"></i></div></div></td><td><div class="note" contenteditable="true">Vorher Aleksandrova erreichen</div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="P:\PLA\300\3940\05_AVA, Baul\BA01\LV151_BA1_Freimessung" style="display: none;">P:\PLA\300\3940\05…\LV151_BA1_Freimessung</div></td></tr><tr data-id="5zlr9e1" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003940-1</div></td><td><div class="editable" contenteditable="true">UKA Brandschutzklappentausch</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="6k5vst8" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3005328</div></td><td><div class="editable" contenteditable="true">UKA Systemzentrale Vorabreinigung</div></td><td><div class="todoCol"><div class="todoHead"><span>1 von 3 erledigt</span><span style="margin-left: auto;">33%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 33%;"></i></div></div></td><td><div class="note" contenteditable="true">Christoph will wissen, wenn das Sanierungskonzept fertig ist.&nbsp;</div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="P:\PLA\300\5328\03_Plan" style="display: none;">P:\PLA\300\5328\03_Plan</div></td></tr><tr data-id="fth7szo"><td class="leftCell" draggable="true"><button class="caret" title="Einklappen"><span class="ms">expand_more</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3003896</div></td><td><div class="editable" contenteditable="true">Luisenhospital - Erweiterung CBG</div></td><td><div class="todoCol"><div class="todoHead"><span>1 von 4 erledigt</span><span style="margin-left: auto;">25%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 25%;"></i></div><div class="todoList"><div class="todoBlock"><div class="todoItem" data-project-id="fth7szo" data-todo-index="0" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Analytik anschauen (Har)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><div class="todoMetaRow"><div class="todoDueWrap"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button></div><select class="todoAssignee todoAssigneeSelect"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select></div><div class="repeatInfo" style="display: none;"></div><div class="todoMoreActions"><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem done" data-project-id="fth7szo" data-todo-index="1" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">OTE Bericht (Har)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><div class="todoMetaRow"><div class="todoDueWrap"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button></div><select class="todoAssignee todoAssigneeSelect"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select></div><div class="repeatInfo" style="display: none;"></div><div class="todoMoreActions"><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="fth7szo" data-todo-index="2" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Rücksprache Jan zu Ergbnissen (Har)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><div class="todoMetaRow"><div class="todoDueWrap"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button></div><select class="todoAssignee todoAssigneeSelect"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select></div><div class="repeatInfo" style="display: none;"></div><div class="todoMoreActions"><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div></div><div class="subList" style="display: none;"></div></div><div class="todoBlock"><div class="todoItem" data-project-id="fth7szo" data-todo-index="3" draggable="true"><input type="checkbox"><div class="todoMain"><div class="todoText editable" contenteditable="true">Timo anrufen (Har)</div><span class="assigneeChip" style="display: none;"></span><span class="repeatBadge" style="display: none;"></span><button type="button" class="repeatEditBtn">Wiederholung</button><button type="button" class="moreBtn" aria-expanded="false">Mehr</button></div><div class="todoMore hidden"><div class="todoMetaRow"><div class="todoDueWrap"><input type="text" class="dateInput" title="Deadline" placeholder="tt.mm.jjjj"><button class="iconbtn miniCal" title="Datum auswählen"><span class="ms">event</span></button></div><select class="todoAssignee todoAssigneeSelect"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select></div><div class="repeatInfo" style="display: none;"></div><div class="todoMoreActions"><button type="button" class="subAddBtn" title="Unter-To-Do hinzufügen"><span class="ms">playlist_add</span></button><button class="todoDel" title="Aufgabe entfernen">✕</button></div></div></div><div class="subList" style="display: none;"></div></div></div><div class="todoAdd"><input type="text" class="todoCustom" placeholder="To-Do hinzufügen"><select class="todoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><input type="date" class="todoDueInput" title="Fälligkeitsdatum" placeholder=""><button class="btnPrimary">+</button></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="P:\PLA\300\3896" style="display: block;">P:\PLA\300\3896</div></td></tr><tr data-id="rxr924s" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3004529</div></td><td><div class="editable" contenteditable="true">DN GS Birkesdorf Fassadensanierung</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 2 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="h29264e" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3002224</div></td><td><div class="editable" contenteditable="true">LH Haupthaus</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr><tr data-id="66ceq5y" class="collapsed"><td class="leftCell" draggable="true"><button class="caret" title="Aufklappen"><span class="ms">chevron_right</span></button><input type="checkbox" class="selectCb"><button class="colorBtn" title="Projektfarbe" style="--pcolor: #7c3aed;"></button></td><td><div class="editable" contenteditable="true">3005201</div></td><td><div class="editable" contenteditable="true">Rückbau Systemzentrale 4</div></td><td><div class="todoCol"><div class="todoHead"><span>0 von 1 erledigt</span><span style="margin-left: auto;">0%</span></div><div class="progress"><i style="background: linear-gradient(90deg, var(--progress), #34d399); width: 0%;"></i></div></div></td><td><div class="note" contenteditable="true"></div></td><td><div class="folderWrap"><input type="text" class="folderInput" placeholder="Pfad oder URL"></div><div class="pathPreview" data-full="" style="display: none;"></div></td></tr></tbody>
         </table>
       </div>
 
@@ -1403,17 +1411,17 @@ r:var(--muted); cursor:pointer}
           <div class="timelineZoomWrap">
             <span>Zoom</span>
             <input id="timelineZoom" type="range" min="0" max="2" step="1">
-            <div class="timelineZoomLabels" id="timelineZoomLabels"><span class="active">KW</span><span>Kompakt</span><span class="">Tage</span></div>
+            <div class="timelineZoomLabels" id="timelineZoomLabels"><span class="">KW</span><span>Kompakt</span><span class="active">Tage</span></div>
           </div>
         </div>
         <div id="timelineView" class="timeline"></div>
       </div>
 
       <!-- Bearbeiter Ansicht -->
-      <div id="assigneeView" class="assigneeView"></div>
+      <div id="assigneeView" class="assigneeView"><div class="assigneeFilterBar"><label for="assigneeFilterSelect">Bearbeiter filtern:</label><select id="assigneeFilterSelect" multiple="" size="3"><option value="__all__">Alle Bearbeiter</option><option value="__unassigned__">Unzugewiesen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><span style="font-size: 12px; color: var(--muted);">Mehrfachauswahl mit Strg/⌘</span></div><div class="assigneeProjects"><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3004529 · DN GS Birkesdorf Fassadensanierung</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Nachfrage bei Firma Vlasman bezüglich Restarbeiten (WMe)</div></div><div class="assigneeTodoMeta">Fällig am 15.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Kurzbewertung Beprobung</div></div><div class="assigneeTodoMeta">Fällig am 17.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3002224 · LH Haupthaus</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">LV Versand (BlM)</div></div><div class="assigneeTodoMeta">Fällig am 10.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3005201 · Rückbau Systemzentrale 4</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Einpflegen von Korrekturvorschlägen(BlM)</div></div><div class="assigneeTodoMeta">Fällig am 22.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3005182 · Aurubis Gebäude 101</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Fotodoku (CVa)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Versand Schimmelgutachten (CVa)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3004955 · Dalli Rückbau Seifenhaus</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Aktenvermerk (CVa)</div></div><div class="assigneeTodoMeta">Fällig am 14.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Baustellenmail (CVa)</div></div><div class="assigneeTodoMeta">Fällig am 14.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Abstimmung Lohmer Pumpen (CVa)</div></div><div class="assigneeTodoMeta">Fällig am 16.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Abstimmung Statik Gerüstaufstellung (CVa)</div></div><div class="assigneeTodoMeta">Fällig am 16.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3004559 · UKA Angiographie</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Fachgutachterliche Begleitung (CVa)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3004489 · SSK Düsseldorf - Sanierung TG</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Prüfung LV (CVa)</div></div><div class="assigneeTodoMeta">Fällig am 15.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Versand LV (CVa)</div></div><div class="assigneeTodoMeta">Fällig am 16.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3004336 · UKA Spüllüftung C5 + B4</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Anpassung Konzept B4 (CVa)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3004141 · Otto Junker</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Abfrage und Zusammenstellung Messergebnis (CVa)</div></div><div class="assigneeTodoMeta">Fällig am 17.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Abstimmung Schimmel (CVa)</div></div><div class="assigneeTodoMeta">Fällig am 05.01.2026</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3003956 · Regionetz KMF</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Weiteres Vorgehen klären (CVa)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Zusammenstellung Messergebnisse (CVa)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3003315 · LP DN Einlaufbauwerk</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Abfrage Status Raumluftmessung (CVa)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3004622 · LH - Bestands-ITS</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Angebot weitere Beprobung (WMe)</div></div><div class="assigneeTodoMeta">Fällig am 15.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3004309 · LH - Wöchnerinnenstation</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Planungs jourfixe (CVa)</div></div><div class="assigneeTodoMeta">Fällig am 15.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Baustellenbegehung mit Firma (WMe)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3003940-1 · UKA Brandschutzklappentausch</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Abnahme PB519 B8 09:00 + Nachbearbeitung (WMe)</div></div><div class="assigneeTodoMeta">Fällig am 16.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Freimessbeauftragung</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3003896 · Luisenhospital - Erweiterung CBG</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Analytik anschauen (Har)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Rücksprache Jan zu Ergbnissen (Har)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Timo anrufen (Har)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3005047 · Landtag Dus - Leitungsumverlegung; Baufeldfreimachung</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Baustellenordnung d. SiGeKo an Bauherr (WMe)</div></div><div class="assigneeTodoMeta">Fällig am 14.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Termin mit Grünflächenamt zu Baumfällantrag (WMe)</div></div><div class="assigneeTodoMeta">Fällig am 14.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Klärung des Deckblattes mit Projektsteuerer (WMe)</div></div><div class="assigneeTodoMeta">Fällig am 15.10.2025</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">LV Baufeldfreimachung (WMe)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">OTE Bericht schreiben (Har)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div><div class="assigneeProjectBlock"><div class="assigneeProjectHeading">3005328 · UKA Systemzentrale Vorabreinigung</div><div class="assigneeTodoList"><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Dominik Konzept schicken (Har)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div><div class="assigneeTodoRow unacknowledged"><input type="checkbox"><div class="assigneeTodoBody"><div class="assigneeTodoHeader"><span class="ackIndicator"></span><div class="assigneeTodoTitle">Sanierungskonzept schreiben (Har)</div></div><div class="assigneeTodoMeta">Kein Fälligkeitsdatum</div></div><div class="assigneeTodoActions"><button type="button" class="miniBtn" title="Als gelesen bestätigen">Gesehen</button></div></div></div></div></div></div>
 
       <!-- Dispo Ansicht -->
-      <div id="dispoView" class="dispo">
+      <div id="dispoView" class="dispo show">
         <div class="dispoControls">
           <div class="dispoField">
             <label for="dispoWeekInput">Kalenderwoche</label>
@@ -1428,8 +1436,8 @@ r:var(--muted); cursor:pointer}
           <button class="btn" id="dispoCsvExportBtn" title="Dispo als CSV exportieren">Dispo CSV export</button>
         </div>
         <div class="dispoExplorer">
-          <div id="dispoBreadcrumbs" class="dispoBreadcrumbs"></div>
-          <div id="dispoList" class="dispoList"></div>
+          <div id="dispoBreadcrumbs" class="dispoBreadcrumbs"><button type="button">Jahre</button><span class="sep">›</span><button type="button">2025</button><span class="sep">›</span><button type="button" class="active" disabled="">Oktober 2025</button></div>
+          <div id="dispoList" class="dispoList"><details class="dispoEntry" open=""><summary><div class="dispoSummaryTitle"><span>KW 42 · 13.10. – 19.10.2025</span></div><span class="dispoSummaryMeta">0 To-Dos</span><div class="dispoSummaryActions"><button type="button" title="Dispo-Eintrag entfernen">Löschen</button></div></summary><div class="dispoBody"><div class="dispoField"><label>Titel / Fokus</label><input type="text" placeholder="z. B. Themen der Dispo"></div><div class="dispoNotes dispoField"><label>Notizen</label><textarea placeholder="Protokollnotizen für das Team…"></textarea></div><div class="dispoItems"><div class="dispoItemHead"><span>Projekt</span><span>Bearbeiter/in</span><span>To-Do</span><span>Deadline</span><span></span></div></div><div class="dispoAssignBar"><select class="dispoProject"><option value="">Projekt wählen</option><option value="lnxl3kg">3000077 · LVR Rückbau Haus 13+14</option><option value="s5fr3cn">3001606 · RWTH IBAC</option><option value="h29264e">3002224 · LH Haupthaus</option><option value="71mkt4q">3003295 · BLB BSK-Tausch</option><option value="x7ool21">3003315 · LP DN Einlaufbauwerk</option><option value="fth7szo">3003896 · Luisenhospital - Erweiterung CBG</option><option value="im8s6o1">3003956 · Regionetz KMF</option><option value="88a65dg">3004141 · Otto Junker</option><option value="jvqopv1">3004266 · UKA Ambulanzaufzüge</option><option value="llbzm0o">3004309 · LH - Wöchnerinnenstation</option><option value="d924wn9">3004336 · UKA Spüllüftung C5 + B4</option><option value="5zbee8o">3004489 · SSK Düsseldorf - Sanierung TG</option><option value="rxr924s">3004529 · DN GS Birkesdorf Fassadensanierung</option><option value="ed56c6e">3004559 · UKA Angiographie</option><option value="jsozik2">3004604 · Aurubis Dachsanierung Gebäude 109</option><option value="t342n54">3004622 · LH - Bestands-ITS</option><option value="dlvvdxu">3004955 · Dalli Rückbau Seifenhaus</option><option value="ntlr180">3005047 · Landtag Dus - Leitungsumverlegung; Baufeldfreimachung</option><option value="tqwx1a4">3005182 · Aurubis Gebäude 101</option><option value="66ceq5y">3005201 · Rückbau Systemzentrale 4</option><option value="6k5vst8">3005328 · UKA Systemzentrale Vorabreinigung</option><option value="5zlr9e1">3003940-1 · UKA Brandschutzklappentausch</option><option value="weovyir">3003940-2 · UKA BSK, LV Freimessung</option></select><select class="dispoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><input type="text" class="dispoTodoText" placeholder="To-Dos durch ; trennen"><input type="date" class="dispoTodoDue"><button type="button" class="btnPrimary" disabled="">Zuweisen</button></div></div></details><details class="dispoEntry" open=""><summary><div class="dispoSummaryTitle"><span>KW 44 · 27.10. – 02.11.2025</span></div><span class="dispoSummaryMeta">13 To-Dos</span><div class="dispoSummaryActions"><button type="button" title="Dispo-Eintrag entfernen">Löschen</button></div></summary><div class="dispoBody"><div class="dispoField"><label>Titel / Fokus</label><input type="text" placeholder="z. B. Themen der Dispo"></div><div class="dispoNotes dispoField"><label>Notizen</label><textarea placeholder="Protokollnotizen für das Team…"></textarea></div><div class="dispoItems"><div class="dispoItemHead"><span>Projekt</span><span>Bearbeiter/in</span><span>To-Do</span><span>Deadline</span><span></span></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div><div class="dispoItemRow"><input type="text" placeholder="Projekt / Bereich"><input type="text" placeholder="Bearbeiter/in"><input type="text" placeholder="Aufgabe"><input type="date"><button type="button" title="To-Do entfernen">×</button></div></div><div class="dispoAssignBar"><select class="dispoProject"><option value="">Projekt wählen</option><option value="lnxl3kg">3000077 · LVR Rückbau Haus 13+14</option><option value="s5fr3cn">3001606 · RWTH IBAC</option><option value="h29264e">3002224 · LH Haupthaus</option><option value="71mkt4q">3003295 · BLB BSK-Tausch</option><option value="x7ool21">3003315 · LP DN Einlaufbauwerk</option><option value="fth7szo">3003896 · Luisenhospital - Erweiterung CBG</option><option value="im8s6o1">3003956 · Regionetz KMF</option><option value="88a65dg">3004141 · Otto Junker</option><option value="jvqopv1">3004266 · UKA Ambulanzaufzüge</option><option value="llbzm0o">3004309 · LH - Wöchnerinnenstation</option><option value="d924wn9">3004336 · UKA Spüllüftung C5 + B4</option><option value="5zbee8o">3004489 · SSK Düsseldorf - Sanierung TG</option><option value="rxr924s">3004529 · DN GS Birkesdorf Fassadensanierung</option><option value="ed56c6e">3004559 · UKA Angiographie</option><option value="jsozik2">3004604 · Aurubis Dachsanierung Gebäude 109</option><option value="t342n54">3004622 · LH - Bestands-ITS</option><option value="dlvvdxu">3004955 · Dalli Rückbau Seifenhaus</option><option value="ntlr180">3005047 · Landtag Dus - Leitungsumverlegung; Baufeldfreimachung</option><option value="tqwx1a4">3005182 · Aurubis Gebäude 101</option><option value="66ceq5y">3005201 · Rückbau Systemzentrale 4</option><option value="6k5vst8">3005328 · UKA Systemzentrale Vorabreinigung</option><option value="5zlr9e1">3003940-1 · UKA Brandschutzklappentausch</option><option value="weovyir">3003940-2 · UKA BSK, LV Freimessung</option></select><select class="dispoAssignee"><option value="">Bearbeiter wählen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select><input type="text" class="dispoTodoText" placeholder="To-Dos durch ; trennen"><input type="date" class="dispoTodoDue"><button type="button" class="btnPrimary" disabled="">Zuweisen</button></div></div></details></div>
           <div id="dispoAssignSummary" class="dispoAssignSummary">Noch keine To-Dos zugewiesen.</div>
         </div>
       </div>
@@ -1498,6 +1506,9 @@ r:var(--muted); cursor:pointer}
     <label for="repeatInterval">Intervall <span id="repeatIntervalLabelText">(Anzahl)</span>
       <input id="repeatInterval" type="number" min="1" value="1">
     </label>
+    <label for="repeatStart">Serienstart
+      <input id="repeatStart" type="date">
+    </label>
     <div id="repeatWeekdayWrap" class="repeatWeekdays">
       <span>Wochentage</span>
       <div class="weekdayGrid">
@@ -1513,8 +1524,8 @@ r:var(--muted); cursor:pointer}
     <label for="repeatCount">Maximale Wiederholungen (optional)
       <input id="repeatCount" type="number" min="1" placeholder="leer = unbegrenzt">
     </label>
-    <label for="repeatUntil">Enddatum (optional)
-      <input id="repeatUntil" type="date">
+    <label for="repeatEnd">Serienende (optional)
+      <input id="repeatEnd" type="date">
     </label>
     <div class="dialogButtons">
       <button type="button" class="btn" id="repeatRemove" disabled="">Entfernen</button>
@@ -1632,10 +1643,26 @@ r:var(--muted); cursor:pointer}
         dueDate = parseIsoDate(ctx.dueDate)
       }
     }
-    const defaultDay = dueDate ? isoWeekday(dueDate) : null
+    const startStr = typeof raw.start === 'string' ? raw.start.trim() : ''
+    let startDate = startStr ? (parseIsoDate(startStr) || parseGermanDate(startStr)) : null
+    if(!startDate && dueDate) startDate = dueDate
+    const endStr = typeof raw.end === 'string' ? raw.end.trim() : ''
+    let endDate = endStr ? (parseIsoDate(endStr) || parseGermanDate(endStr)) : null
+    if(!endDate && until){
+      const parsedUntil = parseIsoDate(until)
+      if(parsedUntil) endDate = parsedUntil
+    }
+    const defaultDay = startDate ? isoWeekday(startDate) : (dueDate ? isoWeekday(dueDate) : null)
     const spec = { freq, interval }
     if(count) spec.count = count
-    if(until) spec.until = until
+    if(startDate) spec.start = formatIsoDate(startDate)
+    if(endDate){
+      const isoEnd = formatIsoDate(endDate)
+      spec.end = isoEnd
+      spec.until = isoEnd
+    }else if(until){
+      spec.until = until
+    }
     if(freq === 'weekly' || freq === 'monthly'){
       const cleaned = normalizeRepeatDays(raw.days)
       if(cleaned.length){
@@ -1911,12 +1938,18 @@ normalizeState()
 
   const dirtyDot = document.getElementById('dirtyDot')
   const fileLocationEl = document.getElementById('fileLocation')
+  const csvLocationInfo = document.getElementById('csvLocationInfo')
+  const csvChangeBtn = document.getElementById('csvChangeBtn')
+  const csvResetBtn = document.getElementById('csvResetBtn')
   let unsaved = false
   const history = [], future = [], selected = new Set()
   const toast = document.getElementById('toast')
   const DAY_MS = 86400000
   if(fileLocationEl){
     updateFileLocationDisplay()
+  }
+  if(csvLocationInfo){
+    initCsvStorage().catch(err => console.error('CSV-Initialisierung fehlgeschlagen', err))
   }
   let draggingProjectId = null
   let draggingTabName = null
@@ -1925,6 +1958,11 @@ normalizeState()
   const ASSIGNEE_UNASSIGNED = '__unassigned__'
   let virtualizationActive = false
   let virtualScrollScheduled = false
+  const CSV_HANDLE_KEY = 'centralCsvHandle'
+  const CSV_SIGNATURE_KEY = 'centralCsvSignature'
+  let currentCsvHandle = null
+  let cachedCsvSignature = undefined
+  let csvWriteInProgress = false
   let currentFileHandle = null
   let repeatTarget = null
   const calendarDialogState = { tasks: [], fileName: 'todos.ics' }
@@ -3161,8 +3199,9 @@ normalizeState()
   const repeatFreqInput = document.getElementById('repeatFreq')
   const repeatIntervalInput = document.getElementById('repeatInterval')
   const repeatIntervalLabelText = document.getElementById('repeatIntervalLabelText')
+  const repeatStartInput = document.getElementById('repeatStart')
   const repeatCountInput = document.getElementById('repeatCount')
-  const repeatUntilInput = document.getElementById('repeatUntil')
+  const repeatEndInput = document.getElementById('repeatEnd')
   const repeatCancelBtn = document.getElementById('repeatCancel')
   const repeatRemoveBtn = document.getElementById('repeatRemove')
   const repeatWeekdayWrap = document.getElementById('repeatWeekdayWrap')
@@ -3253,7 +3292,8 @@ normalizeState()
         return
       }
       const todo = repeatTarget.todo
-      if(!parseIsoDate(todo.due)){
+      const dueDateObj = parseIsoDate(todo.due)
+      if(!dueDateObj){
         showToast('Bitte zuerst ein Fälligkeitsdatum setzen.')
         return
       }
@@ -3267,8 +3307,22 @@ normalizeState()
         const spec = { freq, interval }
         const countVal = repeatCountInput ? Math.floor(Number(repeatCountInput.value)) : NaN
         if(Number.isFinite(countVal) && countVal > 0) spec.count = countVal
-        const untilVal = repeatUntilInput && repeatUntilInput.value ? repeatUntilInput.value : ''
-        if(untilVal && parseIsoDate(untilVal)) spec.until = untilVal
+        const startVal = repeatStartInput && repeatStartInput.value ? repeatStartInput.value : ''
+        if(startVal){
+          const parsedStart = parseIsoDate(startVal)
+          if(parsedStart) spec.start = formatIsoDate(parsedStart)
+        }else if(dueDateObj){
+          spec.start = formatIsoDate(dueDateObj)
+        }
+        const endVal = repeatEndInput && repeatEndInput.value ? repeatEndInput.value : ''
+        if(endVal){
+          const parsedEnd = parseIsoDate(endVal)
+          if(parsedEnd){
+            const isoEnd = formatIsoDate(parsedEnd)
+            spec.end = isoEnd
+            spec.until = isoEnd
+          }
+        }
         if((freq === 'weekly' || freq === 'monthly') && repeatWeekdayInputs.length){
           const selectedDays = repeatWeekdayInputs
             .filter(cb => cb.checked)
@@ -3284,39 +3338,6 @@ normalizeState()
           if(selectedDays.length){
             const unique = Array.from(new Set(selectedDays)).sort((a,b) => a - b)
             spec.days = unique
-          }
-        }
-        if((spec.freq === 'weekly' || spec.freq === 'monthly') && Array.isArray(spec.days) && spec.days.length){
-          const dueIso = parseIsoDate(todo.due)
-          if(dueIso){
-            const sortedDays = spec.days.map(n => Math.min(7, Math.max(1, Number(n) || 0))).filter(Boolean).sort((a,b) => a - b)
-            if(sortedDays.length){
-              const isoOfDue = ((dueIso.getUTCDay() + 6) % 7) + 1
-              const intervalWeeksBase = Number.isFinite(spec.interval) && spec.interval > 0 ? Math.floor(spec.interval) : 1
-              const intervalWeeks = spec.freq === 'monthly' ? intervalWeeksBase * 4 : intervalWeeksBase
-              const baseWeekStart = startOfIsoWeek(dueIso)
-              const baseMs = baseWeekStart.getTime()
-              let targetDay = sortedDays.find(d => d >= isoOfDue)
-              let resultMs
-              if(targetDay){
-                resultMs = baseMs + (targetDay - 1) * DAY_MS
-                if(resultMs < dueIso.getTime()){
-                  const nextWeekMs = baseMs + intervalWeeks * 7 * DAY_MS
-                  const wrapDay = sortedDays[0]
-                  resultMs = nextWeekMs + (wrapDay - 1) * DAY_MS
-                }
-              }else{
-                const wrapDay = sortedDays[0]
-                const nextWeekMs = baseMs + intervalWeeks * 7 * DAY_MS
-                resultMs = nextWeekMs + (wrapDay - 1) * DAY_MS
-              }
-              if(Number.isFinite(resultMs)){
-                const nextDate = new Date(resultMs)
-                if(!Number.isNaN(nextDate.getTime())){
-                  todo.due = formatIsoDate(nextDate)
-                }
-              }
-            }
           }
         }
         todo.repeat = spec
@@ -3555,8 +3576,13 @@ normalizeState()
       const count = Math.floor(Number(spec.count))
       parts.push(`${count} Termin${count === 1 ? '' : 'e'}`)
     }
-    if(spec.until && parseIsoDate(spec.until)){
-      parts.push(`bis ${formatGermanDate(parseIsoDate(spec.until))}`)
+    const startDate = spec.start && parseIsoDate(spec.start)
+    if(startDate){
+      parts.push(`ab ${formatGermanDate(startDate)}`)
+    }
+    const endDate = (spec.end && parseIsoDate(spec.end)) || (spec.until && parseIsoDate(spec.until))
+    if(endDate){
+      parts.push(`bis ${formatGermanDate(endDate)}`)
     }
     return parts.join(' · ') || 'Wiederholung aktiv'
   }
@@ -4990,10 +5016,30 @@ tdFolder.appendChild(preview);
       ? Math.floor(Number(todo.repeat.count))
       : ''
     if(repeatCountInput) repeatCountInput.value = countVal === '' ? '' : String(countVal)
-    const untilVal = todo.repeat && typeof todo.repeat.until === 'string' && parseIsoDate(todo.repeat.until)
-      ? todo.repeat.until
-      : ''
-    if(repeatUntilInput) repeatUntilInput.value = untilVal
+    const startIso = (() => {
+      const rawStart = todo.repeat && typeof todo.repeat.start === 'string' ? todo.repeat.start.trim() : ''
+      if(rawStart){
+        const parsed = parseIsoDate(rawStart)
+        if(parsed) return formatIsoDate(parsed)
+      }
+      const dueParsed = parseIsoDate(todo.due)
+      return dueParsed ? formatIsoDate(dueParsed) : ''
+    })()
+    if(repeatStartInput) repeatStartInput.value = startIso
+    const endIso = (() => {
+      const rawEnd = todo.repeat && typeof todo.repeat.end === 'string' ? todo.repeat.end.trim() : ''
+      if(rawEnd){
+        const parsed = parseIsoDate(rawEnd)
+        if(parsed) return formatIsoDate(parsed)
+      }
+      const rawUntil = todo.repeat && typeof todo.repeat.until === 'string' ? todo.repeat.until.trim() : ''
+      if(rawUntil){
+        const parsedUntil = parseIsoDate(rawUntil)
+        if(parsedUntil) return formatIsoDate(parsedUntil)
+      }
+      return ''
+    })()
+    if(repeatEndInput) repeatEndInput.value = endIso
     if(repeatWeekdayInputs.length){
       const selected = Array.isArray(todo.repeat?.days)
         ? todo.repeat.days.map(val => parseInt(val, 10)).filter(num => Number.isFinite(num) && num >= 1 && num <= 7)
@@ -5072,9 +5118,21 @@ tdFolder.appendChild(preview);
       const nextIso = dateObj ? formatIsoDate(dateObj) : ''
       if(t.due === nextIso) return
       pushHistory()
+      const prevDueIso = t.due
+      const prevRepeat = t.repeat && typeof t.repeat === 'object' ? { ...t.repeat } : null
       t.due = nextIso
+      if(!nextIso){
+        t.repeat = null
+      }else if(prevRepeat){
+        if(prevRepeat.start === prevDueIso || !prevRepeat.start){
+          prevRepeat.start = nextIso
+        }
+        const normalizedRepeat = normalizeRepeatSpec(prevRepeat, { dueDate: nextIso || dateObj })
+        t.repeat = normalizedRepeat || null
+      }
       setDirty(true)
       due.value = dateObj ? formatGermanDate(dateObj) : ''
+      updateRepeatSummary()
     }
     const updateDueFromInput = () => {
       const raw = due.value.trim()
@@ -5448,12 +5506,12 @@ tdFolder.appendChild(preview);
     if(field!=='' || row.length){ row.push(field.trim()); rows.push(row) }
     return rows
   }
-  function exportCSV(list, name){
+  function buildProjectCsvRows(list){
     const header = [
       'ProjektID','Projektnummer','Projektname','Tab','ProjektNotizenHTML','ProjektPfad','ProjektFarbe','ProjektEingeklappt',
       'ProjektDeadline','ProjektDeadlineSichtbar','ProjektLeerErledigt','ProjektDatum','ProjektSortierung',
       'TodoTyp','TodoIndex','SubtaskIndex','TodoText','TodoDone','TodoStart','TodoDue','TodoAssignee','TodoAcknowledged',
-      'TodoRepeatFreq','TodoRepeatInterval','TodoRepeatCount','TodoRepeatUntil','TodoRepeatDays','ParentTodoText'
+      'TodoRepeatFreq','TodoRepeatInterval','TodoRepeatCount','TodoRepeatStart','TodoRepeatEnd','TodoRepeatUntil','TodoRepeatDays','ParentTodoText'
     ]
     const rows = [header]
     const manualOrder = (state.order && state.order.length) ? state.order.slice() : (state.projects || []).map(p => p.id)
@@ -5494,6 +5552,8 @@ tdFolder.appendChild(preview);
         repeat?.freq || '',
         repeat?.interval != null ? String(repeat.interval) : '',
         repeat?.count != null ? String(repeat.count) : '',
+        repeat?.start || '',
+        repeat?.end || '',
         repeat?.until || '',
         repeatDays,
         parentText || ''
@@ -5514,9 +5574,299 @@ tdFolder.appendChild(preview);
         })
       })
     })
-    const csv = rows.map(r => r.map(c => `"${String(c ?? '').replace(/"/g,'""')}"`).join(',')).join('\n')
+    return rows
+  }
+  function stringifyCsv(rows){
+    return rows.map(r => r.map(c => `"${String(c ?? '').replace(/"/g,'""')}"`).join(',')).join('\n')
+  }
+  function supportsFileSystemAccess(){
+    return typeof window !== 'undefined' && (('showSaveFilePicker' in window) || ('showOpenFilePicker' in window)) && 'FileSystemFileHandle' in window
+  }
+  function hasKeyval(){
+    return !!(window.idbKeyval && typeof window.idbKeyval.get === 'function')
+  }
+  function triggerCsvDownload(csv, name){
     const blob = new Blob([csv], {type:'text/csv;charset=utf-8'})
-    const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href)
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = name
+    a.click()
+    URL.revokeObjectURL(a.href)
+  }
+  async function getStoredCsvHandle(){
+    if(!hasKeyval()) return null
+    try{
+      const handle = await window.idbKeyval.get(CSV_HANDLE_KEY)
+      return handle || null
+    }catch(err){
+      console.warn('CSV-Handle konnte nicht gelesen werden', err)
+      return null
+    }
+  }
+  async function storeCsvHandle(handle){
+    if(!hasKeyval()) return
+    try{
+      await window.idbKeyval.set(CSV_HANDLE_KEY, handle)
+    }catch(err){
+      console.warn('CSV-Handle konnte nicht gespeichert werden', err)
+    }
+  }
+  async function deleteStoredCsvBinding(){
+    if(!hasKeyval()) return
+    try{
+      await window.idbKeyval.del(CSV_HANDLE_KEY)
+      await window.idbKeyval.del(CSV_SIGNATURE_KEY)
+    }catch(err){
+      console.warn('CSV-Handle konnte nicht entfernt werden', err)
+    }
+    cachedCsvSignature = undefined
+    currentCsvHandle = null
+  }
+  async function getStoredCsvSignature(){
+    if(cachedCsvSignature !== undefined) return cachedCsvSignature
+    if(!hasKeyval()){
+      cachedCsvSignature = null
+      return cachedCsvSignature
+    }
+    try{
+      const value = await window.idbKeyval.get(CSV_SIGNATURE_KEY)
+      cachedCsvSignature = value || null
+    }catch(err){
+      console.warn('CSV-Signatur konnte nicht gelesen werden', err)
+      cachedCsvSignature = null
+    }
+    return cachedCsvSignature
+  }
+  async function storeCsvSignature(signature){
+    cachedCsvSignature = signature || null
+    if(!hasKeyval()) return
+    try{
+      await window.idbKeyval.set(CSV_SIGNATURE_KEY, cachedCsvSignature)
+    }catch(err){
+      console.warn('CSV-Signatur konnte nicht gespeichert werden', err)
+    }
+  }
+  function signaturesEqual(a, b){
+    if(!a || !b) return false
+    return a.lastModified === b.lastModified && a.size === b.size
+  }
+  async function readHandleSignature(handle){
+    if(!handle || typeof handle.getFile !== 'function') return null
+    try{
+      const file = await handle.getFile()
+      return { lastModified:file.lastModified, size:file.size }
+    }catch(err){
+      console.warn('CSV-Datei konnte nicht gelesen werden', err)
+      return null
+    }
+  }
+  async function verifyPermission(handle, readWrite){
+    if(!handle) return false
+    if(typeof handle.queryPermission === 'function'){
+      const mode = readWrite ? 'readwrite' : 'read'
+      try{
+        let status = await handle.queryPermission({ mode })
+        if(status === 'granted') return true
+        if(status === 'prompt'){
+          status = await handle.requestPermission({ mode })
+          return status === 'granted'
+        }
+        return false
+      }catch(err){
+        console.warn('Berechtigungsprüfung fehlgeschlagen', err)
+        return false
+      }
+    }
+    return true
+  }
+  async function checkHandlePermission(handle, readWrite){
+    if(!handle || typeof handle.queryPermission !== 'function') return true
+    try{
+      const mode = readWrite ? 'readwrite' : 'read'
+      const status = await handle.queryPermission({ mode })
+      return status === 'granted'
+    }catch(err){
+      return false
+    }
+  }
+  function updateCsvLocationDisplay(handle, options = {}){
+    if(!csvLocationInfo) return
+    if(options.message){
+      csvLocationInfo.textContent = options.message
+      csvLocationInfo.title = options.title || options.message
+      return
+    }
+    if(handle){
+      const name = handle.name || 'Unbenannte CSV'
+      const suffix = options.permissionRequired ? ' (Berechtigung erforderlich)' : ''
+      csvLocationInfo.textContent = `CSV-Speicher: ${name}${suffix}`
+      csvLocationInfo.title = name
+    }else{
+      csvLocationInfo.textContent = 'CSV-Speicher: nicht verbunden'
+      csvLocationInfo.title = 'Kein zentraler CSV-Speicher ausgewählt'
+    }
+  }
+  async function promptCsvSaveHandle({ suggestedName } = {}){
+    if(!supportsFileSystemAccess()) return null
+    const pickerTypes = [{ description:'CSV-Dateien', accept:{ 'text/csv': ['.csv'] } }]
+    if(window.showSaveFilePicker){
+      try{
+        return await window.showSaveFilePicker({ suggestedName: suggestedName || 'projekte.csv', types: pickerTypes })
+      }catch(err){
+        if(err && err.name === 'AbortError') return null
+        throw err
+      }
+    }
+    if(window.showOpenFilePicker){
+      try{
+        const handles = await window.showOpenFilePicker({ multiple:false, types: pickerTypes })
+        return handles && handles[0] ? handles[0] : null
+      }catch(err){
+        if(err && err.name === 'AbortError') return null
+        throw err
+      }
+    }
+    return null
+  }
+  async function selectAndStoreCsvHandle({ suggestedName } = {}){
+    try{
+      const handle = await promptCsvSaveHandle({ suggestedName })
+      if(!handle) return null
+      const hasPermission = await verifyPermission(handle, true)
+      if(!hasPermission){
+        alert('Die Anwendung benötigt Schreibzugriff auf die ausgewählte CSV-Datei.')
+        return null
+      }
+      currentCsvHandle = handle
+      updateCsvLocationDisplay(handle)
+      await storeCsvHandle(handle)
+      const signature = await readHandleSignature(handle)
+      await storeCsvSignature(signature)
+      return handle
+    }catch(err){
+      if(err && err.name === 'AbortError') return null
+      console.error('CSV-Speicher konnte nicht ausgewählt werden', err)
+      alert('CSV-Speicher konnte nicht ausgewählt werden: ' + (err && err.message ? err.message : err))
+      return null
+    }
+  }
+  async function ensureCsvHandle({ suggestedName, forcePrompt = false } = {}){
+    if(!supportsFileSystemAccess() || !hasKeyval()) return null
+    if(forcePrompt){
+      return await selectAndStoreCsvHandle({ suggestedName })
+    }
+    if(currentCsvHandle){
+      if(await verifyPermission(currentCsvHandle, true)){
+        return currentCsvHandle
+      }
+      currentCsvHandle = null
+    }
+    const stored = await getStoredCsvHandle()
+    if(stored){
+      if(await verifyPermission(stored, true)){
+        currentCsvHandle = stored
+        updateCsvLocationDisplay(stored)
+        return stored
+      }
+    }
+    return await selectAndStoreCsvHandle({ suggestedName })
+  }
+  async function writeCsvUsingHandle(csv, { suggestedName, forcePrompt = false } = {}){
+    if(csvWriteInProgress) throw new Error('Ein Speichervorgang läuft bereits.')
+    if(!supportsFileSystemAccess() || !hasKeyval()) return 'unsupported'
+    csvWriteInProgress = true
+    try{
+      const handle = await ensureCsvHandle({ suggestedName, forcePrompt })
+      if(!handle) return 'aborted'
+      const knownSignature = await getStoredCsvSignature()
+      const currentSignature = await readHandleSignature(handle)
+      if(knownSignature && currentSignature && !signaturesEqual(knownSignature, currentSignature)){
+        const proceed = confirm('Die zentrale CSV wurde seit dem letzten Speichern geändert. Trotzdem überschreiben?')
+        if(!proceed) return 'aborted'
+      }
+      const writable = await handle.createWritable()
+      await writable.write(csv)
+      await writable.close()
+      const newSignature = await readHandleSignature(handle)
+      await storeCsvSignature(newSignature)
+      updateCsvLocationDisplay(handle)
+      return 'saved'
+    }catch(err){
+      if(err && err.name === 'AbortError') return 'aborted'
+      throw err
+    }finally{
+      csvWriteInProgress = false
+    }
+  }
+  function inferCsvFileName(){
+    const title = (state.title || '').trim()
+    if(title){
+      return `${title.replace(/\s+/g,'_')}.csv`
+    }
+    return 'projekte.csv'
+  }
+  async function initCsvStorage(){
+    if(!csvLocationInfo) return
+    if(!supportsFileSystemAccess()){
+      updateCsvLocationDisplay(null, { message:'CSV-Speicher: Download-Fallback aktiv (Browser ohne Dateizugriff)' })
+      if(csvChangeBtn) csvChangeBtn.disabled = true
+      if(csvResetBtn) csvResetBtn.disabled = true
+      return
+    }
+    if(!hasKeyval()){
+      updateCsvLocationDisplay(null, { message:'CSV-Speicher: Download-Fallback aktiv (IndexedDB nicht verfügbar)' })
+      if(csvChangeBtn) csvChangeBtn.disabled = true
+      if(csvResetBtn) csvResetBtn.disabled = true
+      setTimeout(() => {
+        initCsvStorage().catch(err => console.error('CSV-Initialisierung (erneut) fehlgeschlagen', err))
+      }, 600)
+      return
+    }
+    if(csvChangeBtn) csvChangeBtn.disabled = false
+    if(csvResetBtn) csvResetBtn.disabled = false
+    const stored = await getStoredCsvHandle()
+    if(stored){
+      currentCsvHandle = stored
+      const hasPerm = await checkHandlePermission(stored, false)
+      updateCsvLocationDisplay(stored, { permissionRequired: !hasPerm })
+      await getStoredCsvSignature()
+    }else{
+      updateCsvLocationDisplay(null)
+    }
+  }
+  async function exportCSV(list, name, options = {}){
+    const { forceDownload = false, forcePrompt = false } = options
+    const rows = buildProjectCsvRows(list)
+    const csv = stringifyCsv(rows)
+    const fileName = name || inferCsvFileName()
+    if(forceDownload || !supportsFileSystemAccess() || !hasKeyval()){
+      triggerCsvDownload(csv, fileName)
+      return 'download'
+    }
+    try{
+      const status = await writeCsvUsingHandle(csv, { suggestedName: fileName, forcePrompt })
+      if(status === 'unsupported'){
+        triggerCsvDownload(csv, fileName)
+        return 'download'
+      }
+      if(status === 'saved'){
+        return 'saved'
+      }
+      if(status === 'aborted'){
+        return 'aborted'
+      }
+      return status
+    }catch(err){
+      if(err && err.name === 'AbortError') return 'aborted'
+      console.error('CSV speichern fehlgeschlagen', err)
+      triggerCsvDownload(csv, fileName)
+      return 'download'
+    }
+  }
+  async function saveCsv(options = {}){
+    const { forcePrompt = false, forceDownload = false } = options
+    const list = gatherProjectsForExport()
+    return await exportCSV(list, inferCsvFileName(), { forcePrompt, forceDownload })
   }
   function gatherProjectsForExport(){
     const projects = Array.isArray(state.projects) ? state.projects : []
@@ -6259,7 +6609,10 @@ tdFolder.appendChild(preview);
       const now = new Date();
       return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
     };
-    const diffDays = (later, earlier) => Math.floor((later.getTime() - earlier.getTime()) / dayMs);
+    const diffDays = (later, earlier) => {
+      const toUtcMidnight = (date) => Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+      return Math.round((toUtcMidnight(later) - toUtcMidnight(earlier)) / dayMs);
+    };
     const clamp = (val, min, max) => Math.min(max, Math.max(min, val));
     const formatDate = (d) => `${String(d.getUTCDate()).padStart(2,'0')}.${String(d.getUTCMonth()+1).padStart(2,'0')}.${d.getUTCFullYear()}`;
     const daysInMonth = (yr, mo) => new Date(Date.UTC(yr, mo + 1, 0)).getUTCDate();
@@ -6292,6 +6645,7 @@ tdFolder.appendChild(preview);
     const repeatLimit = (spec) => {
       if(!spec || typeof spec !== 'object') return 0;
       if(Number.isFinite(spec.count) && spec.count > 0) return Math.min(Math.floor(spec.count), 1000);
+      if(spec.end && parseDate(spec.end)) return 1000;
       if(spec.until && parseDate(spec.until)) return 1000;
       return 24;
     };
@@ -6299,13 +6653,18 @@ tdFolder.appendChild(preview);
       if(!(baseDate instanceof Date)) return [];
       const normalized = normalizeRepeatSpec(spec, { dueDate: baseDate });
       if(!normalized) return [];
-      const untilMs = normalized.until ? (parseDate(normalized.until)?.getTime() ?? null) : null;
+      const startAnchor = normalized.start ? parseDate(normalized.start) : null;
+      const anchorDate = (startAnchor instanceof Date && !Number.isNaN(startAnchor.getTime())) ? startAnchor : baseDate;
+      const startLimitMs = (startAnchor instanceof Date && !Number.isNaN(startAnchor.getTime())) ? startAnchor.getTime() : null;
+      const endLimitMs = normalized.end ? (parseDate(normalized.end)?.getTime() ?? null) : null;
+      const untilMsRaw = normalized.until ? (parseDate(normalized.until)?.getTime() ?? null) : null;
+      const limitMs = endLimitMs ?? untilMsRaw;
       const interval = Number.isFinite(normalized.interval) && normalized.interval > 0 ? Math.floor(normalized.interval) : 1;
       const cap = Math.max(1, repeatLimit(normalized));
       const occurrences = [];
       let produced = 0;
       const pushOccurrence = (occMs) => {
-        if(untilMs && occMs > untilMs) return false;
+        if(limitMs && occMs > limitMs) return false;
         produced++;
         if((!windowStartMs || occMs >= windowStartMs) && (!windowEndMs || occMs <= windowEndMs)){
           occurrences.push(new Date(occMs));
@@ -6315,25 +6674,37 @@ tdFolder.appendChild(preview);
         return true;
       };
       if(normalized.freq === 'weekly' || normalized.freq === 'monthly'){
-        let days = normalizeRepeatDays(normalized.days);
-        if(!days.length) days = [isoDay(baseDate)];
-        const baseWeekStart = startOfIsoWeek(baseDate);
-        const weekSpan = normalized.freq === 'monthly' ? interval * 4 : interval;
+        const days = normalizeRepeatDays(normalized.days);
+        const baseDay = isoDay(anchorDate);
+        const effectiveDays = days.length ? days : [baseDay];
+        const dayOffsets = effectiveDays
+          .map(day => day - baseDay)
+          .sort((a, b) => a - b);
+        const intervalWeeks = normalized.freq === 'monthly' ? interval * 4 : interval;
+        const baseMs = anchorDate.getTime();
         let weekIndex = 0;
         while(produced < cap){
-          const weekStartMs = baseWeekStart.getTime() + weekIndex * weekSpan * 7 * dayMs;
-          for(const day of days){
-            const occMs = weekStartMs + (day - 1) * dayMs;
-            if(weekIndex === 0 && occMs < baseDate.getTime()) continue;
+          for(const offset of dayOffsets){
+            const occMs = baseMs + (weekIndex * intervalWeeks * 7 + offset) * dayMs;
+            if(limitMs && occMs > limitMs) return occurrences;
+            if(startLimitMs && occMs < startLimitMs) continue;
+            if(weekIndex === 0 && occMs < baseMs) continue;
             if(!pushOccurrence(occMs)) return occurrences;
           }
           weekIndex++;
-          if(untilMs && (baseWeekStart.getTime() + weekIndex * weekSpan * 7 * dayMs) > untilMs) break;
+          if(limitMs && (baseMs + weekIndex * intervalWeeks * 7 * dayMs) > limitMs) break;
         }
       }else{
-        let current = new Date(baseDate.getTime());
+        let current = new Date(anchorDate.getTime());
         while(produced < cap){
-          if(!pushOccurrence(current.getTime())) break;
+          const currentMs = current.getTime();
+          if(limitMs && currentMs > limitMs) break;
+          if(startLimitMs && currentMs < startLimitMs){
+            current = addInterval(current, normalized.freq, interval);
+            if(!current || Number.isNaN(current.getTime())) break;
+            continue;
+          }
+          if(!pushOccurrence(currentMs)) break;
           const next = addInterval(current, normalized.freq, interval);
           if(!next || next.getTime() === current.getTime()) break;
           current = next;
@@ -6665,8 +7036,10 @@ tdFolder.appendChild(preview);
         const markerLayer = document.createElement('div');
         markerLayer.className = 'timeline-marker-layer';
         (task.milestones || []).forEach(date => {
-          const offsetDays = diffDays(date, startDate);
-          let leftPx = clamp(offsetDays, 0, rangeDays) * pxPerDay;
+          const occMs = date.getTime();
+          const offsetDays = (occMs - timelineStartMs) / dayMs;
+          const clampedOffset = clamp(offsetDays, 0, rangeDays);
+          let leftPx = clampedOffset * pxPerDay;
           if(isDayLikeZoom){ leftPx += pxPerDay / 2; }
           const clampedLeft = Math.max(0, Math.min(chartWidth, leftPx));
           const marker = document.createElement('div');
@@ -7431,6 +7804,8 @@ tdFolder.appendChild(preview);
       repeatFreq: findIndex(['todorepeatfreq','repeatfreq','frequenz']),
       repeatInterval: findIndex(['todorepeatinterval','repeatinterval','intervall']),
       repeatCount: findIndex(['todorepeatcount','repeatcount']),
+      repeatStart: findIndex(['todorepeatstart','repeatstart','serienstart']),
+      repeatEnd: findIndex(['todorepeatend','repeatend','serienende']),
       repeatUntil: findIndex(['todorepeatuntil','repeatuntil','enddatum']),
       repeatDays: findIndex(['todorepeatdays','repeatdays']),
       parentText: findIndex(['parenttodotext','parenttodo','parent'])
@@ -7524,7 +7899,12 @@ tdFolder.appendChild(preview);
         if(todoIdx.repeatFreq >=0 && cells[todoIdx.repeatFreq]) repeatRaw.freq = cells[todoIdx.repeatFreq]
         if(todoIdx.repeatInterval >=0 && cells[todoIdx.repeatInterval]) repeatRaw.interval = cells[todoIdx.repeatInterval]
         if(todoIdx.repeatCount >=0 && cells[todoIdx.repeatCount]) repeatRaw.count = cells[todoIdx.repeatCount]
-        if(todoIdx.repeatUntil >=0 && cells[todoIdx.repeatUntil]) repeatRaw.until = cells[todoIdx.repeatUntil]
+        if(todoIdx.repeatStart >=0 && cells[todoIdx.repeatStart]) repeatRaw.start = cells[todoIdx.repeatStart]
+        if(todoIdx.repeatEnd >=0 && cells[todoIdx.repeatEnd]) repeatRaw.end = cells[todoIdx.repeatEnd]
+        if(todoIdx.repeatUntil >=0 && cells[todoIdx.repeatUntil]){
+          repeatRaw.until = cells[todoIdx.repeatUntil]
+          if(!repeatRaw.end) repeatRaw.end = cells[todoIdx.repeatUntil]
+        }
         if(todoIdx.repeatDays >=0 && cells[todoIdx.repeatDays]) repeatRaw.days = normalizeRepeatDays(cells[todoIdx.repeatDays])
         const normalizedRepeat = normalizeRepeatSpec(repeatRaw, { dueDate: todo.due })
         todo.repeat = normalizedRepeat
@@ -7644,11 +8024,63 @@ tdFolder.appendChild(preview);
   });
 
   // CSV Export / Kalender-Export
-  document.getElementById('csvExportBtn')
-    .addEventListener('click', () => {
-      const list = gatherProjectsForExport();
-      exportCSV(list, 'projekte.csv');
-    });
+  const csvSaveBtn = document.getElementById('csvSaveBtn')
+  const csvExportBtn = document.getElementById('csvExportBtn')
+  if(csvSaveBtn){
+    csvSaveBtn.addEventListener('click', async () => {
+      try{
+        const mode = await saveCsv()
+        if(mode === 'saved'){
+          showToast('CSV gespeichert')
+        }else if(mode === 'download'){
+          showToast('CSV als Download bereitgestellt')
+        }
+      }catch(err){
+        console.error('CSV Speichern fehlgeschlagen', err)
+        alert('CSV konnte nicht gespeichert werden: ' + (err && err.message ? err.message : err))
+      }
+    })
+  }
+  if(csvExportBtn){
+    csvExportBtn.addEventListener('click', async () => {
+      const list = gatherProjectsForExport()
+      try{
+        const mode = await exportCSV(list, 'projekte.csv', { forceDownload:true })
+        if(mode === 'download'){
+          showToast('CSV als Download bereitgestellt')
+        }else if(mode === 'saved'){
+          showToast('CSV gespeichert')
+        }
+      }catch(err){
+        console.error('CSV Export fehlgeschlagen', err)
+        alert('CSV konnte nicht exportiert werden: ' + (err && err.message ? err.message : err))
+      }
+    })
+  }
+  if(csvChangeBtn){
+    csvChangeBtn.addEventListener('click', async () => {
+      if(!supportsFileSystemAccess() || !hasKeyval()){
+        alert('Direkter Zugriff auf den CSV-Speicher wird von diesem Browser nicht unterstützt.')
+        return
+      }
+      const handle = await selectAndStoreCsvHandle({ suggestedName: inferCsvFileName() })
+      if(handle){
+        showToast('CSV-Speicher aktualisiert')
+      }
+    })
+  }
+  if(csvResetBtn){
+    csvResetBtn.addEventListener('click', async () => {
+      if(!supportsFileSystemAccess() || !hasKeyval()){
+        updateCsvLocationDisplay(null)
+        return
+      }
+      if(!confirm('Verknüpfung zum CSV-Speicher wirklich entfernen?')) return
+      await deleteStoredCsvBinding()
+      updateCsvLocationDisplay(null)
+      showToast('CSV-Speicher entfernt')
+    })
+  }
   document.getElementById('calendarExportBtn')
     .addEventListener('click', () => {
       const list = gatherProjectsForExport();
@@ -7825,7 +8257,7 @@ tdFolder.appendChild(preview);
   document.getElementById('bulkAction').addEventListener('change', e=>{
     document.getElementById('bulkTarget').style.display = e.target.value==='move' ? 'inline-block' : 'none';
   });
-  document.getElementById('bulkGo').addEventListener('click', ()=>{
+  document.getElementById('bulkGo').addEventListener('click', async ()=>{
     const action = document.getElementById('bulkAction').value;
     if(!action){ alert('Bitte Aktion wählen.'); return; }
     if(selected.size===0){ alert('Keine Projekte ausgewählt.'); return; }
@@ -7855,7 +8287,15 @@ tdFolder.appendChild(preview);
       ids.forEach(id=>{ const p = state.projects.find(x=>x.id===id); if(p) p.tab = target; });
       selected.clear(); setDirty(true); render();
     }else if(action==='export_csv'){
-      exportCSV(state.projects.filter(p=>ids.includes(p.id)),'projekte_auswahl.csv');
+      try{
+        const mode = await exportCSV(state.projects.filter(p=>ids.includes(p.id)),'projekte_auswahl.csv', { forceDownload:true });
+        if(mode === 'download'){
+          showToast('Ausgewählte Projekte als CSV heruntergeladen');
+        }
+      }catch(err){
+        console.error('CSV Export (Auswahl) fehlgeschlagen', err);
+        alert('Ausgewählte Projekte konnten nicht exportiert werden: ' + (err && err.message ? err.message : err));
+      }
     }else if(action==='export_ics'){
       openCalendarExportDialog(state.projects.filter(p=>ids.includes(p.id)), { fileName: 'todos_auswahl.ics' });
     }
@@ -8006,7 +8446,7 @@ tdFolder.appendChild(preview);
   // Initiale Anzeige
   // Beim ersten Laden wird die komplette Anzeige aufgebaut (inkl. Filter, Tabelle, Kanban oder Timeline).
   applyTheme(); setTitle(); render();
-</script><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div>
+</script><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div>
 
 
 
