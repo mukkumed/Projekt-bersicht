@@ -6,10 +6,6 @@
 
 <!-- Google Material Symbols (Icons) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
-<script type="module">
-  import { get, set, del } from 'https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm';
-  window.idbKeyval = { get, set, del };
-</script>
 <style>
   :root{
     --bg:#0f172a; --card:#0b1225; --muted:#94a3b8; --text:#e6eaf3;
@@ -52,7 +48,7 @@ tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand v
   .dirty.on{display:inline-block}
   .sub{color:var(--muted); font-size:13px}
   .muted{color:var(--muted)}
-  #fileLocation,#csvLocationInfo{font-size:.9rem; opacity:.75; margin:.25rem 0}
+  #fileLocation{font-size:.9rem; opacity:.75; margin:.25rem 0}
 
   .card{
     background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
@@ -85,6 +81,7 @@ tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand v
   .ic-redo{color:#06b6d4}
   .ic-backup{color:#0ea5e9}
   .ic-restore{color:#38bdf8}
+  .ic-trash{color:#f97316}
 
   /* Top-Bars */
   .barTop{
@@ -311,12 +308,30 @@ tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand v
     align-items:center;
     justify-content:center;
   }
+  .viewToggle .viewBtn{gap:6px; font-weight:600;}
+  .viewToggle .viewBtn .ms{font-size:18px;}
+  .viewToggle .viewBtn.view-table{
+    background:color-mix(in srgb, #38bdf8 18%, var(--card));
+    border-color:color-mix(in srgb, #38bdf8 45%, var(--border));
+  }
+  .viewToggle .viewBtn.view-timeline{
+    background:color-mix(in srgb, #a78bfa 18%, var(--card));
+    border-color:color-mix(in srgb, #a78bfa 45%, var(--border));
+  }
+  .viewToggle .viewBtn.view-assignees{
+    background:color-mix(in srgb, #34d399 18%, var(--card));
+    border-color:color-mix(in srgb, #34d399 45%, var(--border));
+  }
+  .viewToggle .viewBtn.view-dispo{
+    background:color-mix(in srgb, #fbbf24 18%, var(--card));
+    border-color:color-mix(in srgb, #fbbf24 45%, var(--border));
+  }
   .viewToggle .on{outline:2px solid var(--accent)}
 
   /* Eingabe-Toolbar */
   .toolbar{
     display:grid;
-    grid-template-columns: minmax(90px,.8fr) minmax(0,1.4fr) minmax(110px,.8fr) 36px minmax(0,1.05fr) minmax(0,1.15fr) minmax(150px,.85fr) minmax(130px,.8fr);
+    grid-template-columns: minmax(90px,.55fr) minmax(0,1.35fr) minmax(0,1fr) minmax(0,1.9fr) minmax(110px,.6fr) minmax(110px,.55fr) minmax(150px,.75fr);
     gap:10px; padding:14px; border-bottom:1px solid var(--border); background:rgba(255,255,255,.02);
     align-items:center;
   }
@@ -328,10 +343,12 @@ tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand v
   body.light .toolbar select{background:#ffffff}
   .toolbar .btnPrimary{justify-self:stretch; align-self:stretch; display:flex; align-items:center; justify-content:center;}
   .toolbar .todoField{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
-  .toolbar .todoField input{flex:1 1 220px}
+  .toolbar .todoField input{flex:1 1 320px}
   .toolbar .todoField select{padding:6px 10px; border-radius:10px; border:1px solid var(--border); background:var(--card); color:var(--text)}
   body.light .toolbar .todoField select{background:#ffffff}
-  .toolbar .tabSelect{min-width:150px;}
+  .toolbar .tabSelect{min-width:110px;}
+  .toolbar #inNr{max-width:130px; justify-self:start;}
+  .toolbar #manageTeamBtn{padding:8px 10px; font-size:13px;}
   .btnPrimary{
     border:none; padding:10px 16px; border-radius:12px; color:#fff; cursor:pointer;
     background:linear-gradient(135deg, var(--accent), #4f46e5);
@@ -366,8 +383,6 @@ tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand v
     background:#0c1630;
     color:var(--text);
   }
-  .filterbar .pct{display:flex; align-items:center; gap:6px; white-space:nowrap;}
-  .filterbar .pct input[type="number"]{width:68px; padding:8px 10px;}
   body.light .filterbar input[type="text"],
   body.light .filterbar select{
     background:#ffffff;
@@ -1011,32 +1026,12 @@ r:var(--muted); cursor:pointer}
   .toast{position:fixed; left:24px; bottom:24px; background:#111827; color:#fff; padding:10px 14px; border-radius:10px; box-shadow:var(--shadow); opacity:0; transform:translateY(8px); transition:.25s}
   .toast.show{opacity:1; transform:translateY(0)}
 
-  /* Kanban */
-  .kanban{display:none; padding:14px}
-  .kanban.show{display:block}
-  .kbWrap{display:grid; grid-template-columns: repeat(3, 1fr); gap:12px}
-  .kbCol{border:1px solid var(--border); border-radius:14px; background:var(--card); min-height:240px; padding:10px}
-  .kbHead{font-weight:700; color:var(--muted); margin:4px 6px 10px}
-  .kbList{display:flex; flex-direction:column; gap:10px; min-height:200px; position:relative}
-  .kbCard{border:1px solid var(--border); border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); padding:10px; cursor:grab; transition:border-color .2s, box-shadow .2s}
-  .kbCard.drop-before{box-shadow:0 -2px 0 var(--accent) inset; border-color:color-mix(in srgb, var(--accent) 40%, var(--border));}
-  .kbCard.drop-after{box-shadow:0 2px 0 var(--accent) inset; border-color:color-mix(in srgb, var(--accent) 40%, var(--border));}
-  .kbTitle{font-weight:700; margin-bottom:6px}
-  .kbMeta{display:flex; gap:8px; align-items:center; color:var(--muted); font-size:12px}
-  .kbProg{height:6px; border-radius:999px; background:#0c1630; border:1px solid #223055; overflow:hidden; margin-top:8px}
-  .kbProg > i{display:block; height:100%; width:0%}
-  .kbPlaceholder{height:6px; background:color-mix(in srgb, var(--accent) 75%, transparent); border-radius:999px; margin:2px 0; pointer-events:none;}
-
   /* Bearbeiteransicht */
   .assigneeView{display:none; padding:18px; gap:16px; flex-direction:column;}
   .assigneeView.show{display:flex;}
   .assigneeFilterBar{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
   .assigneeFilterBar select{min-width:110px; max-width:200px; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:var(--card); color:var(--text); max-height:150px; overflow-y:auto;}
   body.light .assigneeFilterBar select{background:#ffffff;}
-  .kanbanFilterBar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:0 0 14px 0;}
-  .kanbanFilterBar label{font-size:14px; color:var(--muted);}
-  .kanbanFilterBar select{min-width:180px; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:var(--card); color:var(--text);}
-  body.light .kanbanFilterBar select{background:#ffffff;}
   .assigneeProjects{display:flex; flex-direction:column; gap:16px;}
   .assigneeProjectBlock{border:1px solid var(--border); border-radius:14px; background:var(--card); padding:16px; display:flex; flex-direction:column; gap:12px;}
   body.light .assigneeProjectBlock{background:#ffffff;}
@@ -1051,15 +1046,25 @@ r:var(--muted); cursor:pointer}
   .assigneeTodoTitle{font-weight:600; overflow-wrap:anywhere;}
   .assigneeTodoMeta{color:var(--muted); font-size:12px;}
   .assigneeTodoActions{display:flex; align-items:center; gap:8px;}
+  .assigneeTodoRow.editing .assigneeTodoTitle,
+  .assigneeTodoRow.editing .assigneeTodoMeta{display:none;}
+  .assigneeTodoEdit{display:none; flex-direction:column; gap:8px;}
+  .assigneeTodoRow.editing .assigneeTodoEdit{display:flex;}
+  .assigneeTodoEdit input[type="text"],
+  .assigneeTodoEdit input[type="date"]{
+    padding:8px 10px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:#0c1630;
+    color:var(--text);
+  }
+  body.light .assigneeTodoEdit input[type="text"],
+  body.light .assigneeTodoEdit input[type="date"]{background:#ffffff;}
+  .assigneeTodoEditActions{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .assigneeEditBtn .ms{font-size:18px;}
   .ackIndicator{width:10px; height:10px; border-radius:999px; background:#facc15; box-shadow:0 0 8px rgba(250,204,21,.35);}
   .ackIndicator.acknowledged{opacity:0; visibility:hidden;}
   .assigneeEmpty{padding:24px; text-align:center; color:var(--muted); border:1px dashed var(--border); border-radius:14px; margin:24px auto;}
-
-  /* Wenn es viele Projekte gibt, soll jede Kanban‑Spalte selbst scrollen. Ab 10 Karten wird der Bereich begrenzt. */
-  .kbList{
-    max-height:480px;
-    overflow-y:auto;
-  }
 
   /* Dispo */
   .dispo{display:none; padding:18px;}
@@ -1095,13 +1100,33 @@ r:var(--muted); cursor:pointer}
   .dispoBody{padding:18px; display:flex; flex-direction:column; gap:16px;}
   .dispoNotes textarea{min-height:140px; resize:vertical;}
   .dispoItems{display:flex; flex-direction:column; gap:10px;}
-  .dispoItemHead{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.6fr) 140px 40px; gap:8px; font-size:12px; color:var(--muted); padding:0 4px;}
-  .dispoItemRow{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.6fr) 140px 40px; gap:8px; align-items:center;}
+  .dispoItemHead{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,0.45fr) minmax(0,2fr) 120px 40px; gap:8px; font-size:12px; color:var(--muted); padding:0 4px;}
+  .dispoItemRow{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,0.45fr) minmax(0,2fr) 120px 40px; gap:8px; align-items:center;}
   .dispoItemRow input{padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:#0c1630; color:var(--text);}
   body.light .dispoItemRow input{background:#ffffff;}
   .dispoItemRow button{border:none; background:transparent; color:var(--muted); cursor:pointer; font-size:18px; line-height:1; padding:4px;}
   .dispoItemRow button:hover{color:var(--danger);}
+  .dispoAssignBar .dispoProject{min-width:220px; flex:1 1 220px;}
+  .dispoAssignBar .dispoAssignee{min-width:120px; max-width:160px; flex:0 1 140px;}
+  .dispoAssignBar .dispoTodoText{flex:2 1 320px;}
+  .dispoAssignBar .dispoTodoDue{min-width:130px; flex:0 0 130px;}
   .dispoAssignBar{display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; padding-top:12px; margin-top:4px; border-top:1px solid var(--border);}
+
+  @media (max-width: 1200px){
+    .container{margin:16px auto 96px; padding:0 14px;}
+    .barTop{flex-direction:column; align-items:flex-start;}
+    .rightTop{flex-wrap:wrap; justify-content:flex-start;}
+    .viewToggle{flex-wrap:wrap;}
+    .toolbar{grid-template-columns:repeat(2, minmax(0,1fr));}
+    .toolbar .todoField{grid-column:span 2;}
+    .toolbar #manageTeamBtn{justify-self:start;}
+    .filterbar{grid-template-columns:repeat(2, minmax(0,1fr));}
+  }
+  @media (max-width: 900px){
+    .toolbar{grid-template-columns:1fr;}
+    .filterbar{grid-template-columns:1fr;}
+    .toolbar .todoField{grid-column:auto;}
+  }
   .dispoAssignBar select,
   .dispoAssignBar input{padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:#0c1630; color:var(--text);}
   body.light .dispoAssignBar select,
@@ -1115,37 +1140,29 @@ r:var(--muted); cursor:pointer}
   /* Print */
   @media print{
     @page view-table{ size:A4 portrait; margin:12mm; }
-    @page view-kanban{ size:A4 portrait; margin:12mm; }
     @page view-assignees{ size:A4 portrait; margin:12mm; }
     @page view-dispo{ size:A4 portrait; margin:12mm; }
     @page view-timeline{ size:A4 landscape; margin:12mm; }
-    body{ background:#ffffff; color:#0f172a; font-size:11px; }
+    body{ background:#ffffff; color:#0f172a; font-size:10px; line-height:1.35; }
+    table{ table-layout:auto; }
+    thead th, tbody td{ padding:6px 8px; font-size:10px; vertical-align:top; }
     body.view-table{ page:view-table; }
-    body.view-kanban{ page:view-kanban; }
     body.view-assignees{ page:view-assignees; }
     body.view-dispo{ page:view-dispo; }
     body.view-timeline{ page:view-timeline; }
     header, .barTop, .viewToggle, .toolbar, .filterbar, .bulkbar, .footer, .fab, .actions-right,
     .caret, .leftCell .selectCb, .colorBtn, .todoDel, .miniCal { display:none !important; }
-    .container{ margin:0; max-width:100%; padding:0 12mm; }
-    body.view-table .kanban,
+    .container{ margin:0; max-width:100%; padding:0 8mm; }
     body.view-table .timelineShell,
     body.view-table #assigneeView,
     body.view-table #dispoView{ display:none !important; }
-    body.view-kanban #tableView,
-    body.view-kanban .timelineShell,
-    body.view-kanban #assigneeView,
-    body.view-kanban #dispoView{ display:none !important; }
     body.view-assignees #tableView,
-    body.view-assignees .kanban,
     body.view-assignees .timelineShell,
     body.view-assignees #dispoView{ display:none !important; }
     body.view-dispo #tableView,
-    body.view-dispo .kanban,
     body.view-dispo .timelineShell,
     body.view-dispo #assigneeView{ display:none !important; }
     body.view-timeline #tableView,
-    body.view-timeline .kanban,
     body.view-timeline #assigneeView,
     body.view-timeline #dispoView{ display:none !important; }
     body.view-timeline .timelineShell{ display:block !important; padding:0 !important; }
@@ -1240,13 +1257,11 @@ r:var(--muted); cursor:pointer}
         </div>
         <div class="sub"></div>
         <div id="fileLocation" class="muted">26-01-19_1_TeamSS.html</div>
-        <div id="csvLocationInfo" class="muted" title="Team.csv">CSV-Speicher: Team.csv (Berechtigung erforderlich)</div>
       </div>
       <div class="actions-right" role="toolbar" aria-label="Aktionen">
         <!-- Nur Icons (ohne Text) -->
         <button class="iconbtn" id="saveBtn" title="Speichern"><span class="ms ic-save">save</span></button>
         <button class="iconbtn" id="printBtn" title="Drucken"><span class="ms ic-print">print</span></button>
-        <button class="btn" id="printDetailToggle" title="To-Dos in der Druckansicht einblenden">Druck-Details: AUS</button>
         <button class="iconbtn" id="undoBtn" title="Rückgängig"><span class="ms ic-undo">undo</span></button>
         <button class="iconbtn" id="redoBtn" title="Wiederholen"><span class="ms ic-redo">redo</span></button>
         <button class="iconbtn" id="backupBtn" title="Backup speichern"><span class="ms ic-backup">backup</span></button>
@@ -1257,7 +1272,7 @@ r:var(--muted); cursor:pointer}
           <span class="ms">dark_mode</span>
         </label>
         <!-- Papierkorb (ständig verfügbar) -->
-        <button class="btn" id="trashOpenBtn" title="Papierkorb öffnen">Papierkorb</button>
+        <button class="iconbtn" id="trashOpenBtn" title="Papierkorb öffnen"><span class="ms ic-trash">delete</span></button>
       </div>
     </header>
 
@@ -1276,17 +1291,13 @@ r:var(--muted); cursor:pointer}
         </div>
         <div class="rightTop">
           <div class="viewToggle">
-            <button id="viewTable" class="on">Tabelle</button>
-            <button id="viewKanban" class="">Kanban</button>
-            <button id="viewTimeline" class="">Timeline</button>
-            <button id="viewAssignees" class="">Bearbeiter</button>
-            <button id="viewDispo" class="">Dispo</button>
+            <button id="viewTable" class="viewBtn view-table on"><span class="ms">table_rows</span><span>Tabelle</span></button>
+            <button id="viewTimeline" class="viewBtn view-timeline"><span class="ms">timeline</span><span>Timeline</span></button>
+            <button id="viewAssignees" class="viewBtn view-assignees"><span class="ms">groups</span><span>Bearbeiter</span></button>
+            <button id="viewDispo" class="viewBtn view-dispo"><span class="ms">event_note</span><span>Dispo</span></button>
           </div>
           <button class="btn" id="csvImportBtn" title="CSV importieren">CSV import</button>
           <button class="btn" id="csvExportBtn" title="CSV exportieren">CSV export</button>
-          <button class="btn" id="csvSaveBtn" title="Zentralen CSV-Speicher aktualisieren">Speichern als CSV</button>
-          <button class="btn" id="csvChangeBtn" title="Zentralen CSV-Speicher auswählen oder ändern">CSV Speicher wählen</button>
-          <button class="btn" id="csvResetBtn" title="Verknüpfung zum CSV-Speicher entfernen">CSV Speicher zurücksetzen</button>
           <button class="btn" id="calendarExportBtn" title="Export für Kalender">Export für Kalender</button>
         </div>
       </div>
@@ -1313,12 +1324,6 @@ r:var(--muted); cursor:pointer}
           <option value="done">Nur erledigt</option>
           <option value="partial">Teilweise erledigt</option>
         </select>
-        <div class="pct">
-          <span>% von</span>
-          <input id="pctMin" type="number" min="0" max="100" step="1" value="0">
-          <span>bis</span>
-          <input id="pctMax" type="number" min="0" max="100" step="1" value="100">
-        </div>
         <div class="assigneeFilterControl">
           <select id="tableAssigneeFilter" multiple="" title="Bearbeiter filtern" size="3"><option value="__all__">Alle Bearbeiter</option><option value="__unassigned__">Unzugewiesen</option><option value="JHi">JHi</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="Har">Har</option><option value="BlM">BlM</option></select>
         </div>
@@ -1373,28 +1378,6 @@ r:var(--muted); cursor:pointer}
           </thead>
           <tbody id="tbody"><tr id="emptyRow"><td colspan="7" class="emptyRowCell">Keine Projekte gefunden</td></tr></tbody>
         </table>
-      </div>
-
-      <!-- Kanban -->
-      <div id="kanbanView" class="kanban">
-        <div class="kanbanFilterBar">
-          <label for="kanbanTabFilter">Tab:</label>
-          <select id="kanbanTabFilter"><option value="Alle">Alle</option><option value="WMe">WMe</option><option value="CVa">CVa</option><option value="UKA">UKA</option><option value="BlM">BlM</option><option value="Har">Har</option></select>
-        </div>
-        <div class="kbWrap">
-          <div class="kbCol" data-col="open">
-            <div class="kbHead">Offen</div>
-            <div class="kbList" id="kbOpen"></div>
-          </div>
-          <div class="kbCol" data-col="partial">
-            <div class="kbHead">Teilweise</div>
-            <div class="kbList" id="kbPartial"></div>
-          </div>
-          <div class="kbCol" data-col="done">
-            <div class="kbHead">Erledigt</div>
-            <div class="kbList" id="kbDone"></div>
-          </div>
-        </div>
       </div>
 
       <!-- Timeline Ansicht -->
@@ -1564,7 +1547,7 @@ Noch 9 Tage" style="left: 285px; width: 267px; background: var(--accent);"></div
     return {
       title: 'XY-To-Dos',
       projects: [],
-      filters: { q:'', status:'all', sort:'date_desc', pctMin:0, pctMax:100 },
+      filters: { q:'', status:'all', sort:'date_desc' },
       trash: [],
       tabs: ['Alle'],
       currentTab: 'Alle',
@@ -1573,7 +1556,6 @@ Noch 9 Tage" style="left: 285px; width: 267px; background: var(--accent);"></div
       timelineTab: 'Alle',
       timelineZoom: 'days',
       timelineAssignees: [],
-      kanbanTab: 'Alle',
       assigneeFilter: [],
       order: [],
       orderByTab: {},
@@ -1850,14 +1832,7 @@ Noch 9 Tage" style="left: 285px; width: 267px; background: var(--accent);"></div
       state.filters = {
         q: String(state.filters.q ?? filters.q),
         status: ['all','open','done'].includes(state.filters.status) ? state.filters.status : filters.status,
-        sort: typeof state.filters.sort === 'string' && state.filters.sort ? state.filters.sort : filters.sort,
-        pctMin: clampPct(state.filters.pctMin),
-        pctMax: clampPct(state.filters.pctMax)
-      }
-      if(state.filters.pctMin > state.filters.pctMax){
-        const tmp = state.filters.pctMin
-        state.filters.pctMin = state.filters.pctMax
-        state.filters.pctMax = tmp
+        sort: typeof state.filters.sort === 'string' && state.filters.sort ? state.filters.sort : filters.sort
       }
     }
 
@@ -1866,7 +1841,6 @@ Noch 9 Tage" style="left: 285px; width: 267px; background: var(--accent);"></div
 
     if(!Array.isArray(state.tabs)) state.tabs = defaults.tabs.slice()
     if(!state.tabs.includes('Alle')) state.tabs = ['Alle', ...state.tabs.filter(name => name !== 'Alle')]
-    if(typeof state.kanbanTab !== 'string' || !state.tabs.includes(state.kanbanTab)) state.kanbanTab = 'Alle'
     if(!Array.isArray(state.tabGroups)) state.tabGroups = []
     if(!Array.isArray(state.tabOrder)) state.tabOrder = []
     if(!state.tabMeta || typeof state.tabMeta !== 'object') state.tabMeta = {}
@@ -1886,7 +1860,7 @@ Noch 9 Tage" style="left: 285px; width: 267px; background: var(--accent);"></div
     if(!state.theme || typeof state.theme !== 'string') state.theme = defaults.theme
     state.theme = state.theme === 'light' ? 'light' : 'dark'
     if(!state.view || typeof state.view !== 'string') state.view = defaults.view
-    if(!['table','kanban','timeline','dispo','assignees'].includes(state.view)) state.view = defaults.view
+    if(!['table','timeline','dispo','assignees'].includes(state.view)) state.view = defaults.view
 
     if(!Array.isArray(state.dispo)) state.dispo = []
     else {
@@ -1941,9 +1915,6 @@ normalizeState()
 
   const dirtyDot = document.getElementById('dirtyDot')
   const fileLocationEl = document.getElementById('fileLocation')
-  const csvLocationInfo = document.getElementById('csvLocationInfo')
-  const csvChangeBtn = document.getElementById('csvChangeBtn')
-  const csvResetBtn = document.getElementById('csvResetBtn')
   let unsaved = false
   const history = [], future = [], selected = new Set()
   const toast = document.getElementById('toast')
@@ -1951,20 +1922,12 @@ normalizeState()
   if(fileLocationEl){
     updateFileLocationDisplay()
   }
-  if(csvLocationInfo){
-    initCsvStorage().catch(err => console.error('CSV-Initialisierung fehlgeschlagen', err))
-  }
   let draggingProjectId = null
   let draggingTabName = null
   let draggingGroupId = null
   let lastDispoAssignInfo = { count:0, label:'' }
   let virtualizationActive = false
   let virtualScrollScheduled = false
-  const CSV_HANDLE_KEY = 'centralCsvHandle'
-  const CSV_SIGNATURE_KEY = 'centralCsvSignature'
-  let currentCsvHandle = null
-  let cachedCsvSignature = undefined
-  let csvWriteInProgress = false
   let currentFileHandle = null
   let repeatTarget = null
   const calendarDialogState = { tasks: [], fileName: 'todos.ics' }
@@ -3187,8 +3150,6 @@ normalizeState()
   const bulkTarget = document.getElementById('bulkTarget')
   const selCount = document.getElementById('selCount')
   const tableView = document.getElementById('tableView')
-  const kanbanView = document.getElementById('kanbanView')
-  const kanbanTabSelect = document.getElementById('kanbanTabFilter')
   const timelineShell = document.getElementById('timelineShell')
   const timelineViewEl = document.getElementById('timelineView')
   const timelineTabSelect = document.getElementById('timelineTabSelect')
@@ -3225,8 +3186,6 @@ normalizeState()
   const toolbar = document.getElementById('addForm')
   const filterbar = document.querySelector('.filterbar')
   const manageTeamBtn = document.getElementById('manageTeamBtn')
-  const kanbanPlaceholder = document.createElement('div')
-  kanbanPlaceholder.className = 'kbPlaceholder'
   const TIMELINE_ZOOMS = [
       { value:'weeks',   label:'KW',       min:8,  max:16, showDays:false, labelStep:7, unitDays:7 },
       { value:'compact', label:'Kompakt',  min:14, max:26, showDays:true,  labelStep:2, unitDays:1 },
@@ -3265,12 +3224,6 @@ normalizeState()
     })
   }
 
-  if(kanbanTabSelect){
-    kanbanTabSelect.addEventListener('change', () => {
-      state.kanbanTab = kanbanTabSelect.value || 'Alle'
-      render()
-    })
-  }
   if(manageTeamBtn){
     manageTeamBtn.addEventListener('click', () => {
       const raw = prompt('Bearbeiter mit ; trennen', (state.team || []).join(';'))
@@ -3546,12 +3499,14 @@ normalizeState()
         if(!active) return true
         const raw = typeof assignee === 'string' ? assignee.trim() : ''
         if(raw){
-          const key = raw.toLowerCase()
-          if(teamLookup.has(key)){
-            return allowed.has(key)
-          }
+          const parts = raw.split(/[;,]/).map(part => part.trim()).filter(Boolean)
+          if(!parts.length) return includeUnassigned
+          return parts.some(part => {
+            const key = part.toLowerCase()
+            return teamLookup.has(key) && allowed.has(key)
+          })
         }
-        return includeUnassigned && !raw
+        return includeUnassigned
       }
     }
   }
@@ -3711,64 +3666,6 @@ normalizeState()
     if(!id){ id = draggingProjectId }
     return id || ''
   }
-  function clearKanbanPlaceholder(){
-    if(kanbanPlaceholder.parentElement) kanbanPlaceholder.parentElement.removeChild(kanbanPlaceholder)
-    kanbanPlaceholder.dataset.before = ''
-    kanbanPlaceholder.dataset.col = ''
-  }
-  function positionKanbanPlaceholder(list, clientY){
-    if(!list) return
-    const cards = Array.from(list.querySelectorAll('.kbCard'))
-    let placed = false
-    for(const card of cards){
-      if(card.classList.contains('dragging')) continue
-      const rect = card.getBoundingClientRect()
-      if(clientY < rect.top + rect.height / 2){
-        list.insertBefore(kanbanPlaceholder, card)
-        kanbanPlaceholder.dataset.before = card.dataset.id || ''
-        placed = true
-        break
-      }
-    }
-    if(!placed){
-      list.appendChild(kanbanPlaceholder)
-      kanbanPlaceholder.dataset.before = ''
-    }
-    const col = list.closest('.kbCol')
-    kanbanPlaceholder.dataset.col = col ? (col.dataset.col || '') : (list.dataset.col || '')
-  }
-  function commitKanbanDrop(dragId, targetCol, beforeId){
-    if(!dragId) return false
-    const proj = (state.projects || []).find(p => p.id === dragId)
-    if(!proj) return false
-    pushHistory()
-    applyKanbanStatus(proj, targetCol)
-    state.filters.sort = 'manual'
-    const sortSelect = document.getElementById('sort')
-    if(sortSelect) sortSelect.value = 'manual'
-    const order = ensureManualOrder((state.projects || []).map(p => p.id), 'Alle')
-    const from = order.indexOf(dragId)
-    if(from >= 0) order.splice(from, 1)
-    let insertIdx = order.length
-    if(beforeId){
-      const idx = order.indexOf(beforeId)
-      if(idx >= 0) insertIdx = idx
-    }else{
-      const desiredStatus = targetCol === 'done' ? 'done' : targetCol === 'partial' ? 'partial' : 'open'
-      for(let i = order.length - 1; i >= 0; i--){
-        const other = state.projects.find(x => x.id === order[i])
-        if(other && progressOf(other).status === desiredStatus){ insertIdx = i + 1; break }
-      }
-    }
-    if(insertIdx < 0) insertIdx = 0
-    if(insertIdx > order.length) insertIdx = order.length
-    order.splice(insertIdx, 0, dragId)
-    state.order = order
-    state.orderByTab['Alle'] = order.slice()
-    setDirty(true)
-    render()
-    return true
-  }
   function isoWeekOf(date){
     const target = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
     const day = target.getUTCDay() || 7
@@ -3807,6 +3704,35 @@ normalizeState()
     return `${fmt(start)} – ${fmt(end)}${end.getUTCFullYear()}`
   }
   function ensureDispo(){ if(!Array.isArray(state.dispo)) state.dispo = [] }
+  function projectLabel(project){
+    if(!project) return ''
+    const parts = []
+    if(project.number) parts.push(project.number)
+    if(project.name) parts.push(project.name)
+    return parts.join(' · ')
+  }
+  function cleanupDispoItems(project, todoText){
+    if(!project) return
+    ensureDispo()
+    const label = projectLabel(project)
+    if(!label) return
+    let changed = false
+    state.dispo.forEach(entry => {
+      if(!entry || !Array.isArray(entry.items)) return
+      const nextItems = entry.items.filter(item => {
+        if(!item || item.project !== label) return true
+        if(todoText){
+          return item.todo !== todoText
+        }
+        return false
+      })
+      if(nextItems.length !== entry.items.length){
+        entry.items = nextItems
+        changed = true
+      }
+    })
+    if(changed) setDirty(true)
+  }
 
   // Fällig-Badge
   function dueBadge(dateYMD){
@@ -3849,12 +3775,11 @@ normalizeState()
   }
 
   function applyFilters(list){
-    const f = state.filters, min = clampPct(f.pctMin), max = clampPct(f.pctMax)
+    const f = state.filters
     let res = [...list]
     if(state.currentTab && state.currentTab !== 'Alle'){ res = res.filter(p => (p.tab || 'Alle') === state.currentTab) }
     res = res.filter(p => {
-      const st = progressOf(p); const inRange = st.pct >= min && st.pct <= max
-      if(!inRange) return false
+      const st = progressOf(p)
       if(f.status === 'all') return true
       return st.status === f.status
     })
@@ -4562,38 +4487,18 @@ normalizeState()
     team.forEach(name => addOption(name, name, selected.has(name)))
   }
 
-  function renderKanbanFilters(){
-    if(!kanbanTabSelect) return
-    const tabs = Array.isArray(state.tabs) && state.tabs.length ? state.tabs : ['Alle']
-    const current = tabs.includes(state.kanbanTab) ? state.kanbanTab : 'Alle'
-    state.kanbanTab = current
-    kanbanTabSelect.innerHTML = ''
-    tabs.forEach(tabName => {
-      const opt = document.createElement('option')
-      opt.value = tabName
-      opt.textContent = tabName
-      kanbanTabSelect.appendChild(opt)
-    })
-    kanbanTabSelect.value = current
-  }
-
   function render(){
     applyTheme(); setTitle(); renderTabs();
     renderTimelineFilters();
-    renderKanbanFilters();
     if(q) q.value = state.filters.q ?? '';
     if(status) status.value = state.filters.status ?? 'all';
     if(sort) sort.value = state.filters.sort ?? 'date_desc';
-    if(pctMin) pctMin.value = clampPct(state.filters.pctMin ?? 0);
-    if(pctMax) pctMax.value = clampPct(state.filters.pctMax ?? 100);
     renderAssigneeFilterControl();
-    const isKanban = state.view === 'kanban';
     const isTimeline = state.view === 'timeline';
     const isAssignees = state.view === 'assignees';
     const isDispo = state.view === 'dispo';
     const viewClassMap = {
       table: 'view-table',
-      kanban: 'view-kanban',
       timeline: 'view-timeline',
       assignees: 'view-assignees',
       dispo: 'view-dispo'
@@ -4602,8 +4507,7 @@ normalizeState()
     const viewClasses = Object.values(viewClassMap);
     viewClasses.forEach(cls => document.body.classList.toggle(cls, cls === activeViewClass));
     // Toggle view buttons
-    document.getElementById('viewTable').classList.toggle('on', !isKanban && !isTimeline && !isAssignees && !isDispo);
-    document.getElementById('viewKanban').classList.toggle('on', isKanban);
+    document.getElementById('viewTable').classList.toggle('on', !isTimeline && !isAssignees && !isDispo);
     const viewTimelineBtn = document.getElementById('viewTimeline');
     if(viewTimelineBtn) viewTimelineBtn.classList.toggle('on', isTimeline);
     const viewAssigneesBtn = document.getElementById('viewAssignees');
@@ -4611,23 +4515,17 @@ normalizeState()
     const viewDispoBtn = document.getElementById('viewDispo');
     if(viewDispoBtn) viewDispoBtn.classList.toggle('on', isDispo);
     // Show/hide main sections
-    tableView.style.display = (!isKanban && !isTimeline && !isAssignees && !isDispo) ? 'block' : 'none';
-    kanbanView.classList.toggle('show', isKanban);
+    tableView.style.display = (!isTimeline && !isAssignees && !isDispo) ? 'block' : 'none';
     if(timelineShell) timelineShell.classList.toggle('show', isTimeline);
     if(timelineViewEl) timelineViewEl.classList.toggle('show', isTimeline);
     if(assigneeViewEl) assigneeViewEl.classList.toggle('show', isAssignees);
     if(dispoView) dispoView.classList.toggle('show', isDispo);
     if(toolbar) toolbar.style.display = (isTimeline || isAssignees || isDispo) ? 'none' : 'grid';
-    if(filterbar) filterbar.style.display = (!isKanban && !isTimeline && !isAssignees && !isDispo) ? 'grid' : 'none';
+    if(filterbar) filterbar.style.display = (!isTimeline && !isAssignees && !isDispo) ? 'grid' : 'none';
     if(timelineZoomInput || timelineZoomLabelsEl){
       updateTimelineZoomIndicator();
     }
     // Render per view
-    if(isKanban){
-      virtualizationActive = false;
-      renderKanban();
-      return;
-    }
     if(isTimeline){
       virtualizationActive = false;
       renderTimeline();
@@ -5266,7 +5164,13 @@ tdFolder.appendChild(preview);
     subBtn.innerHTML = '<span class="ms">playlist_add</span>'
 
     const del = document.createElement('button'); del.className='todoDel'; del.innerHTML='✕'; del.title='Aufgabe entfernen'
-    del.addEventListener('click', () => { pushHistory(); project.todos.splice(idx,1); setDirty(true); render() })
+    del.addEventListener('click', () => {
+      pushHistory()
+      cleanupDispoItems(project, t.text || '')
+      project.todos.splice(idx,1)
+      setDirty(true)
+      render()
+    })
 
     const b = dueBadge(t.due)
     if(b?.cls === 'b-red') wrap.style.boxShadow = 'inset 0 0 0 2px rgba(239,68,68,.7)'
@@ -5440,6 +5344,7 @@ tdFolder.appendChild(preview);
       remove.addEventListener('click', () => {
         pushHistory()
         const list = ensureSubtasks()
+        cleanupDispoItems(project, sub.text || '')
         list.splice(subIndex, 1)
         setDirty(true)
         render()
@@ -5581,12 +5486,6 @@ tdFolder.appendChild(preview);
   function stringifyCsv(rows){
     return rows.map(r => r.map(c => `"${String(c ?? '').replace(/"/g,'""')}"`).join(',')).join('\n')
   }
-  function supportsFileSystemAccess(){
-    return typeof window !== 'undefined' && (('showSaveFilePicker' in window) || ('showOpenFilePicker' in window)) && 'FileSystemFileHandle' in window
-  }
-  function hasKeyval(){
-    return !!(window.idbKeyval && typeof window.idbKeyval.get === 'function')
-  }
   function triggerCsvDownload(csv, name){
     const blob = new Blob([csv], {type:'text/csv;charset=utf-8'})
     const a = document.createElement('a')
@@ -5595,211 +5494,6 @@ tdFolder.appendChild(preview);
     a.click()
     URL.revokeObjectURL(a.href)
   }
-  async function getStoredCsvHandle(){
-    if(!hasKeyval()) return null
-    try{
-      const handle = await window.idbKeyval.get(CSV_HANDLE_KEY)
-      return handle || null
-    }catch(err){
-      console.warn('CSV-Handle konnte nicht gelesen werden', err)
-      return null
-    }
-  }
-  async function storeCsvHandle(handle){
-    if(!hasKeyval()) return
-    try{
-      await window.idbKeyval.set(CSV_HANDLE_KEY, handle)
-    }catch(err){
-      console.warn('CSV-Handle konnte nicht gespeichert werden', err)
-    }
-  }
-  async function deleteStoredCsvBinding(){
-    if(!hasKeyval()) return
-    try{
-      await window.idbKeyval.del(CSV_HANDLE_KEY)
-      await window.idbKeyval.del(CSV_SIGNATURE_KEY)
-    }catch(err){
-      console.warn('CSV-Handle konnte nicht entfernt werden', err)
-    }
-    cachedCsvSignature = undefined
-    currentCsvHandle = null
-  }
-  async function getStoredCsvSignature(){
-    if(cachedCsvSignature !== undefined) return cachedCsvSignature
-    if(!hasKeyval()){
-      cachedCsvSignature = null
-      return cachedCsvSignature
-    }
-    try{
-      const value = await window.idbKeyval.get(CSV_SIGNATURE_KEY)
-      cachedCsvSignature = value || null
-    }catch(err){
-      console.warn('CSV-Signatur konnte nicht gelesen werden', err)
-      cachedCsvSignature = null
-    }
-    return cachedCsvSignature
-  }
-  async function storeCsvSignature(signature){
-    cachedCsvSignature = signature || null
-    if(!hasKeyval()) return
-    try{
-      await window.idbKeyval.set(CSV_SIGNATURE_KEY, cachedCsvSignature)
-    }catch(err){
-      console.warn('CSV-Signatur konnte nicht gespeichert werden', err)
-    }
-  }
-  function signaturesEqual(a, b){
-    if(!a || !b) return false
-    return a.lastModified === b.lastModified && a.size === b.size
-  }
-  async function readHandleSignature(handle){
-    if(!handle || typeof handle.getFile !== 'function') return null
-    try{
-      const file = await handle.getFile()
-      return { lastModified:file.lastModified, size:file.size }
-    }catch(err){
-      console.warn('CSV-Datei konnte nicht gelesen werden', err)
-      return null
-    }
-  }
-  async function verifyPermission(handle, readWrite){
-    if(!handle) return false
-    if(typeof handle.queryPermission === 'function'){
-      const mode = readWrite ? 'readwrite' : 'read'
-      try{
-        let status = await handle.queryPermission({ mode })
-        if(status === 'granted') return true
-        if(status === 'prompt'){
-          status = await handle.requestPermission({ mode })
-          return status === 'granted'
-        }
-        return false
-      }catch(err){
-        console.warn('Berechtigungsprüfung fehlgeschlagen', err)
-        return false
-      }
-    }
-    return true
-  }
-  async function checkHandlePermission(handle, readWrite){
-    if(!handle || typeof handle.queryPermission !== 'function') return true
-    try{
-      const mode = readWrite ? 'readwrite' : 'read'
-      const status = await handle.queryPermission({ mode })
-      return status === 'granted'
-    }catch(err){
-      return false
-    }
-  }
-  function updateCsvLocationDisplay(handle, options = {}){
-    if(!csvLocationInfo) return
-    if(options.message){
-      csvLocationInfo.textContent = options.message
-      csvLocationInfo.title = options.title || options.message
-      return
-    }
-    if(handle){
-      const name = handle.name || 'Unbenannte CSV'
-      const suffix = options.permissionRequired ? ' (Berechtigung erforderlich)' : ''
-      csvLocationInfo.textContent = `CSV-Speicher: ${name}${suffix}`
-      csvLocationInfo.title = name
-    }else{
-      csvLocationInfo.textContent = 'CSV-Speicher: nicht verbunden'
-      csvLocationInfo.title = 'Kein zentraler CSV-Speicher ausgewählt'
-    }
-  }
-  async function promptCsvSaveHandle({ suggestedName } = {}){
-    if(!supportsFileSystemAccess()) return null
-    const pickerTypes = [{ description:'CSV-Dateien', accept:{ 'text/csv': ['.csv'] } }]
-    if(window.showSaveFilePicker){
-      try{
-        return await window.showSaveFilePicker({ suggestedName: suggestedName || 'projekte.csv', types: pickerTypes })
-      }catch(err){
-        if(err && err.name === 'AbortError') return null
-        throw err
-      }
-    }
-    if(window.showOpenFilePicker){
-      try{
-        const handles = await window.showOpenFilePicker({ multiple:false, types: pickerTypes })
-        return handles && handles[0] ? handles[0] : null
-      }catch(err){
-        if(err && err.name === 'AbortError') return null
-        throw err
-      }
-    }
-    return null
-  }
-  async function selectAndStoreCsvHandle({ suggestedName } = {}){
-    try{
-      const handle = await promptCsvSaveHandle({ suggestedName })
-      if(!handle) return null
-      const hasPermission = await verifyPermission(handle, true)
-      if(!hasPermission){
-        alert('Die Anwendung benötigt Schreibzugriff auf die ausgewählte CSV-Datei.')
-        return null
-      }
-      currentCsvHandle = handle
-      updateCsvLocationDisplay(handle)
-      await storeCsvHandle(handle)
-      const signature = await readHandleSignature(handle)
-      await storeCsvSignature(signature)
-      return handle
-    }catch(err){
-      if(err && err.name === 'AbortError') return null
-      console.error('CSV-Speicher konnte nicht ausgewählt werden', err)
-      alert('CSV-Speicher konnte nicht ausgewählt werden: ' + (err && err.message ? err.message : err))
-      return null
-    }
-  }
-  async function ensureCsvHandle({ suggestedName, forcePrompt = false } = {}){
-    if(!supportsFileSystemAccess() || !hasKeyval()) return null
-    if(forcePrompt){
-      return await selectAndStoreCsvHandle({ suggestedName })
-    }
-    if(currentCsvHandle){
-      if(await verifyPermission(currentCsvHandle, true)){
-        return currentCsvHandle
-      }
-      currentCsvHandle = null
-    }
-    const stored = await getStoredCsvHandle()
-    if(stored){
-      if(await verifyPermission(stored, true)){
-        currentCsvHandle = stored
-        updateCsvLocationDisplay(stored)
-        return stored
-      }
-    }
-    return await selectAndStoreCsvHandle({ suggestedName })
-  }
-  async function writeCsvUsingHandle(csv, { suggestedName, forcePrompt = false } = {}){
-    if(csvWriteInProgress) throw new Error('Ein Speichervorgang läuft bereits.')
-    if(!supportsFileSystemAccess() || !hasKeyval()) return 'unsupported'
-    csvWriteInProgress = true
-    try{
-      const handle = await ensureCsvHandle({ suggestedName, forcePrompt })
-      if(!handle) return 'aborted'
-      const knownSignature = await getStoredCsvSignature()
-      const currentSignature = await readHandleSignature(handle)
-      if(knownSignature && currentSignature && !signaturesEqual(knownSignature, currentSignature)){
-        const proceed = confirm('Die zentrale CSV wurde seit dem letzten Speichern geändert. Trotzdem überschreiben?')
-        if(!proceed) return 'aborted'
-      }
-      const writable = await handle.createWritable()
-      await writable.write(csv)
-      await writable.close()
-      const newSignature = await readHandleSignature(handle)
-      await storeCsvSignature(newSignature)
-      updateCsvLocationDisplay(handle)
-      return 'saved'
-    }catch(err){
-      if(err && err.name === 'AbortError') return 'aborted'
-      throw err
-    }finally{
-      csvWriteInProgress = false
-    }
-  }
   function inferCsvFileName(){
     const title = (state.title || '').trim()
     if(title){
@@ -5807,78 +5501,22 @@ tdFolder.appendChild(preview);
     }
     return 'projekte.csv'
   }
-  async function initCsvStorage(){
-    if(!csvLocationInfo) return
-    if(!supportsFileSystemAccess()){
-      updateCsvLocationDisplay(null, { message:'CSV-Speicher: Download-Fallback aktiv (Browser ohne Dateizugriff)' })
-      if(csvChangeBtn) csvChangeBtn.disabled = true
-      if(csvResetBtn) csvResetBtn.disabled = true
-      return
-    }
-    if(!hasKeyval()){
-      updateCsvLocationDisplay(null, { message:'CSV-Speicher: Download-Fallback aktiv (IndexedDB nicht verfügbar)' })
-      if(csvChangeBtn) csvChangeBtn.disabled = true
-      if(csvResetBtn) csvResetBtn.disabled = true
-      setTimeout(() => {
-        initCsvStorage().catch(err => console.error('CSV-Initialisierung (erneut) fehlgeschlagen', err))
-      }, 600)
-      return
-    }
-    if(csvChangeBtn) csvChangeBtn.disabled = false
-    if(csvResetBtn) csvResetBtn.disabled = false
-    const stored = await getStoredCsvHandle()
-    if(stored){
-      currentCsvHandle = stored
-      const hasPerm = await checkHandlePermission(stored, false)
-      updateCsvLocationDisplay(stored, { permissionRequired: !hasPerm })
-      await getStoredCsvSignature()
-    }else{
-      updateCsvLocationDisplay(null)
-    }
-  }
-  async function exportCSV(list, name, options = {}){
-    const { forceDownload = false, forcePrompt = false } = options
+  async function exportCSV(list, name){
     const rows = buildProjectCsvRows(list)
     const csv = stringifyCsv(rows)
     const fileName = name || inferCsvFileName()
-    if(forceDownload || !supportsFileSystemAccess() || !hasKeyval()){
-      triggerCsvDownload(csv, fileName)
-      return 'download'
-    }
-    try{
-      const status = await writeCsvUsingHandle(csv, { suggestedName: fileName, forcePrompt })
-      if(status === 'unsupported'){
-        triggerCsvDownload(csv, fileName)
-        return 'download'
-      }
-      if(status === 'saved'){
-        return 'saved'
-      }
-      if(status === 'aborted'){
-        return 'aborted'
-      }
-      return status
-    }catch(err){
-      if(err && err.name === 'AbortError') return 'aborted'
-      console.error('CSV speichern fehlgeschlagen', err)
-      triggerCsvDownload(csv, fileName)
-      return 'download'
-    }
+    triggerCsvDownload(csv, fileName)
+    return 'download'
   }
-  async function saveCsv(options = {}){
-    const { forcePrompt = false, forceDownload = false } = options
+  async function saveCsv(){
     const list = gatherProjectsForExport()
-    return await exportCSV(list, inferCsvFileName(), { forcePrompt, forceDownload })
+    return await exportCSV(list, inferCsvFileName())
   }
   function gatherProjectsForExport(){
     const projects = Array.isArray(state.projects) ? state.projects : []
     switch(state.view){
       case 'table':
         return applyFilters(projects)
-      case 'kanban': {
-        const tab = (state.kanbanTab && state.tabs?.includes(state.kanbanTab)) ? state.kanbanTab : 'Alle'
-        return projects.filter(p => tab === 'Alle' || (p.tab || 'Alle') === tab)
-      }
       case 'timeline': {
         const tab = (state.timelineTab && state.tabs?.includes(state.timelineTab)) ? state.timelineTab : 'Alle'
         const selected = Array.isArray(state.timelineAssignees) ? state.timelineAssignees.filter(Boolean) : []
@@ -5893,10 +5531,14 @@ tdFolder.appendChild(preview);
           if(!matcherActive) return true
           const raw = typeof assignee === 'string' ? assignee.trim() : ''
           if(raw){
-            const key = raw.toLowerCase()
-            if(teamLookup.has(key) && lowerLookup.has(key)) return true
+            const parts = raw.split(/[;,]/).map(part => part.trim()).filter(Boolean)
+            if(!parts.length) return includeUnassigned
+            return parts.some(part => {
+              const key = part.toLowerCase()
+              return teamLookup.has(key) && lowerLookup.has(key)
+            })
           }
-          return includeUnassigned && !raw
+          return includeUnassigned
         }
         return projects.filter(project => {
           if(tab !== 'Alle' && (project.tab || 'Alle') !== tab) return false
@@ -6239,101 +5881,6 @@ tdFolder.appendChild(preview);
     calendarDialogEl.showModal()
   }
 
-  // ===== Kanban =====
-  function applyKanbanStatus(project, column){
-    if(column === 'done'){
-      project.todos.forEach(t => t.done = true)
-    }else if(column === 'open'){
-      project.todos.forEach(t => t.done = false)
-    }else if(column === 'partial'){
-      if(project.todos.length){ project.todos.forEach((t,i) => t.done = i > 0) }
-    }
-  }
-  function renderKanban(){
-      clearKanbanPlaceholder()
-      const wrapOpen = document.getElementById('kbOpen')
-      const wrapPart = document.getElementById('kbPartial')
-      const wrapDone = document.getElementById('kbDone')
-      wrapOpen.innerHTML = wrapPart.innerHTML = wrapDone.innerHTML = ''
-    const prevTab = state.currentTab
-    let baseList
-    try{
-      state.currentTab = 'Alle'
-      baseList = applyFilters(state.projects || [])
-    }finally{
-      state.currentTab = prevTab
-    }
-    const activeTab = (state.kanbanTab && state.tabs?.includes(state.kanbanTab)) ? state.kanbanTab : 'Alle'
-    const list = activeTab === 'Alle'
-      ? baseList
-      : baseList.filter(p => (p.tab || 'Alle') === activeTab)
-    list.forEach(p => {
-      const st = progressOf(p)
-      const card = document.createElement('div'); card.className='kbCard'; card.draggable = true; card.dataset.id = p.id; card.dataset.col = st.status
-      if(p.color){ card.style.background = `linear-gradient(180deg, color-mix(in srgb, ${p.color} 20%, transparent), rgba(255,255,255,.02))` }
-      const t = document.createElement('div'); t.className='kbTitle'; t.textContent = `${p.number || '—'} · ${p.name || 'Ohne Titel'}`
-      const meta = document.createElement('div'); meta.className='kbMeta'
-      const due = dueBadge(p.deadline); if(due){ const b=document.createElement('span'); b.className=`badge ${due.cls}`; b.textContent=due.label; meta.appendChild(b) }
-      const prog = document.createElement('div'); prog.className='kbProg'; const fill=document.createElement('i'); fill.style.width=`${st.pct}%`; prog.appendChild(fill)
-      card.appendChild(t); card.appendChild(meta); card.appendChild(prog)
-
-        card.addEventListener('dragstart', e => {
-          e.dataTransfer.setData('text/proj', p.id)
-          e.dataTransfer.setData('text/plain', p.id)
-          e.dataTransfer.effectAllowed = 'move'
-          card.style.opacity=.6
-          draggingProjectId = p.id
-          clearKanbanPlaceholder()
-        })
-        card.addEventListener('dragend',   ()=> { card.style.opacity=''; clearKanbanPlaceholder(); draggingProjectId = null })
-        card.addEventListener('dragover', e => {
-          const id = getDragProjectId(e)
-          if(!id) return
-          e.preventDefault()
-          positionKanbanPlaceholder(card.parentElement, e.clientY)
-        })
-        card.addEventListener('drop', e => {
-          e.preventDefault()
-          e.stopPropagation()
-          const dragId = getDragProjectId(e)
-          const targetCol = kanbanPlaceholder.dataset.col || card.parentElement?.dataset.col || card.dataset.col
-          const beforeId = kanbanPlaceholder.dataset.before || card.dataset.id
-          if(commitKanbanDrop(dragId, targetCol, beforeId)){
-            clearKanbanPlaceholder()
-            draggingProjectId = null
-          }
-        })
-
-      const targetList = st.status==='done' ? wrapDone : st.status==='partial' ? wrapPart : wrapOpen
-      targetList.appendChild(card)
-    })
-      ;[wrapOpen, wrapPart, wrapDone].forEach(listEl => {
-        if(!listEl) return
-        listEl.ondragover = (e) => {
-          const id = getDragProjectId(e)
-          if(!id) return
-          e.preventDefault()
-          positionKanbanPlaceholder(listEl, e.clientY)
-        }
-        listEl.ondragleave = (e) => {
-          if(!listEl.contains(e.relatedTarget)){
-            clearKanbanPlaceholder()
-          }
-        }
-        listEl.ondrop = (e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          const dragId = getDragProjectId(e)
-          const targetCol = kanbanPlaceholder.dataset.col || listEl.parentElement?.dataset.col || listEl.dataset.col
-          const beforeId = kanbanPlaceholder.dataset.before || ''
-          if(commitKanbanDrop(dragId, targetCol, beforeId)){
-            clearKanbanPlaceholder()
-            draggingProjectId = null
-          }
-        }
-      })
-  }
-
   // ===== Timeline (Gantt‑ähnliche Ansicht) =====
   /**
    * Rendert die Timeline‑Ansicht. Sie sammelt alle To‑Dos mit gesetzter Deadline
@@ -6417,10 +5964,15 @@ tdFolder.appendChild(preview);
     const filterSet = new Set(Array.isArray(state.assigneeFilter) ? state.assigneeFilter : []);
     const filterActive = filterSet.size > 0;
     const includeUnassigned = filterSet.has(ASSIGNEE_UNASSIGNED);
-    const matchesAssignee = assignee => {
-      const normalized = team.includes(assignee) ? assignee : '';
+    const parseAssignees = (value) => {
+      if(typeof value !== 'string') return []
+      return value.split(/[;,]/).map(part => part.trim()).filter(Boolean).map(part => {
+        return team.find(name => name.toLowerCase() === part.toLowerCase()) || ''
+      }).filter(Boolean)
+    }
+    const matchesAssignee = assignees => {
       if(!filterActive) return true;
-      if(normalized) return filterSet.has(normalized);
+      if(assignees.length) return assignees.some(name => filterSet.has(name));
       return includeUnassigned;
     };
 
@@ -6429,8 +5981,8 @@ tdFolder.appendChild(preview);
       const tasks = [];
       (project.todos || []).forEach((todo, todoIndex) => {
         if(!todo) return;
-        const todoAssignee = team.includes(todo.assignee) ? todo.assignee : '';
-        if(!todo.done && matchesAssignee(todoAssignee)){
+        const todoAssignees = parseAssignees(todo.assignee)
+        if(!todo.done && matchesAssignee(todoAssignees)){
           tasks.push({
             project,
             todo,
@@ -6438,14 +5990,14 @@ tdFolder.appendChild(preview);
             subIndex: null,
             parent: null,
             isSubtask: false,
-            assignee: todoAssignee
+            assignee: todoAssignees.join(', ')
           });
         }
         const subtasks = Array.isArray(todo.subtasks) ? todo.subtasks : [];
         subtasks.forEach((sub, subIndex) => {
           if(!sub || sub.done) return;
-          const subAssignee = team.includes(sub.assignee) ? sub.assignee : '';
-          if(matchesAssignee(subAssignee)){
+          const subAssignees = parseAssignees(sub.assignee)
+          if(matchesAssignee(subAssignees)){
             tasks.push({
               project,
               todo: sub,
@@ -6453,7 +6005,7 @@ tdFolder.appendChild(preview);
               subIndex,
               parent: todo,
               isSubtask: true,
-              assignee: subAssignee
+              assignee: subAssignees.join(', ')
             });
           }
         });
@@ -6500,6 +6052,7 @@ tdFolder.appendChild(preview);
         if(task.isSubtask) row.classList.add('is-subtask');
         const ackNeeded = !task.todo.acknowledged;
         row.classList.toggle('unacknowledged', ackNeeded);
+        const targetTodo = task.todo;
 
         const cb = document.createElement('input');
         cb.type = 'checkbox';
@@ -6548,12 +6101,70 @@ tdFolder.appendChild(preview);
         due.textContent = dueDate ? `Fällig am ${formatGermanDate(dueDate)}` : 'Kein Fälligkeitsdatum';
         body.appendChild(due);
 
+        const editFields = document.createElement('div');
+        editFields.className = 'assigneeTodoEdit';
+        const editTitle = document.createElement('input');
+        editTitle.type = 'text';
+        editTitle.value = baseText;
+        editTitle.placeholder = 'To-Do';
+        editFields.appendChild(editTitle);
+        const editDue = document.createElement('input');
+        editDue.type = 'date';
+        editDue.value = task.todo.due || '';
+        editFields.appendChild(editDue);
+
+        let subtaskInput = null;
+        if(!task.isSubtask){
+          const subtaskRow = document.createElement('div');
+          subtaskRow.className = 'assigneeTodoEditActions';
+          subtaskInput = document.createElement('input');
+          subtaskInput.type = 'text';
+          subtaskInput.placeholder = 'Unter-To-Do hinzufügen';
+          const subtaskBtn = document.createElement('button');
+          subtaskBtn.type = 'button';
+          subtaskBtn.className = 'miniBtn';
+          subtaskBtn.textContent = 'Unter-To-Do hinzufügen';
+          subtaskBtn.addEventListener('click', () => {
+            const value = (subtaskInput.value || '').trim();
+            if(!value) return;
+            pushHistory();
+            const list = Array.isArray(targetTodo.subtasks) ? targetTodo.subtasks : (targetTodo.subtasks = []);
+            list.push({ text: value, done: false, due: '', assignee: task.assignee || '', acknowledged: false });
+            subtaskInput.value = '';
+            setDirty(true);
+            render();
+          });
+          subtaskRow.appendChild(subtaskInput);
+          subtaskRow.appendChild(subtaskBtn);
+          editFields.appendChild(subtaskRow);
+        }
+
+        const editActions = document.createElement('div');
+        editActions.className = 'assigneeTodoEditActions';
+        const confirmBtn = document.createElement('button');
+        confirmBtn.type = 'button';
+        confirmBtn.className = 'miniBtn';
+        confirmBtn.textContent = 'Änderung speichern';
+        confirmBtn.addEventListener('click', () => {
+          const nextText = (editTitle.value || '').trim();
+          const nextDue = (editDue.value || '').trim();
+          if(!nextText && !nextDue) return;
+          pushHistory();
+          if(nextText) targetTodo.text = nextText;
+          targetTodo.due = nextDue;
+          setDirty(true);
+          render();
+        });
+        editActions.appendChild(confirmBtn);
+        editFields.appendChild(editActions);
+        body.appendChild(editFields);
+
         const actions = document.createElement('div');
         actions.className = 'assigneeTodoActions';
-        const ackBtn = document.createElement('button');
-        ackBtn.type = 'button';
-        ackBtn.className = 'miniBtn';
         if(ackNeeded){
+          const ackBtn = document.createElement('button');
+          ackBtn.type = 'button';
+          ackBtn.className = 'miniBtn';
           ackBtn.textContent = 'Gesehen';
           ackBtn.title = 'Als gelesen bestätigen';
           ackBtn.addEventListener('click', () => {
@@ -6562,6 +6173,7 @@ tdFolder.appendChild(preview);
             setDirty(true);
             render();
           });
+          actions.appendChild(ackBtn);
         }else{
           const undoBtn = document.createElement('button');
           undoBtn.type = 'button';
@@ -6575,10 +6187,20 @@ tdFolder.appendChild(preview);
             render();
           });
           actions.appendChild(undoBtn);
-          ackBtn.textContent = 'Bestätigt';
-          ackBtn.disabled = true;
         }
-        actions.appendChild(ackBtn);
+
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'miniBtn assigneeEditBtn';
+        editBtn.title = 'Bearbeiten';
+        editBtn.setAttribute('aria-label', 'Bearbeiten');
+        editBtn.innerHTML = '<span class="ms">edit</span>';
+        editBtn.addEventListener('click', () => {
+          const nextState = !row.classList.contains('editing');
+          row.classList.toggle('editing', nextState);
+          if(nextState) editTitle.focus();
+        });
+        actions.appendChild(editBtn);
 
         row.appendChild(cb);
         row.appendChild(body);
@@ -7509,16 +7131,32 @@ tdFolder.appendChild(preview);
     if(Array.isArray(state.team) && state.team.length){
       assignAssignee = document.createElement('select');
       assignAssignee.className = 'dispoAssignee';
-      const defaultOpt = document.createElement('option');
-      defaultOpt.value = '';
-      defaultOpt.textContent = 'Bearbeiter wählen';
-      assignAssignee.appendChild(defaultOpt);
+      assignAssignee.multiple = true;
+      assignAssignee.size = Math.min(3, state.team.length);
       state.team.forEach(name => {
         const opt = document.createElement('option');
         opt.value = name;
         opt.textContent = name;
         assignAssignee.appendChild(opt);
       });
+    }
+
+    const lastItem = Array.isArray(entry.items) && entry.items.length
+      ? entry.items[entry.items.length - 1]
+      : null;
+    if(lastItem){
+      const matchProject = (state.projects || []).find(p => projectLabel(p) === lastItem.project);
+      if(matchProject) projectSelect.value = matchProject.id || '';
+      if(assignAssignee){
+        const assignees = String(lastItem.assignee || '')
+          .split(/[;,]/)
+          .map(part => part.trim())
+          .filter(Boolean);
+        const assigneeSet = new Set(assignees.map(name => name.toLowerCase()));
+        Array.from(assignAssignee.options).forEach(opt => {
+          opt.selected = assigneeSet.has(String(opt.value).toLowerCase());
+        });
+      }
     }
 
     const todoInput = document.createElement('input');
@@ -7558,7 +7196,12 @@ tdFolder.appendChild(preview);
         return;
       }
       const dueValue = dueInput.value && parseIsoDate(dueInput.value) ? dueInput.value : '';
-      const assigneeValue = assignAssignee && state.team.includes(assignAssignee.value) ? assignAssignee.value : '';
+      const assigneeValue = assignAssignee
+        ? Array.from(assignAssignee.selectedOptions)
+          .map(opt => opt.value)
+          .filter(value => state.team.includes(value))
+          .join(', ')
+        : '';
       pushHistory();
       if(!Array.isArray(entry.items)) entry.items = [];
       const labelParts = [];
@@ -7577,9 +7220,6 @@ tdFolder.appendChild(preview);
       setDirty(true);
       lastDispoAssignInfo = { count: tokens.length, label: labelParts.join(' · ') || 'Projekt' };
       todoInput.value = '';
-      dueInput.value = '';
-      projectSelect.value = '';
-      if(assignAssignee) assignAssignee.value = '';
       updateAssignState();
       showToast(`${tokens.length} To-Do${tokens.length === 1 ? '' : 's'} hinzugefügt`);
       render();
@@ -7685,20 +7325,6 @@ tdFolder.appendChild(preview);
 
   // ===== Events =====
   document.getElementById('printBtn').addEventListener('click', () => window.print())
-  const printDetailToggle = document.getElementById('printDetailToggle')
-  if(printDetailToggle){
-    const syncPrintToggle = () => {
-      const active = document.body.classList.contains('print-detailed')
-      printDetailToggle.classList.toggle('on', active)
-      printDetailToggle.textContent = active ? 'Druck-Details: AN' : 'Druck-Details: AUS'
-    }
-    printDetailToggle.addEventListener('click', () => {
-      document.body.classList.toggle('print-detailed')
-      syncPrintToggle()
-    })
-    window.addEventListener('afterprint', syncPrintToggle)
-    syncPrintToggle()
-  }
   document.getElementById('undoBtn').addEventListener('click', undo)
   document.getElementById('redoBtn').addEventListener('click', redo)
   document.getElementById('backupBtn').addEventListener('click', () => {
@@ -8087,61 +7713,17 @@ tdFolder.appendChild(preview);
   });
 
   // CSV Export / Kalender-Export
-  const csvSaveBtn = document.getElementById('csvSaveBtn')
   const csvExportBtn = document.getElementById('csvExportBtn')
-  if(csvSaveBtn){
-    csvSaveBtn.addEventListener('click', async () => {
-      try{
-        const mode = await saveCsv()
-        if(mode === 'saved'){
-          showToast('CSV gespeichert')
-        }else if(mode === 'download'){
-          showToast('CSV als Download bereitgestellt')
-        }
-      }catch(err){
-        console.error('CSV Speichern fehlgeschlagen', err)
-        alert('CSV konnte nicht gespeichert werden: ' + (err && err.message ? err.message : err))
-      }
-    })
-  }
   if(csvExportBtn){
     csvExportBtn.addEventListener('click', async () => {
       const list = gatherProjectsForExport()
       try{
-        const mode = await exportCSV(list, 'projekte.csv', { forceDownload:true })
-        if(mode === 'download'){
-          showToast('CSV als Download bereitgestellt')
-        }else if(mode === 'saved'){
-          showToast('CSV gespeichert')
-        }
+        await exportCSV(list, 'projekte.csv')
+        showToast('CSV als Download bereitgestellt')
       }catch(err){
         console.error('CSV Export fehlgeschlagen', err)
         alert('CSV konnte nicht exportiert werden: ' + (err && err.message ? err.message : err))
       }
-    })
-  }
-  if(csvChangeBtn){
-    csvChangeBtn.addEventListener('click', async () => {
-      if(!supportsFileSystemAccess() || !hasKeyval()){
-        alert('Direkter Zugriff auf den CSV-Speicher wird von diesem Browser nicht unterstützt.')
-        return
-      }
-      const handle = await selectAndStoreCsvHandle({ suggestedName: inferCsvFileName() })
-      if(handle){
-        showToast('CSV-Speicher aktualisiert')
-      }
-    })
-  }
-  if(csvResetBtn){
-    csvResetBtn.addEventListener('click', async () => {
-      if(!supportsFileSystemAccess() || !hasKeyval()){
-        updateCsvLocationDisplay(null)
-        return
-      }
-      if(!confirm('Verknüpfung zum CSV-Speicher wirklich entfernen?')) return
-      await deleteStoredCsvBinding()
-      updateCsvLocationDisplay(null)
-      showToast('CSV-Speicher entfernt')
     })
   }
   document.getElementById('calendarExportBtn')
@@ -8225,8 +7807,6 @@ tdFolder.appendChild(preview);
   const q = document.getElementById('q'),
         status = document.getElementById('status'),
         sort = document.getElementById('sort'),
-        pctMin = document.getElementById('pctMin'),
-        pctMax = document.getElementById('pctMax'),
         tableAssigneeFilter = document.getElementById('tableAssigneeFilter');
   // Hinweis: Der Warnzeitraum für Deadlines wurde entfernt. Es gibt daher kein alertInput mehr.
 
@@ -8236,8 +7816,6 @@ tdFolder.appendChild(preview);
     state.filters.q = q.value;
     state.filters.status = status.value;
     state.filters.sort = sort.value;
-    state.filters.pctMin = clampPct(pctMin.value);
-    state.filters.pctMax = clampPct(pctMax.value);
     render();
   }
     function renderAssigneeFilterControl(){
@@ -8263,8 +7841,6 @@ tdFolder.appendChild(preview);
   q.addEventListener('input', updateFilters);
   status.addEventListener('change', updateFilters);
   sort.addEventListener('change', updateFilters);
-  pctMin.addEventListener('change', updateFilters);
-  pctMax.addEventListener('change', updateFilters);
   if(tableAssigneeFilter){
     tableAssigneeFilter.addEventListener('change', () => {
       const rawValues = Array.from(tableAssigneeFilter.selectedOptions).map(opt => opt.value)
@@ -8331,7 +7907,10 @@ tdFolder.appendChild(preview);
         state.trash = state.trash || [];
         ids.forEach(id=>{
           const p = state.projects.find(x=>x.id===id);
-          if(p) state.trash.unshift({...p, deletedAt: new Date().toISOString()});
+          if(p){
+            state.trash.unshift({...p, deletedAt: new Date().toISOString()});
+            cleanupDispoItems(p)
+          }
         });
         state.projects = state.projects.filter(x=>!selected.has(x.id));
         if(state.order) state.order = state.order.filter(id=>!selected.has(id));
@@ -8351,10 +7930,8 @@ tdFolder.appendChild(preview);
       selected.clear(); setDirty(true); render();
     }else if(action==='export_csv'){
       try{
-        const mode = await exportCSV(state.projects.filter(p=>ids.includes(p.id)),'projekte_auswahl.csv', { forceDownload:true });
-        if(mode === 'download'){
-          showToast('Ausgewählte Projekte als CSV heruntergeladen');
-        }
+        await exportCSV(state.projects.filter(p=>ids.includes(p.id)),'projekte_auswahl.csv');
+        showToast('Ausgewählte Projekte als CSV heruntergeladen');
       }catch(err){
         console.error('CSV Export (Auswahl) fehlgeschlagen', err);
         alert('Ausgewählte Projekte konnten nicht exportiert werden: ' + (err && err.message ? err.message : err));
@@ -8400,12 +7977,6 @@ tdFolder.appendChild(preview);
 
   // Ansicht umschalten
   document.getElementById('viewTable').addEventListener('click', ()=>{ state.view='table'; render(); });
-  document.getElementById('viewKanban').addEventListener('click', ()=>{
-    state.view='kanban';
-    const candidate = state.currentTab && state.tabs?.includes(state.currentTab) ? state.currentTab : 'Alle';
-    state.kanbanTab = candidate;
-    render();
-  });
   const viewTimelineBtn = document.getElementById('viewTimeline');
   if(viewTimelineBtn){
     viewTimelineBtn.addEventListener('click', () => {
@@ -8507,7 +8078,7 @@ tdFolder.appendChild(preview);
   });
 
   // Initiale Anzeige
-  // Beim ersten Laden wird die komplette Anzeige aufgebaut (inkl. Filter, Tabelle, Kanban oder Timeline).
+  // Beim ersten Laden wird die komplette Anzeige aufgebaut (inkl. Filter, Tabelle oder Timeline).
   applyTheme(); setTitle(); render();
 </script><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div><div class="tab-menu"></div><div class="tab-submenu"></div><div class="color-palette"><div class="color-grid"></div><div class="custom-color"><span>Eigene Farbe</span><input type="color"><input type="text" placeholder="#RRGGBB" autocomplete="off" spellcheck="false"><button type="button">Übernehmen</button></div><button type="button" class="reset-btn">Standardfarbe verwenden</button></div>
 
