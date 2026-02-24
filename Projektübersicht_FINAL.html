@@ -318,6 +318,10 @@ tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand v
     background:color-mix(in srgb, #a78bfa 18%, var(--card));
     border-color:color-mix(in srgb, #a78bfa 45%, var(--border));
   }
+  .viewToggle .viewBtn.view-summary{
+    background:color-mix(in srgb, #60a5fa 18%, var(--card));
+    border-color:color-mix(in srgb, #60a5fa 45%, var(--border));
+  }
   .viewToggle .viewBtn.view-assignees{
     background:color-mix(in srgb, #34d399 18%, var(--card));
     border-color:color-mix(in srgb, #34d399 45%, var(--border));
@@ -710,6 +714,84 @@ r:var(--muted); cursor:pointer}
   /* Hinweisleiste für bevorstehende Deadlines wurde entfernt */
 
   /* Timeline‑Ansicht */
+
+  .summaryView {
+    display: none;
+    padding: 18px;
+    gap: 16px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .summaryView.show {
+    display: flex;
+  }
+  .summaryCard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 280px;
+    position: relative;
+  }
+  .summaryCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+  .summaryCardStats {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .summaryStat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .summaryStat .label {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .summaryStat .value {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  .summaryDropdown {
+    display: none;
+    margin-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    font-size: 0.9rem;
+  }
+  .summaryDropdown ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  .summaryDropdown li {
+    margin: 0;
+    padding: 8px 0;
+  }
+  .summaryDropdown li + li {
+    border-top: 1px solid rgba(0,0,0,.35);
+  }
+  .summaryCardArrow {
+    cursor: pointer;
+    font-family: 'Material Symbols Rounded';
+    user-select: none;
+  }
+  .csvMenuWrap{position:relative; display:inline-flex;}
+  .csvMenu{position:absolute; top:calc(100% + 6px); right:0; min-width:150px; display:none; flex-direction:column; background:var(--card); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); overflow:hidden; z-index:1900;}
+  .csvMenu.show{display:flex;}
+  .csvMenu button{border:none; background:transparent; color:var(--text); text-align:left; padding:9px 12px; cursor:pointer;}
+  .csvMenu button:hover{background:var(--hover);}
   .timelineShell{display:none; padding:14px 14px 22px;}
   .timelineShell.show{display:block}
   .timeline{
@@ -841,7 +923,7 @@ r:var(--muted); cursor:pointer}
   }
   .timeline-marker-layer{
     position:absolute;
-    left:var(--timeline-label-width);
+    left:0;
     right:0;
     top:0;
     bottom:0;
@@ -1292,12 +1374,18 @@ r:var(--muted); cursor:pointer}
         <div class="rightTop">
           <div class="viewToggle">
             <button id="viewTable" class="viewBtn view-table on"><span class="ms">table_rows</span><span>Tabelle</span></button>
-            <button id="viewTimeline" class="viewBtn view-timeline"><span class="ms">timeline</span><span>Timeline</span></button>
+            <button id="viewSummary" class="viewBtn view-summary"><span class="ms">dashboard</span><span>Workload</span></button>
             <button id="viewAssignees" class="viewBtn view-assignees"><span class="ms">groups</span><span>Bearbeiter</span></button>
             <button id="viewDispo" class="viewBtn view-dispo"><span class="ms">event_note</span><span>Dispo</span></button>
+            <button id="viewTimeline" class="viewBtn view-timeline"><span class="ms">timeline</span><span>Timeline</span></button>
           </div>
-          <button class="btn" id="csvImportBtn" title="CSV importieren">CSV import</button>
-          <button class="btn" id="csvExportBtn" title="CSV exportieren">CSV export</button>
+          <div class="csvMenuWrap">
+            <button class="btn" id="csvMenuBtn" title="CSV Optionen">CSV</button>
+            <div class="csvMenu" id="csvMenu">
+              <button type="button" id="csvImportBtn" title="CSV importieren">Import</button>
+              <button type="button" id="csvExportBtn" title="CSV exportieren">Export</button>
+            </div>
+          </div>
           <button class="btn" id="calendarExportBtn" title="Export für Kalender">Export für Kalender</button>
         </div>
       </div>
@@ -1426,6 +1514,9 @@ Noch 9 Tage" style="left: 285px; width: 267px; background: var(--accent);"></div
           <div id="dispoAssignSummary" class="dispoAssignSummary">Noch keine To-Dos zugewiesen.</div>
         </div>
       </div>
+
+      <!-- Workload-Karten Ansicht -->
+      <div id="summaryView" class="summaryView"></div>
 
       <div class="footer" style="display:flex; justify-content:space-between; padding:12px 14px; color:var(--muted); font-size:12px; border-top:1px solid var(--border)">
         <div>Speichern schreibt alle Daten in diese HTML-Datei. Tastenkürzel: <span class="kbd">Strg+S</span>, <span class="kbd">Strg+Z</span>, <span class="kbd">Strg+Y</span></div>
@@ -1860,7 +1951,7 @@ Noch 9 Tage" style="left: 285px; width: 267px; background: var(--accent);"></div
     if(!state.theme || typeof state.theme !== 'string') state.theme = defaults.theme
     state.theme = state.theme === 'light' ? 'light' : 'dark'
     if(!state.view || typeof state.view !== 'string') state.view = defaults.view
-    if(!['table','timeline','dispo','assignees'].includes(state.view)) state.view = defaults.view
+    if(!['table','timeline','dispo','assignees','summary'].includes(state.view)) state.view = defaults.view
 
     if(!Array.isArray(state.dispo)) state.dispo = []
     else {
@@ -3157,6 +3248,7 @@ normalizeState()
   const timelineZoomInput = document.getElementById('timelineZoom')
   const timelineZoomLabelsEl = document.getElementById('timelineZoomLabels')
   const assigneeViewEl = document.getElementById('assigneeView')
+  const summaryView = document.getElementById('summaryView')
   const repeatDialogEl = document.getElementById('repeatDlg')
   const repeatForm = document.getElementById('repeatForm')
   const repeatFreqInput = document.getElementById('repeatFreq')
@@ -3186,6 +3278,8 @@ normalizeState()
   const toolbar = document.getElementById('addForm')
   const filterbar = document.querySelector('.filterbar')
   const manageTeamBtn = document.getElementById('manageTeamBtn')
+  const csvMenuBtn = document.getElementById('csvMenuBtn')
+  const csvMenu = document.getElementById('csvMenu')
   const TIMELINE_ZOOMS = [
       { value:'weeks',   label:'KW',       min:8,  max:16, showDays:false, labelStep:7, unitDays:7 },
       { value:'compact', label:'Kompakt',  min:14, max:26, showDays:true,  labelStep:2, unitDays:1 },
@@ -4495,11 +4589,13 @@ normalizeState()
     if(sort) sort.value = state.filters.sort ?? 'date_desc';
     renderAssigneeFilterControl();
     const isTimeline = state.view === 'timeline';
+    const isSummary = state.view === 'summary';
     const isAssignees = state.view === 'assignees';
     const isDispo = state.view === 'dispo';
     const viewClassMap = {
       table: 'view-table',
       timeline: 'view-timeline',
+      summary: 'view-summary',
       assignees: 'view-assignees',
       dispo: 'view-dispo'
     };
@@ -4507,21 +4603,24 @@ normalizeState()
     const viewClasses = Object.values(viewClassMap);
     viewClasses.forEach(cls => document.body.classList.toggle(cls, cls === activeViewClass));
     // Toggle view buttons
-    document.getElementById('viewTable').classList.toggle('on', !isTimeline && !isAssignees && !isDispo);
+    document.getElementById('viewTable').classList.toggle('on', !isTimeline && !isSummary && !isAssignees && !isDispo);
     const viewTimelineBtn = document.getElementById('viewTimeline');
     if(viewTimelineBtn) viewTimelineBtn.classList.toggle('on', isTimeline);
-    const viewAssigneesBtn = document.getElementById('viewAssignees');
+    const viewSummaryBtn = document.getElementById('viewSummary');
+    if(viewSummaryBtn) viewSummaryBtn.classList.toggle('on', isSummary);
+  const viewAssigneesBtn = document.getElementById('viewAssignees');
     if(viewAssigneesBtn) viewAssigneesBtn.classList.toggle('on', isAssignees);
     const viewDispoBtn = document.getElementById('viewDispo');
     if(viewDispoBtn) viewDispoBtn.classList.toggle('on', isDispo);
     // Show/hide main sections
-    tableView.style.display = (!isTimeline && !isAssignees && !isDispo) ? 'block' : 'none';
+    tableView.style.display = (!isTimeline && !isSummary && !isAssignees && !isDispo) ? 'block' : 'none';
     if(timelineShell) timelineShell.classList.toggle('show', isTimeline);
     if(timelineViewEl) timelineViewEl.classList.toggle('show', isTimeline);
     if(assigneeViewEl) assigneeViewEl.classList.toggle('show', isAssignees);
+    if(summaryView) summaryView.classList.toggle('show', isSummary);
     if(dispoView) dispoView.classList.toggle('show', isDispo);
-    if(toolbar) toolbar.style.display = (isTimeline || isAssignees || isDispo) ? 'none' : 'grid';
-    if(filterbar) filterbar.style.display = (!isTimeline && !isAssignees && !isDispo) ? 'grid' : 'none';
+    if(toolbar) toolbar.style.display = (isTimeline || isSummary || isAssignees || isDispo) ? 'none' : 'grid';
+    if(filterbar) filterbar.style.display = (!isTimeline && !isSummary && !isAssignees && !isDispo) ? 'grid' : 'none';
     if(timelineZoomInput || timelineZoomLabelsEl){
       updateTimelineZoomIndicator();
     }
@@ -4529,6 +4628,12 @@ normalizeState()
     if(isTimeline){
       virtualizationActive = false;
       renderTimeline();
+      updateBulkUi();
+      return;
+    }
+    if(isSummary){
+      virtualizationActive = false;
+      renderSummary();
       updateBulkUi();
       return;
     }
@@ -5889,6 +5994,76 @@ tdFolder.appendChild(preview);
    * entspricht. Die heutige Linie wird als rote vertikale Linie dargestellt.
    */
 
+
+  function renderSummary() {
+    if (!summaryView) return;
+    summaryView.innerHTML = '';
+    const team = Array.isArray(state.team) ? state.team.slice() : [];
+    team.forEach(member => {
+      const projectIds = new Set();
+      let todoCount = 0;
+      (state.projects || []).forEach(project => {
+        let assignedInProject = false;
+        (project.todos || []).forEach(todo => {
+          if (todo.assignee === member) {
+            assignedInProject = true;
+            todoCount++;
+          }
+          (todo.subtasks || []).forEach(sub => {
+            if (sub.assignee === member) {
+              assignedInProject = true;
+              todoCount++;
+            }
+          });
+        });
+        if (assignedInProject) {
+          projectIds.add(project.id);
+        }
+      });
+      const card = document.createElement('div');
+      card.className = 'summaryCard';
+      const header = document.createElement('div');
+      header.className = 'summaryCardHeader';
+      header.textContent = member;
+      const arrow = document.createElement('span');
+      arrow.className = 'summaryCardArrow ms';
+      arrow.textContent = 'expand_more';
+      header.appendChild(arrow);
+      card.appendChild(header);
+      const stats = document.createElement('div');
+      stats.className = 'summaryCardStats';
+      const projStat = document.createElement('div');
+      projStat.className = 'summaryStat';
+      projStat.innerHTML = '<span class="label">Projekte</span><span class="value">' + projectIds.size + '</span>';
+      const todoStat = document.createElement('div');
+      todoStat.className = 'summaryStat';
+      todoStat.innerHTML = '<span class="label">To-Dos</span><span class="value">' + todoCount + '</span>';
+      stats.appendChild(projStat);
+      stats.appendChild(todoStat);
+      card.appendChild(stats);
+      const dropdown = document.createElement('div');
+      dropdown.className = 'summaryDropdown';
+      const ul = document.createElement('ul');
+      (state.projects || []).forEach(project => {
+        if (projectIds.has(project.id)) {
+          const li = document.createElement('li');
+          const labelParts = [];
+          if (project.number) labelParts.push(project.number);
+          if (project.name) labelParts.push(project.name);
+          li.textContent = labelParts.join(' · ') || 'Unbenanntes Projekt';
+          ul.appendChild(li);
+        }
+      });
+      dropdown.appendChild(ul);
+      card.appendChild(dropdown);
+      header.addEventListener('click', () => {
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        arrow.textContent = dropdown.style.display === 'block' ? 'expand_less' : 'expand_more';
+      });
+      summaryView.appendChild(card);
+    });
+  }
+
   function renderAssignees(){
     if(!assigneeViewEl) return;
     assigneeViewEl.innerHTML = '';
@@ -6523,13 +6698,20 @@ tdFolder.appendChild(preview);
     const futureSpan = Math.max(0, diffDays(new Date(latestDue), today));
     const paddingPast = Math.min(120, Math.max(7, overdueSpan + 7));
     const paddingFuture = Math.min(120, Math.max(14, futureSpan + 14));
+    const minPastDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate()));
     let startDate = new Date(Math.min(earliestStart, earliestDue, today.getTime()) - paddingPast * dayMs);
     let maxDate = new Date(Math.max(latestDue, today.getTime()) + paddingFuture * dayMs);
     startDate = startOfIsoWeek(startDate);
     maxDate = endOfIsoWeek(maxDate);
+    if(startDate.getTime() < minPastDate.getTime()){
+      startDate = new Date(minPastDate.getTime());
+    }
+    if(maxDate.getTime() < startDate.getTime()){
+      maxDate = new Date(startDate.getTime());
+    }
     let rangeDays = Math.max(1, diffDays(maxDate, startDate) + 1);
     const timelineStartMs = startDate.getTime();
-    const timelineEndMs = timelineStartMs + rangeDays * dayMs;
+    const timelineEndMs = maxDate.getTime();
 
     const MAX_MARKERS = 1000;
     let markerCount = 0;
@@ -7683,8 +7865,21 @@ tdFolder.appendChild(preview);
     setDirty(true); render(); showToast('CSV importiert')
   }
 
+  const closeCsvMenu = () => { if(csvMenu) csvMenu.classList.remove('show') }
+  if(csvMenuBtn && csvMenu){
+    csvMenuBtn.addEventListener('click', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      csvMenu.classList.toggle('show')
+    })
+    csvMenu.addEventListener('click', (e) => e.stopPropagation())
+    document.addEventListener('click', closeCsvMenu)
+    document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeCsvMenu() })
+  }
+
   // CSV Import
   document.getElementById('csvImportBtn').addEventListener('click', () => {
+    closeCsvMenu()
     const inp = document.createElement('input');
     inp.type = 'file'; inp.accept = '.csv,text/csv';
     inp.onchange = () => {
@@ -7716,6 +7911,7 @@ tdFolder.appendChild(preview);
   const csvExportBtn = document.getElementById('csvExportBtn')
   if(csvExportBtn){
     csvExportBtn.addEventListener('click', async () => {
+      closeCsvMenu()
       const list = gatherProjectsForExport()
       try{
         await exportCSV(list, 'projekte.csv')
@@ -7983,6 +8179,13 @@ tdFolder.appendChild(preview);
       state.view = 'timeline';
       if(state.tabs?.includes(state.currentTab)) state.timelineTab = state.currentTab;
       else state.timelineTab = 'Alle';
+      render();
+    });
+  }
+  const viewSummaryBtn = document.getElementById('viewSummary');
+  if(viewSummaryBtn){
+    viewSummaryBtn.addEventListener('click', () => {
+      state.view = 'summary';
       render();
     });
   }
