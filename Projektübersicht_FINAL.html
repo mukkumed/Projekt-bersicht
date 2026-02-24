@@ -718,6 +718,7 @@ r:var(--muted); cursor:pointer}
   .summaryView {
     --summary-columns: 5;
     --summary-gap: 16px;
+    --summary-side-padding: 10px;
     display: none;
     padding: 18px;
     position: relative;
@@ -1244,7 +1245,8 @@ r:var(--muted); cursor:pointer}
     @page view-assignees{ size:A4 portrait; margin:12mm; }
     @page view-dispo{ size:A4 portrait; margin:12mm; }
     @page view-timeline{ size:A4 landscape; margin:12mm; }
-    body{ background:#ffffff; color:#0f172a; font-size:10px; line-height:1.35; }
+    :root{ --print-scale:0.86; }
+    body{ background:#ffffff; color:#0f172a; font-size:10px; line-height:1.35; zoom:var(--print-scale); }
     table{ table-layout:auto; }
     thead th, tbody td{ padding:6px 8px; font-size:10px; vertical-align:top; }
     body.view-table{ page:view-table; }
@@ -6026,13 +6028,15 @@ tdFolder.appendChild(preview);
     const rawColumns = Number.parseInt(styles.getPropertyValue('--summary-columns'), 10);
     const columns = Math.max(1, Number.isFinite(rawColumns) ? rawColumns : 5);
     const gap = Number.parseFloat(styles.getPropertyValue('--summary-gap')) || 16;
+    const sidePadding = Number.parseFloat(styles.getPropertyValue('--summary-side-padding')) || 10;
     const containerWidth = summaryView.clientWidth;
-    const columnWidth = columns > 1 ? (containerWidth - gap * (columns - 1)) / columns : containerWidth;
+    const availableWidth = Math.max(0, containerWidth - sidePadding * 2);
+    const columnWidth = columns > 1 ? (availableWidth - gap * (columns - 1)) / columns : availableWidth;
     const heights = new Array(columns).fill(0);
 
     cards.forEach((card, index) => {
       const col = index % columns;
-      const left = (columnWidth + gap) * col;
+      const left = sidePadding + (columnWidth + gap) * col;
       const top = heights[col];
       card.style.width = `${Math.max(0, columnWidth)}px`;
       card.style.left = `${Math.round(left)}px`;
@@ -6098,7 +6102,7 @@ tdFolder.appendChild(preview);
       card.appendChild(stats);
       const dropdown = document.createElement('div');
       dropdown.className = 'summaryDropdown';
-      if(projectIds.size > 20){
+      if(projectIds.size > 14){
         dropdown.classList.add('scrollable');
       }
       const ul = document.createElement('ul');
