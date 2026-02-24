@@ -326,7 +326,78 @@ tr.collapsed .pathPreview{ display:none; } /* Vorschau im zugeklappten Zustand v
     background:color-mix(in srgb, #fbbf24 18%, var(--card));
     border-color:color-mix(in srgb, #fbbf24 45%, var(--border));
   }
+  .viewToggle .viewBtn.view-summary{
+    background:color-mix(in srgb, #06b6d4 18%, var(--card));
+    border-color:color-mix(in srgb, #06b6d4 45%, var(--border));
+  }
   .viewToggle .on{outline:2px solid var(--accent)}
+
+  .summaryView {
+    display: none;
+    padding: 18px;
+    gap: 16px;
+    flex-direction: column;
+  }
+  .summaryView.show {
+    display: flex;
+  }
+  .summaryCard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 280px;
+    position: relative;
+  }
+  .summaryCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+  .summaryCardStats {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .summaryStat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .summaryStat .label {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .summaryStat .value {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  .summaryDropdown {
+    display: none;
+    margin-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    font-size: 0.9rem;
+  }
+  .summaryDropdown ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  .summaryDropdown li {
+    margin-bottom: 4px;
+  }
+  .summaryCardArrow {
+    cursor: pointer;
+    font-family: 'Material Symbols Rounded';
+    user-select: none;
+  }
 
   /* Eingabe-Toolbar */
   .toolbar{
@@ -841,7 +912,7 @@ r:var(--muted); cursor:pointer}
   }
   .timeline-marker-layer{
     position:absolute;
-    left:var(--timeline-label-width);
+    left:0;
     right:0;
     top:0;
     bottom:0;
@@ -1292,9 +1363,10 @@ r:var(--muted); cursor:pointer}
         <div class="rightTop">
           <div class="viewToggle">
             <button id="viewTable" class="viewBtn view-table on"><span class="ms">table_rows</span><span>Tabelle</span></button>
-            <button id="viewTimeline" class="viewBtn view-timeline"><span class="ms">timeline</span><span>Timeline</span></button>
+            <button id="viewSummary" class="viewBtn view-summary"><span class="ms">dashboard</span><span>Workload</span></button>
             <button id="viewAssignees" class="viewBtn view-assignees"><span class="ms">groups</span><span>Bearbeiter</span></button>
             <button id="viewDispo" class="viewBtn view-dispo"><span class="ms">event_note</span><span>Dispo</span></button>
+            <button id="viewTimeline" class="viewBtn view-timeline"><span class="ms">timeline</span><span>Timeline</span></button>
           </div>
           <button class="btn" id="csvImportBtn" title="CSV importieren">CSV import</button>
           <button class="btn" id="csvExportBtn" title="CSV exportieren">CSV export</button>
@@ -1426,6 +1498,9 @@ Noch 9 Tage" style="left: 285px; width: 267px; background: var(--accent);"></div
           <div id="dispoAssignSummary" class="dispoAssignSummary">Noch keine To-Dos zugewiesen.</div>
         </div>
       </div>
+
+      <!-- Workload-Karten Ansicht -->
+      <div id="summaryView" class="summaryView"></div>
 
       <div class="footer" style="display:flex; justify-content:space-between; padding:12px 14px; color:var(--muted); font-size:12px; border-top:1px solid var(--border)">
         <div>Speichern schreibt alle Daten in diese HTML-Datei. Tastenkürzel: <span class="kbd">Strg+S</span>, <span class="kbd">Strg+Z</span>, <span class="kbd">Strg+Y</span></div>
@@ -1860,7 +1935,7 @@ Noch 9 Tage" style="left: 285px; width: 267px; background: var(--accent);"></div
     if(!state.theme || typeof state.theme !== 'string') state.theme = defaults.theme
     state.theme = state.theme === 'light' ? 'light' : 'dark'
     if(!state.view || typeof state.view !== 'string') state.view = defaults.view
-    if(!['table','timeline','dispo','assignees'].includes(state.view)) state.view = defaults.view
+    if(!['table','timeline','dispo','assignees','summary'].includes(state.view)) state.view = defaults.view
 
     if(!Array.isArray(state.dispo)) state.dispo = []
     else {
@@ -3177,6 +3252,7 @@ normalizeState()
   const calendarSelectionCountEl = document.getElementById('calendarSelectionCount')
   const calendarCancelBtn = document.getElementById('calendarCancel')
   const dispoView = document.getElementById('dispoView')
+  const summaryView = document.getElementById('summaryView')
     const dispoListEl = document.getElementById('dispoList')
     const dispoBreadcrumbsEl = document.getElementById('dispoBreadcrumbs')
     const dispoAssignSummaryEl = document.getElementById('dispoAssignSummary')
@@ -4497,31 +4573,36 @@ normalizeState()
     const isTimeline = state.view === 'timeline';
     const isAssignees = state.view === 'assignees';
     const isDispo = state.view === 'dispo';
+    const isSummary = state.view === 'summary';
     const viewClassMap = {
       table: 'view-table',
       timeline: 'view-timeline',
       assignees: 'view-assignees',
-      dispo: 'view-dispo'
+      dispo: 'view-dispo',
+      summary: 'view-summary'
     };
     const activeViewClass = viewClassMap[state.view] || 'view-table';
     const viewClasses = Object.values(viewClassMap);
     viewClasses.forEach(cls => document.body.classList.toggle(cls, cls === activeViewClass));
     // Toggle view buttons
-    document.getElementById('viewTable').classList.toggle('on', !isTimeline && !isAssignees && !isDispo);
+    document.getElementById('viewTable').classList.toggle('on', !isTimeline && !isAssignees && !isDispo && !isSummary);
     const viewTimelineBtn = document.getElementById('viewTimeline');
     if(viewTimelineBtn) viewTimelineBtn.classList.toggle('on', isTimeline);
     const viewAssigneesBtn = document.getElementById('viewAssignees');
     if(viewAssigneesBtn) viewAssigneesBtn.classList.toggle('on', isAssignees);
     const viewDispoBtn = document.getElementById('viewDispo');
     if(viewDispoBtn) viewDispoBtn.classList.toggle('on', isDispo);
+    const viewSummaryBtn = document.getElementById('viewSummary');
+    if(viewSummaryBtn) viewSummaryBtn.classList.toggle('on', isSummary);
     // Show/hide main sections
-    tableView.style.display = (!isTimeline && !isAssignees && !isDispo) ? 'block' : 'none';
+    tableView.style.display = (!isTimeline && !isAssignees && !isDispo && !isSummary) ? 'block' : 'none';
     if(timelineShell) timelineShell.classList.toggle('show', isTimeline);
     if(timelineViewEl) timelineViewEl.classList.toggle('show', isTimeline);
     if(assigneeViewEl) assigneeViewEl.classList.toggle('show', isAssignees);
     if(dispoView) dispoView.classList.toggle('show', isDispo);
-    if(toolbar) toolbar.style.display = (isTimeline || isAssignees || isDispo) ? 'none' : 'grid';
-    if(filterbar) filterbar.style.display = (!isTimeline && !isAssignees && !isDispo) ? 'grid' : 'none';
+    if(summaryView) summaryView.classList.toggle('show', isSummary);
+    if(toolbar) toolbar.style.display = (isTimeline || isAssignees || isDispo || isSummary) ? 'none' : 'grid';
+    if(filterbar) filterbar.style.display = (!isTimeline && !isAssignees && !isDispo && !isSummary) ? 'grid' : 'none';
     if(timelineZoomInput || timelineZoomLabelsEl){
       updateTimelineZoomIndicator();
     }
@@ -4541,6 +4622,12 @@ normalizeState()
     if(isDispo){
       virtualizationActive = false;
       renderDispo();
+      updateBulkUi();
+      return;
+    }
+    if(isSummary){
+      virtualizationActive = false;
+      renderSummary();
       updateBulkUi();
       return;
     }
@@ -5889,6 +5976,76 @@ tdFolder.appendChild(preview);
    * entspricht. Die heutige Linie wird als rote vertikale Linie dargestellt.
    */
 
+  function renderSummary(){
+    const el = document.getElementById('summaryView');
+    if(!el) return;
+    el.innerHTML = '';
+    const team = Array.isArray(state.team) ? state.team.slice() : [];
+    team.forEach(member => {
+      const projectIds = new Set();
+      let todoCount = 0;
+      (state.projects || []).forEach(project => {
+        let assignedInProject = false;
+        (project.todos || []).forEach(todo => {
+          if(todo.assignee === member){
+            assignedInProject = true;
+            todoCount++;
+          }
+          (todo.subtasks || []).forEach(sub => {
+            if(sub.assignee === member){
+              assignedInProject = true;
+              todoCount++;
+            }
+          });
+        });
+        if(assignedInProject) projectIds.add(project.id);
+      });
+      const card = document.createElement('div');
+      card.className = 'summaryCard';
+      const header = document.createElement('div');
+      header.className = 'summaryCardHeader';
+      const headerName = document.createElement('span');
+      headerName.textContent = member;
+      header.appendChild(headerName);
+      const arrow = document.createElement('span');
+      arrow.className = 'summaryCardArrow';
+      arrow.textContent = 'expand_more';
+      header.appendChild(arrow);
+      card.appendChild(header);
+      const stats = document.createElement('div');
+      stats.className = 'summaryCardStats';
+      const projStat = document.createElement('div');
+      projStat.className = 'summaryStat';
+      projStat.innerHTML = '<span class="label">Projekte</span><span class="value">' + projectIds.size + '</span>';
+      const todoStat = document.createElement('div');
+      todoStat.className = 'summaryStat';
+      todoStat.innerHTML = '<span class="label">To-Dos</span><span class="value">' + todoCount + '</span>';
+      stats.appendChild(projStat);
+      stats.appendChild(todoStat);
+      card.appendChild(stats);
+      const dropdown = document.createElement('div');
+      dropdown.className = 'summaryDropdown';
+      const ul = document.createElement('ul');
+      (state.projects || []).forEach(project => {
+        if(projectIds.has(project.id)){
+          const li = document.createElement('li');
+          const labelParts = [];
+          if(project.number) labelParts.push(project.number);
+          if(project.name) labelParts.push(project.name);
+          li.textContent = labelParts.join(' · ') || 'Unbenanntes Projekt';
+          ul.appendChild(li);
+        }
+      });
+      dropdown.appendChild(ul);
+      card.appendChild(dropdown);
+      header.addEventListener('click', () => {
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        arrow.textContent = dropdown.style.display === 'block' ? 'expand_less' : 'expand_more';
+      });
+      el.appendChild(card);
+    });
+  }
+
   function renderAssignees(){
     if(!assigneeViewEl) return;
     assigneeViewEl.innerHTML = '';
@@ -6523,13 +6680,20 @@ tdFolder.appendChild(preview);
     const futureSpan = Math.max(0, diffDays(new Date(latestDue), today));
     const paddingPast = Math.min(120, Math.max(7, overdueSpan + 7));
     const paddingFuture = Math.min(120, Math.max(14, futureSpan + 14));
+    const minPastDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate()));
     let startDate = new Date(Math.min(earliestStart, earliestDue, today.getTime()) - paddingPast * dayMs);
     let maxDate = new Date(Math.max(latestDue, today.getTime()) + paddingFuture * dayMs);
     startDate = startOfIsoWeek(startDate);
     maxDate = endOfIsoWeek(maxDate);
+    if(startDate.getTime() < minPastDate.getTime()){
+      startDate = new Date(minPastDate.getTime());
+    }
+    if(maxDate.getTime() < startDate.getTime()){
+      maxDate = new Date(startDate.getTime());
+    }
     let rangeDays = Math.max(1, diffDays(maxDate, startDate) + 1);
     const timelineStartMs = startDate.getTime();
-    const timelineEndMs = timelineStartMs + rangeDays * dayMs;
+    const timelineEndMs = maxDate.getTime();
 
     const MAX_MARKERS = 1000;
     let markerCount = 0;
@@ -7993,6 +8157,13 @@ tdFolder.appendChild(preview);
   const viewDispoBtn = document.getElementById('viewDispo');
   if(viewDispoBtn){
     viewDispoBtn.addEventListener('click', () => { state.view = 'dispo'; render(); });
+  }
+  const viewSummaryBtn = document.getElementById('viewSummary');
+  if(viewSummaryBtn){
+    viewSummaryBtn.addEventListener('click', () => {
+      state.view = 'summary';
+      render();
+    });
   }
   if(timelineTabSelect){
     timelineTabSelect.addEventListener('change', (e) => {
