@@ -777,8 +777,6 @@ r:var(--muted); cursor:pointer}
     list-style: none;
     padding-left: 0;
     margin: 0;
-  }
-  .summaryDropdown.scrollable ul {
     max-height: calc(15 * 40px);
     overflow-y: auto;
     padding-right: 4px;
@@ -6089,7 +6087,7 @@ tdFolder.appendChild(preview);
           if (project.number) labelParts.push(project.number);
           if (project.name) labelParts.push(project.name);
           const projectLabel = labelParts.join(' · ') || 'Unbenanntes Projekt';
-          projectLabels.set(project.id, `${projectLabel} (${activeTodoCountInProject})`);
+          projectLabels.set(project.id, { label: projectLabel, count: activeTodoCountInProject });
         }
       });
       const card = document.createElement('div');
@@ -6135,14 +6133,16 @@ tdFolder.appendChild(preview);
       card.appendChild(stats);
       const dropdown = document.createElement('div');
       dropdown.className = 'summaryDropdown';
-      if(projectIds.size > 15){
-        dropdown.classList.add('scrollable');
-      }
       const ul = document.createElement('ul');
       (state.projects || []).forEach(project => {
         if (projectIds.has(project.id)) {
           const li = document.createElement('li');
-          li.textContent = projectLabels.get(project.id) || 'Unbenanntes Projekt';
+          const info = projectLabels.get(project.id);
+          if(info && typeof info === 'object') {
+            li.innerHTML = `${info.label} <strong>(${info.count})</strong>`;
+          }else{
+            li.textContent = 'Unbenanntes Projekt';
+          }
           ul.appendChild(li);
         }
       });
