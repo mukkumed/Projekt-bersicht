@@ -716,15 +716,16 @@ r:var(--muted); cursor:pointer}
   /* Timeline‑Ansicht */
 
   .summaryView {
+    --summary-columns: 5;
+    --summary-gap: 16px;
+    --summary-edge-gap: 16px;
     display: none;
     padding: 18px;
-    gap: 16px;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-start;
+    position: relative;
+    min-height: 40px;
   }
   .summaryView.show {
-    display: flex;
+    display: block;
   }
   .summaryCard {
     background: var(--card);
@@ -733,8 +734,10 @@ r:var(--muted); cursor:pointer}
     padding: 14px;
     box-shadow: var(--shadow);
     width: 100%;
-    max-width: 280px;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: top .2s ease;
   }
   .summaryCardHeader {
     display: flex;
@@ -775,6 +778,11 @@ r:var(--muted); cursor:pointer}
     padding-left: 0;
     margin: 0;
   }
+  .summaryDropdown.scrollable ul {
+    max-height: calc(15 * 40px);
+    overflow-y: auto;
+    padding-right: 4px;
+  }
   .summaryDropdown li {
     margin: 0;
     padding: 8px 0;
@@ -786,6 +794,32 @@ r:var(--muted); cursor:pointer}
     cursor: pointer;
     font-family: 'Material Symbols Rounded';
     user-select: none;
+  }
+
+  .summaryArrowTooltip {
+    position: fixed;
+    z-index: 2500;
+    pointer-events: none;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    color: var(--text);
+    font-size: 12px;
+    padding: 6px 8px;
+    white-space: nowrap;
+  }
+  @media (max-width: 1400px){
+    .summaryView{--summary-columns:4;}
+  }
+  @media (max-width: 1120px){
+    .summaryView{--summary-columns:3;}
+  }
+  @media (max-width: 860px){
+    .summaryView{--summary-columns:2;}
+  }
+  @media (max-width: 620px){
+    .summaryView{--summary-columns:1;}
   }
   .csvMenuWrap{position:relative; display:inline-flex;}
   .csvMenu{position:absolute; top:calc(100% + 6px); right:0; min-width:150px; display:none; flex-direction:column; background:var(--card); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); overflow:hidden; z-index:1900;}
@@ -3249,6 +3283,7 @@ normalizeState()
   const timelineZoomLabelsEl = document.getElementById('timelineZoomLabels')
   const assigneeViewEl = document.getElementById('assigneeView')
   const summaryView = document.getElementById('summaryView')
+  window.addEventListener('resize', () => { requestAnimationFrame(layoutSummaryCards); });
   const repeatDialogEl = document.getElementById('repeatDlg')
   const repeatForm = document.getElementById('repeatForm')
   const repeatFreqInput = document.getElementById('repeatFreq')
@@ -5995,29 +6030,66 @@ tdFolder.appendChild(preview);
    */
 
 
+  function layoutSummaryCards(){
+    if(!summaryView || !summaryView.classList.contains('show')) return;
+    const cards = Array.from(summaryView.querySelectorAll('.summaryCard'));
+    if(!cards.length){
+      summaryView.style.height = '0px';
+      return;
+    }
+    const styles = getComputedStyle(summaryView);
+    const rawColumns = Number.parseInt(styles.getPropertyValue('--summary-columns'), 10);
+    const columns = Math.max(1, Number.isFinite(rawColumns) ? rawColumns : 5);
+    const gap = Number.parseFloat(styles.getPropertyValue('--summary-gap')) || 16;
+    const edgeGap = Number.parseFloat(styles.getPropertyValue('--summary-edge-gap')) || 0;
+    const containerWidth = summaryView.clientWidth;
+    const usableWidth = Math.max(0, containerWidth - edgeGap * 2);
+    const columnWidth = columns > 1 ? (usableWidth - gap * (columns - 1)) / columns : usableWidth;
+    const heights = new Array(columns).fill(0);
+
+    cards.forEach((card, index) => {
+      const col = index % columns;
+      const left = edgeGap + (columnWidth + gap) * col;
+      const top = edgeGap + heights[col];
+      card.style.width = `${Math.max(0, columnWidth)}px`;
+      card.style.left = `${Math.round(left)}px`;
+      card.style.top = `${Math.round(top)}px`;
+      heights[col] += card.offsetHeight + gap;
+    });
+
+    summaryView.style.height = `${Math.max(0, ...heights) - gap + edgeGap * 2}px`;
+  }
+
   function renderSummary() {
     if (!summaryView) return;
     summaryView.innerHTML = '';
     const team = Array.isArray(state.team) ? state.team.slice() : [];
     team.forEach(member => {
       const projectIds = new Set();
+      const projectLabels = new Map();
       let todoCount = 0;
       (state.projects || []).forEach(project => {
-        let assignedInProject = false;
+        let activeTodoCountInProject = 0;
         (project.todos || []).forEach(todo => {
-          if (todo.assignee === member) {
-            assignedInProject = true;
+          if (!todo) return;
+          if (todo.assignee === member && !todo.done) {
+            activeTodoCountInProject++;
             todoCount++;
           }
           (todo.subtasks || []).forEach(sub => {
-            if (sub.assignee === member) {
-              assignedInProject = true;
+            if (sub.assignee === member && !sub.done) {
+              activeTodoCountInProject++;
               todoCount++;
             }
           });
         });
-        if (assignedInProject) {
+        if (activeTodoCountInProject > 0) {
           projectIds.add(project.id);
+          const labelParts = [];
+          if (project.number) labelParts.push(project.number);
+          if (project.name) labelParts.push(project.name);
+          const projectLabel = labelParts.join(' · ') || 'Unbenanntes Projekt';
+          projectLabels.set(project.id, `${projectLabel} (${activeTodoCountInProject})`);
         }
       });
       const card = document.createElement('div');
@@ -6028,41 +6100,66 @@ tdFolder.appendChild(preview);
       const arrow = document.createElement('span');
       arrow.className = 'summaryCardArrow ms';
       arrow.textContent = 'expand_more';
+      arrow.addEventListener('mouseenter', e => {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'summaryArrowTooltip';
+        tooltip.textContent = 'alle Projekte anzeigen';
+        document.body.appendChild(tooltip);
+        arrow.__tooltipEl = tooltip;
+        tooltip.style.left = `${e.clientX + 14}px`;
+        tooltip.style.top = `${e.clientY + 14}px`;
+      });
+      arrow.addEventListener('mousemove', e => {
+        if(!arrow.__tooltipEl) return;
+        arrow.__tooltipEl.style.left = `${e.clientX + 14}px`;
+        arrow.__tooltipEl.style.top = `${e.clientY + 14}px`;
+      });
+      arrow.addEventListener('mouseleave', () => {
+        if(arrow.__tooltipEl){
+          arrow.__tooltipEl.remove();
+          arrow.__tooltipEl = null;
+        }
+      });
       header.appendChild(arrow);
       card.appendChild(header);
       const stats = document.createElement('div');
       stats.className = 'summaryCardStats';
       const projStat = document.createElement('div');
       projStat.className = 'summaryStat';
-      projStat.innerHTML = '<span class="label">Projekte</span><span class="value">' + projectIds.size + '</span>';
+      projStat.innerHTML = '<span class="label">Aktive Projekte</span><span class="value">' + projectIds.size + '</span>';
       const todoStat = document.createElement('div');
       todoStat.className = 'summaryStat';
-      todoStat.innerHTML = '<span class="label">To-Dos</span><span class="value">' + todoCount + '</span>';
+      todoStat.innerHTML = '<span class="label">Aktive To-Dos</span><span class="value">' + todoCount + '</span>';
       stats.appendChild(projStat);
       stats.appendChild(todoStat);
       card.appendChild(stats);
       const dropdown = document.createElement('div');
       dropdown.className = 'summaryDropdown';
+      if(projectIds.size > 15){
+        dropdown.classList.add('scrollable');
+      }
       const ul = document.createElement('ul');
       (state.projects || []).forEach(project => {
         if (projectIds.has(project.id)) {
           const li = document.createElement('li');
-          const labelParts = [];
-          if (project.number) labelParts.push(project.number);
-          if (project.name) labelParts.push(project.name);
-          li.textContent = labelParts.join(' · ') || 'Unbenanntes Projekt';
+          li.textContent = projectLabels.get(project.id) || 'Unbenanntes Projekt';
           ul.appendChild(li);
         }
       });
       dropdown.appendChild(ul);
       card.appendChild(dropdown);
       header.addEventListener('click', () => {
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-        arrow.textContent = dropdown.style.display === 'block' ? 'expand_less' : 'expand_more';
+        if(arrow.__tooltipEl){ arrow.__tooltipEl.remove(); arrow.__tooltipEl = null; }
+        const isOpen = dropdown.style.display === 'block';
+        dropdown.style.display = isOpen ? 'none' : 'block';
+        arrow.textContent = isOpen ? 'expand_more' : 'expand_less';
+        requestAnimationFrame(layoutSummaryCards);
       });
       summaryView.appendChild(card);
     });
+    requestAnimationFrame(layoutSummaryCards);
   }
+
 
   function renderAssignees(){
     if(!assigneeViewEl) return;
