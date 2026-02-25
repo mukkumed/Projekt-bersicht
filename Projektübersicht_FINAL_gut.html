@@ -971,7 +971,8 @@ r:var(--muted); cursor:pointer}
     top:calc((var(--timeline-row-height) - 10px)/2);
     border-radius:2px;
     background:var(--accent);
-    transform:rotate(45deg);
+    /* left wird als Mittelpunkt berechnet -> Marker optisch exakt in der Spalte zentrieren */
+    transform:translateX(-50%) rotate(45deg);
     box-shadow:0 1px 3px rgba(15,23,42,.25);
   }
   .timeline-week-boundaries{position:absolute; inset:0; pointer-events:none;}
@@ -6801,11 +6802,15 @@ tdFolder.appendChild(preview);
     startDate = startOfIsoWeek(startDate);
     maxDate = endOfIsoWeek(maxDate);
     if(startDate.getTime() < minPastDate.getTime()){
-      startDate = new Date(minPastDate.getTime());
+      // Nach der Begrenzung erneut auf Wochenanfang ausrichten, damit KW-Spalten
+      // und Marker dieselbe Referenz haben und nicht dauerhaft versetzt erscheinen.
+      startDate = startOfIsoWeek(minPastDate);
     }
     if(maxDate.getTime() < startDate.getTime()){
       maxDate = new Date(startDate.getTime());
     }
+    // Auch das Ende nach möglichen Anpassungen wieder an ISO-Wochenraster koppeln.
+    maxDate = endOfIsoWeek(maxDate);
     let rangeDays = Math.max(1, diffDays(maxDate, startDate) + 1);
     const timelineStartMs = startDate.getTime();
     const timelineEndMs = maxDate.getTime();
