@@ -550,14 +550,14 @@ tbody tr.row-selected.colored{
   .todoItem.dragging{opacity:.6; outline:2px dashed #64748b}
   .todoItem input[type="checkbox"]{accent-color:var(--accent-2); margin-top:2px}
   .todoItem.done{opacity:.65}
-  .todoMain{display:flex; flex-wrap:wrap; gap:8px; align-items:center; min-width:0}
+  .todoMain{display:flex; flex-wrap:nowrap; gap:8px; align-items:center; min-width:0}
   .todoText{min-height:16px; min-width:0; flex:1 1 160px; overflow:hidden; text-overflow:ellipsis; font-weight:600}
   .todoText.editable{cursor:text}
   .assigneeChip{background:var(--muted); color:var(--bg); border-radius:.75rem; padding:2px 10px; font-size:.85rem; line-height:1}
   body.light .assigneeChip{color:#f8fafc}
   .todoItem.done .assigneeChip{opacity:.7}
-  .moreBtn{margin-left:auto; background:transparent; border:1px solid var(--border); border-radius:999px; padding:2px 10px; colo
-r:var(--muted); cursor:pointer}
+  .moreBtn{margin-left:auto; background:transparent; border:1px solid var(--border); border-radius:999px; width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; color:var(--muted); cursor:pointer; font-size:0}
+  .moreBtn .ms{font-size:20px; font-weight:700;}
   .moreBtn:hover, .moreBtn:focus{color:var(--text); border-color:var(--accent)}
   .todoMore{grid-column:1 / span 2; display:flex; flex-direction:column; gap:10px; align-items:stretch; margin-left:24px}
   .todoMore.hidden{display:none}
@@ -595,6 +595,8 @@ r:var(--muted); cursor:pointer}
     justify-content:center;
   }
   .todoItem .subAddBtn:hover{color:#cbd5e1; background:rgba(148,163,184,.12);}
+  body.light .todoItem .subAddBtn{color:#334155;}
+  body.light .todoItem .subAddBtn:hover{color:#0f172a; background:rgba(148,163,184,.24);}
 
   /* Mini‑Kalenderbutton in To‑Do‑Zeilen */
   .miniCal{
@@ -666,6 +668,46 @@ r:var(--muted); cursor:pointer}
   body.light .todoItem .todoAssignee,
   body.light .todoAdd .todoAssignee,
   body.light .subItem .todoAssignee{background:#ffffff;}
+  .assigneeMulti{
+    position:relative;
+    min-width:160px;
+  }
+  .assigneeMultiBtn{
+    width:100%;
+    min-height:30px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--card);
+    color:var(--text);
+    padding:6px 10px;
+    text-align:left;
+    cursor:pointer;
+    font-size:13px;
+  }
+  .assigneeMultiPanel{
+    position:absolute;
+    inset-inline-start:0;
+    top:calc(100% + 6px);
+    z-index:2200;
+    min-width:100%;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--card);
+    box-shadow:var(--shadow);
+    padding:8px;
+    display:none;
+    flex-direction:column;
+    gap:4px;
+  }
+  .assigneeMulti.open .assigneeMultiPanel{display:flex;}
+  .assigneeMulti.open-up .assigneeMultiPanel{
+    top:auto;
+    bottom:calc(100% + 6px);
+  }
+  .assigneeMultiItem{display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;}
+  .assigneeMultiHint{font-size:11px; color:var(--muted); margin-top:2px;}
+  body.light .assigneeMultiBtn,
+  body.light .assigneeMultiPanel{background:#ffffff;}
   body.light .todoAdd .todoDueInput{background:#ffffff;}
   .subList{margin-left:36px; display:flex; flex-direction:column; gap:4px;}
   .subItem{
@@ -1151,6 +1193,19 @@ r:var(--muted); cursor:pointer}
   .assigneeProjectBlock{border:1px solid var(--border); border-radius:14px; background:var(--card); padding:16px; display:flex; flex-direction:column; gap:12px;}
   body.light .assigneeProjectBlock{background:#ffffff;}
   .assigneeProjectHeading{font-weight:700; font-size:16px;}
+  .assigneeProjectHeadingRow{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .assigneeProjectHeadingRow .miniBtn{
+    width:24px; height:24px; min-width:24px;
+    padding:0; border-radius:6px;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .assigneeProjectHeadingRow .miniBtn .ms{font-size:20px; line-height:1;}
+  .assigneeInlineAdd{display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding-top:4px;}
+  .assigneeInlineAdd input[type="text"]{
+    flex:1 1 220px; min-width:180px;
+    border:1px solid var(--border); border-radius:10px; background:var(--card); color:var(--text); padding:8px 10px;
+  }
+  body.light .assigneeInlineAdd input[type="text"]{background:#ffffff;}
   .assigneeTodoList{display:flex; flex-direction:column; gap:8px;}
   .assigneeTodoRow{position:relative; display:flex; align-items:flex-start; gap:12px; border:1px solid var(--border); border-radius:10px; background:var(--chip); padding:10px 12px;}
   .assigneeTodoRow.unacknowledged{border-color:#facc15; box-shadow:0 0 0 1px color-mix(in srgb, #facc15 45%, transparent);}
@@ -1173,6 +1228,7 @@ r:var(--muted); cursor:pointer}
     background:#0c1630;
     color:var(--text);
   }
+  .assigneeTodoEdit input[type="date"]{max-width:150px;}
   body.light .assigneeTodoEdit input[type="text"],
   body.light .assigneeTodoEdit input[type="date"]{background:#ffffff;}
   .assigneeTodoEditActions{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
@@ -3337,27 +3393,14 @@ normalizeState()
 
   if(timelineAssigneeSelect){
     timelineAssigneeSelect.addEventListener('change', () => {
-      const rawValues = Array.from(timelineAssigneeSelect.selectedOptions).map(opt => opt.value)
-      if(rawValues.includes('__all__')){
+      const value = timelineAssigneeSelect.value
+      if(!value || value === '__all__'){
         state.timelineAssignees = []
+      }else if(value === ASSIGNEE_UNASSIGNED){
+        state.timelineAssignees = [ASSIGNEE_UNASSIGNED]
       }else{
-        const normalized = []
-        const seen = new Set()
-        rawValues.forEach(val => {
-          if(val === ASSIGNEE_UNASSIGNED){
-            if(!seen.has(ASSIGNEE_UNASSIGNED)){
-              seen.add(ASSIGNEE_UNASSIGNED)
-              normalized.push(ASSIGNEE_UNASSIGNED)
-            }
-            return
-          }
-          const original = (state.team || []).find(name => name.toLowerCase() === val.toLowerCase()) || val
-          const key = original.toLowerCase()
-          if(seen.has(key)) return
-          seen.add(key)
-          normalized.push(original)
-        })
-        state.timelineAssignees = normalized
+        const original = (state.team || []).find(name => name.toLowerCase() === value.toLowerCase()) || value
+        state.timelineAssignees = [original]
       }
       renderTimelineFilters()
       renderTimeline()
@@ -3626,6 +3669,120 @@ normalizeState()
     })
     return out
   }
+  function parseAssigneeValues(value){
+    if(typeof value !== 'string') return []
+    return value
+      .split(/[;,/]/)
+      .map(part => part.trim())
+      .filter(Boolean)
+  }
+  function normalizeAssignees(value, { limit=5 } = {}){
+    const team = Array.isArray(state.team) ? state.team : []
+    const parsed = Array.isArray(value) ? value : parseAssigneeValues(value)
+    const lookup = new Map(team.map(name => [name.toLowerCase(), name]))
+    const out = []
+    const seen = new Set()
+    parsed.forEach(raw => {
+      const norm = String(raw || '').trim()
+      if(!norm) return
+      const canonical = lookup.get(norm.toLowerCase()) || norm
+      const key = canonical.toLowerCase()
+      if(seen.has(key)) return
+      seen.add(key)
+      out.push(canonical)
+    })
+    return out.slice(0, Math.max(1, limit))
+  }
+  function formatAssignees(value){
+    return normalizeAssignees(value).join(' / ')
+  }
+  function createAssigneeMultiSelect({ value='', placeholder='Bearbeiter wählen', className='todoAssignee', onChange } = {}){
+    const wrap = document.createElement('div')
+    wrap.className = `assigneeMulti ${className}`.trim()
+    const btn = document.createElement('button')
+    btn.type = 'button'
+    btn.className = 'assigneeMultiBtn'
+    const panel = document.createElement('div')
+    panel.className = 'assigneeMultiPanel'
+    const hint = document.createElement('div')
+    hint.className = 'assigneeMultiHint'
+    hint.textContent = 'Bis zu 5 Bearbeiter'
+    const team = Array.isArray(state.team) ? state.team.slice() : []
+    let selected = normalizeAssignees(value)
+    const close = () => wrap.classList.remove('open')
+    const syncButton = () => {
+      btn.textContent = selected.length ? selected.join(' / ') : placeholder
+    }
+    const apply = () => {
+      syncButton()
+      if(typeof onChange === 'function') onChange(selected.join(' / '))
+    }
+    btn.addEventListener('click', (ev) => {
+      ev.preventDefault()
+      ev.stopPropagation()
+      const willOpen = !wrap.classList.contains('open')
+      wrap.classList.toggle('open', willOpen)
+      wrap.classList.remove('open-up')
+      if(willOpen){
+        panel.style.maxHeight = ''
+        requestAnimationFrame(() => {
+          const rect = wrap.getBoundingClientRect()
+          const panelHeight = Math.max(panel.scrollHeight + 18, 120)
+          const spaceBelow = window.innerHeight - rect.bottom
+          const spaceAbove = rect.top
+          const openUp = spaceBelow < panelHeight && spaceAbove > spaceBelow
+          wrap.classList.toggle('open-up', openUp)
+          const maxHeight = Math.max(120, openUp ? spaceAbove - 20 : spaceBelow - 20)
+          panel.style.maxHeight = `${Math.round(maxHeight)}px`
+          panel.style.overflowY = 'auto'
+        })
+      }
+    })
+    const outsideHandler = (ev) => {
+      if(wrap.contains(ev.target)) return
+      close()
+    }
+    document.addEventListener('mousedown', outsideHandler)
+    wrap.__cleanup = () => document.removeEventListener('mousedown', outsideHandler)
+    team.forEach(name => {
+      const label = document.createElement('label')
+      label.className = 'assigneeMultiItem'
+      const cb = document.createElement('input')
+      cb.type = 'checkbox'
+      cb.value = name
+      cb.checked = selected.some(sel => sel.toLowerCase() === name.toLowerCase())
+      cb.addEventListener('change', () => {
+        const current = normalizeAssignees(selected)
+        if(cb.checked){
+          if(current.length >= 5){
+            cb.checked = false
+            showToast('Maximal 5 Bearbeiter möglich.')
+            return
+          }
+          selected = normalizeAssignees([...current, name])
+        }else{
+          selected = current.filter(entry => entry.toLowerCase() !== name.toLowerCase())
+        }
+        apply()
+      })
+      label.appendChild(cb)
+      label.appendChild(document.createTextNode(name))
+      panel.appendChild(label)
+    })
+    wrap.appendChild(btn)
+    wrap.appendChild(panel)
+    panel.appendChild(hint)
+    syncButton()
+    wrap.getValue = () => selected.join(' / ')
+    wrap.setValue = (next) => {
+      selected = normalizeAssignees(next)
+      Array.from(panel.querySelectorAll('input[type="checkbox"]')).forEach(cb => {
+        cb.checked = selected.some(entry => entry.toLowerCase() === cb.value.toLowerCase())
+      })
+      syncButton()
+    }
+    return wrap
+  }
   function buildAssigneeMatcher(){
     const values = Array.isArray(state.assigneeFilter) ? state.assigneeFilter : []
     const includeUnassigned = values.includes(ASSIGNEE_UNASSIGNED)
@@ -3639,7 +3796,7 @@ normalizeState()
         if(!active) return true
         const raw = typeof assignee === 'string' ? assignee.trim() : ''
         if(raw){
-          const parts = raw.split(/[;,]/).map(part => part.trim()).filter(Boolean)
+          const parts = normalizeAssignees(raw)
           if(!parts.length) return includeUnassigned
           return parts.some(part => {
             const key = part.toLowerCase()
@@ -4610,11 +4767,11 @@ normalizeState()
   function renderTimelineFilters(){
     if(!timelineAssigneeSelect) return
     const values = Array.isArray(state.timelineAssignees) ? state.timelineAssignees : []
-    const selected = new Set(values)
+    const selected = values[0] || ''
     const team = Array.isArray(state.team) ? state.team : []
     timelineAssigneeSelect.innerHTML = ''
-    const optionCount = team.length + 2
-    timelineAssigneeSelect.size = optionCount <= 3 ? optionCount : 3
+    timelineAssigneeSelect.multiple = false
+    timelineAssigneeSelect.size = 1
     const addOption = (value, label, isSelected) => {
       const opt = document.createElement('option')
       opt.value = value
@@ -4622,9 +4779,9 @@ normalizeState()
       opt.selected = !!isSelected
       timelineAssigneeSelect.appendChild(opt)
     }
-    addOption('__all__', 'Alle Bearbeiter', selected.size === 0)
-    addOption(ASSIGNEE_UNASSIGNED, 'Unzugewiesen', selected.has(ASSIGNEE_UNASSIGNED))
-    team.forEach(name => addOption(name, name, selected.has(name)))
+    addOption('__all__', 'Alle Bearbeiter', !selected)
+    addOption(ASSIGNEE_UNASSIGNED, 'Unzugewiesen', selected === ASSIGNEE_UNASSIGNED)
+    team.forEach(name => addOption(name, name, selected === name))
   }
 
   function render(){
@@ -4947,18 +5104,7 @@ function rowFor(p){
       addDue.placeholder = '';
       let addAssigneeSelect = null;
       if(Array.isArray(state.team) && state.team.length){
-        addAssigneeSelect = document.createElement('select');
-        addAssigneeSelect.className = 'todoAssignee';
-        const opt = document.createElement('option');
-        opt.value = '';
-        opt.textContent = 'Bearbeiter wählen';
-        addAssigneeSelect.appendChild(opt);
-        state.team.forEach(name => {
-          const option = document.createElement('option');
-          option.value = name;
-          option.textContent = name;
-          addAssigneeSelect.appendChild(option);
-        });
+        addAssigneeSelect = createAssigneeMultiSelect({ className:'todoAssignee' });
       }
       const addBtn = document.createElement('button');
       addBtn.className = 'btnPrimary';
@@ -4968,9 +5114,7 @@ function rowFor(p){
         if(!custom) return;
         const tokens = custom.split(';').map(s => s.trim()).filter(Boolean);
         if(!tokens.length) return;
-        const assignee = addAssigneeSelect && state.team.includes(addAssigneeSelect.value)
-          ? addAssigneeSelect.value
-          : '';
+        const assignee = addAssigneeSelect ? addAssigneeSelect.getValue() : '';
         const dueValue = addDue.value && parseIsoDate(addDue.value)
           ? addDue.value
           : '';
@@ -4986,7 +5130,7 @@ function rowFor(p){
         });
         inTask.value = '';
         addDue.value = '';
-        if(addAssigneeSelect) addAssigneeSelect.value = '';
+        if(addAssigneeSelect) addAssigneeSelect.setValue('');
       };
       addBtn.addEventListener('click', () => {
         commitTodo();
@@ -5214,7 +5358,7 @@ tdFolder.appendChild(preview);
 
     let assigneeSelect = null
     const updateAssigneeChip = () => {
-      const current = state.team.includes(t.assignee) ? t.assignee : ''
+      const current = formatAssignees(t.assignee)
       if(current){
         assigneeChip.textContent = current
         assigneeChip.style.display = 'inline-flex'
@@ -5252,31 +5396,20 @@ tdFolder.appendChild(preview);
 
     if(Array.isArray(state.team) && state.team.length){
       main.appendChild(assigneeChip)
-      assigneeSelect = document.createElement('select')
-      assigneeSelect.className = 'todoAssignee'
-      const defaultOpt = document.createElement('option')
-      defaultOpt.value = ''
-      defaultOpt.textContent = 'Bearbeiter wählen'
-      assigneeSelect.appendChild(defaultOpt)
-      state.team.forEach(name => {
-        const opt = document.createElement('option')
-        opt.value = name
-        opt.textContent = name
-        assigneeSelect.appendChild(opt)
-      })
-      assigneeSelect.value = state.team.includes(t.assignee) ? t.assignee : ''
-      assigneeSelect.addEventListener('change', () => {
-        const next = assigneeSelect.value
+      assigneeSelect = createAssigneeMultiSelect({
+        value: t.assignee || '',
+        className: 'todoAssignee',
+        onChange: (next) => {
         if(next === (t.assignee || '')) return
         pushHistory()
         t.assignee = next
         setDirty(true)
         updateAssigneeChip()
-        render()
-      })
+      }})
       assigneeChip.addEventListener('click', () => {
         if(assigneeSelect){
-          assigneeSelect.focus()
+          const btn = assigneeSelect.querySelector('.assigneeMultiBtn')
+          if(btn) btn.click()
         }
       })
     }
@@ -5296,12 +5429,11 @@ tdFolder.appendChild(preview);
       repeatBtn.disabled = true
       repeatBtn.title = 'Wiederholung nicht verfügbar'
     }
-    main.appendChild(repeatBtn)
 
     const moreBtn = document.createElement('button')
     moreBtn.type = 'button'
     moreBtn.className = 'moreBtn'
-    moreBtn.textContent = 'Mehr'
+    moreBtn.innerHTML = '<span class="ms">expand_more</span>'
     moreBtn.setAttribute('aria-expanded','false')
     main.appendChild(moreBtn)
 
@@ -5333,11 +5465,11 @@ tdFolder.appendChild(preview);
       const show = typeof force === 'boolean' ? force : todoMore.classList.contains('hidden')
       if(show){
         todoMore.classList.remove('hidden')
-        moreBtn.textContent = 'Weniger'
+        moreBtn.innerHTML = '<span class="ms">expand_less</span>'
         moreBtn.setAttribute('aria-expanded','true')
       }else{
         todoMore.classList.add('hidden')
-        moreBtn.textContent = 'Mehr'
+        moreBtn.innerHTML = '<span class="ms">expand_more</span>'
         moreBtn.setAttribute('aria-expanded','false')
       }
     }
@@ -5349,6 +5481,7 @@ tdFolder.appendChild(preview);
     dueWrap.className = 'todoDueWrap'
     dueWrap.appendChild(due)
     dueWrap.appendChild(calBtn)
+    dueWrap.appendChild(repeatBtn)
     metaRow.appendChild(dueWrap)
     if(assigneeSelect){
       assigneeSelect.classList.add('todoAssigneeSelect')
@@ -5464,27 +5597,15 @@ tdFolder.appendChild(preview);
 
       let subAssignee = null
       if(Array.isArray(state.team) && state.team.length){
-        subAssignee = document.createElement('select')
-        subAssignee.className = 'todoAssignee'
-        const defaultOpt = document.createElement('option')
-        defaultOpt.value = ''
-        defaultOpt.textContent = 'Bearbeiter wählen'
-        subAssignee.appendChild(defaultOpt)
-        state.team.forEach(name => {
-          const opt = document.createElement('option')
-          opt.value = name
-          opt.textContent = name
-          subAssignee.appendChild(opt)
-        })
-        subAssignee.value = state.team.includes(sub.assignee) ? sub.assignee : ''
-        subAssignee.addEventListener('change', () => {
-          const next = subAssignee.value
+        subAssignee = createAssigneeMultiSelect({
+          value: sub.assignee || '',
+          className: 'todoAssignee',
+          onChange: (next) => {
           if(next === (sub.assignee || '')) return
           pushHistory()
           sub.assignee = next
           setDirty(true)
-          render()
-        })
+        }})
       }
 
       const remove = document.createElement('button')
@@ -5682,7 +5803,7 @@ tdFolder.appendChild(preview);
           if(!matcherActive) return true
           const raw = typeof assignee === 'string' ? assignee.trim() : ''
           if(raw){
-            const parts = raw.split(/[;,]/).map(part => part.trim()).filter(Boolean)
+            const parts = parseAssigneeValues(raw)
             if(!parts.length) return includeUnassigned
             return parts.some(part => {
               const key = part.toLowerCase()
@@ -6083,12 +6204,14 @@ tdFolder.appendChild(preview);
         let activeTodoCountInProject = 0;
         (project.todos || []).forEach(todo => {
           if (!todo) return;
-          if (todo.assignee === member && !todo.done) {
+          const todoAssignees = normalizeAssignees(todo.assignee || '').map(name => name.toLowerCase());
+          if (todoAssignees.includes(String(member).toLowerCase()) && !todo.done) {
             activeTodoCountInProject++;
             todoCount++;
           }
           (todo.subtasks || []).forEach(sub => {
-            if (sub.assignee === member && !sub.done) {
+            const subAssignees = normalizeAssignees(sub.assignee || '').map(name => name.toLowerCase());
+            if (subAssignees.includes(String(member).toLowerCase()) && !sub.done) {
               activeTodoCountInProject++;
               todoCount++;
             }
@@ -6190,11 +6313,10 @@ tdFolder.appendChild(preview);
 
     const select = document.createElement('select');
     select.id = 'assigneeFilterSelect';
-    select.multiple = true;
-    const optionCount = team.length + 2;
-    select.size = optionCount <= 3 ? optionCount : 3;
-    const selectedSet = new Set(selectedValues);
-    const filterActiveInitial = selectedSet.size > 0;
+    select.multiple = false;
+    select.size = 1;
+    const selectedValue = selectedValues[0] || '';
+    const filterActiveInitial = !!selectedValue;
 
     const appendOption = (value, label, isSelected) => {
       const opt = document.createElement('option');
@@ -6205,56 +6327,33 @@ tdFolder.appendChild(preview);
     };
 
     appendOption(SELECT_ALL, 'Alle Bearbeiter', !filterActiveInitial);
-    appendOption(ASSIGNEE_UNASSIGNED, 'Unzugewiesen', selectedSet.has(ASSIGNEE_UNASSIGNED));
-    team.forEach(name => appendOption(name, name, selectedSet.has(name)));
+    appendOption(ASSIGNEE_UNASSIGNED, 'Unzugewiesen', selectedValue === ASSIGNEE_UNASSIGNED);
+    team.forEach(name => appendOption(name, name, selectedValue === name));
 
     select.addEventListener('change', () => {
-      const rawValues = Array.from(select.selectedOptions).map(opt => opt.value);
-      if(rawValues.includes(SELECT_ALL)){
+      const value = select.value;
+      if(!value || value === SELECT_ALL){
         state.assigneeFilter = [];
         renderAssignees();
         return;
       }
-      const normalized = [];
-      const seen = new Set();
-      rawValues.forEach(val => {
-        if(val === ASSIGNEE_UNASSIGNED){
-          if(!seen.has(ASSIGNEE_UNASSIGNED)){
-            seen.add(ASSIGNEE_UNASSIGNED);
-            normalized.push(ASSIGNEE_UNASSIGNED);
-          }
-        }else{
-          const original = (team.find(name => name.toLowerCase() === val.toLowerCase()) || val).trim();
-          if(!original) return;
-          const key = original.toLowerCase();
-          if(seen.has(key)) return;
-          seen.add(key);
-          normalized.push(original);
-        }
-      });
-      state.assigneeFilter = normalized;
+      if(value === ASSIGNEE_UNASSIGNED){
+        state.assigneeFilter = [ASSIGNEE_UNASSIGNED];
+        renderAssignees();
+        return;
+      }
+      const original = (team.find(name => name.toLowerCase() === value.toLowerCase()) || value).trim();
+      state.assigneeFilter = original ? [original] : [];
       renderAssignees();
     });
 
     filterBar.appendChild(select);
-    if(team.length){
-      const hint = document.createElement('span');
-      hint.textContent = 'Mehrfachauswahl mit Strg/⌘';
-      hint.style.fontSize = '12px';
-      hint.style.color = 'var(--muted)';
-      filterBar.appendChild(hint);
-    }
     assigneeViewEl.appendChild(filterBar);
 
     const filterSet = new Set(Array.isArray(state.assigneeFilter) ? state.assigneeFilter : []);
     const filterActive = filterSet.size > 0;
     const includeUnassigned = filterSet.has(ASSIGNEE_UNASSIGNED);
-    const parseAssignees = (value) => {
-      if(typeof value !== 'string') return []
-      return value.split(/[;,]/).map(part => part.trim()).filter(Boolean).map(part => {
-        return team.find(name => name.toLowerCase() === part.toLowerCase()) || ''
-      }).filter(Boolean)
-    }
+    const parseAssignees = (value) => normalizeAssignees(value)
     const matchesAssignee = assignees => {
       if(!filterActive) return true;
       if(assignees.length) return assignees.some(name => filterSet.has(name));
@@ -6275,7 +6374,7 @@ tdFolder.appendChild(preview);
             subIndex: null,
             parent: null,
             isSubtask: false,
-            assignee: todoAssignees.join(', ')
+            assignee: todoAssignees.join(' / ')
           });
         }
         const subtasks = Array.isArray(todo.subtasks) ? todo.subtasks : [];
@@ -6290,7 +6389,7 @@ tdFolder.appendChild(preview);
               subIndex,
               parent: todo,
               isSubtask: true,
-              assignee: subAssignees.join(', ')
+              assignee: subAssignees.join(' / ')
             });
           }
         });
@@ -6308,16 +6407,87 @@ tdFolder.appendChild(preview);
 
     const container = document.createElement('div');
     container.className = 'assigneeProjects';
+    if(!state.assigneeInlineAdd || typeof state.assigneeInlineAdd !== 'object'){
+      state.assigneeInlineAdd = {};
+    }
     groups.forEach(({ project, tasks }) => {
       const block = document.createElement('div');
       block.className = 'assigneeProjectBlock';
+      const headingRow = document.createElement('div');
+      headingRow.className = 'assigneeProjectHeadingRow';
       const heading = document.createElement('div');
       heading.className = 'assigneeProjectHeading';
       const labelParts = [];
       if(project.number) labelParts.push(project.number);
       if(project.name) labelParts.push(project.name);
       heading.textContent = labelParts.join(' · ') || 'Unbenanntes Projekt';
-      block.appendChild(heading);
+      const addTodoBtn = document.createElement('button');
+      addTodoBtn.type = 'button';
+      addTodoBtn.className = 'miniBtn';
+      addTodoBtn.title = 'To-Do hinzufügen';
+      addTodoBtn.setAttribute('aria-label', 'To-Do hinzufügen');
+      addTodoBtn.innerHTML = '<span class="ms">add</span>';
+      addTodoBtn.addEventListener('click', () => {
+        state.assigneeInlineAdd[project.id] = { text:'', assignee:'' };
+        renderAssignees();
+      });
+      headingRow.appendChild(heading);
+      headingRow.appendChild(addTodoBtn);
+      block.appendChild(headingRow);
+
+      const draft = state.assigneeInlineAdd[project.id];
+      if(draft){
+        const inlineAdd = document.createElement('div');
+        inlineAdd.className = 'assigneeInlineAdd';
+        const textInput = document.createElement('input');
+        textInput.type = 'text';
+        textInput.placeholder = 'To-Do';
+        textInput.value = draft.text || '';
+        const assigneeControl = createAssigneeMultiSelect({
+          className:'todoAssignee',
+          value: draft.assignee || '',
+          onChange: (value) => { draft.assignee = value; }
+        });
+        const confirmBtn = document.createElement('button');
+        confirmBtn.type = 'button';
+        confirmBtn.className = 'miniBtn';
+        confirmBtn.textContent = 'Bestätigen';
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'miniBtn';
+        cancelBtn.textContent = 'Abbrechen';
+        cancelBtn.addEventListener('click', () => {
+          delete state.assigneeInlineAdd[project.id];
+          renderAssignees();
+        });
+        confirmBtn.addEventListener('click', () => {
+          const text = (textInput.value || '').trim();
+          if(!text){
+            textInput.focus();
+            return;
+          }
+          pushHistory();
+          if(!Array.isArray(project.todos)) project.todos = [];
+          project.todos.push({
+            text,
+            done:false,
+            due:'',
+            assignee:assigneeControl.getValue(),
+            repeat:null,
+            acknowledged:false,
+            subtasks:[]
+          });
+          delete state.assigneeInlineAdd[project.id];
+          setDirty(true);
+          render();
+        });
+        textInput.addEventListener('input', () => { draft.text = textInput.value; });
+        inlineAdd.appendChild(textInput);
+        inlineAdd.appendChild(assigneeControl);
+        inlineAdd.appendChild(confirmBtn);
+        inlineAdd.appendChild(cancelBtn);
+        block.appendChild(inlineAdd);
+      }
 
       const list = document.createElement('div');
       list.className = 'assigneeTodoList';
@@ -6690,8 +6860,8 @@ tdFolder.appendChild(preview);
     const includeUnassigned = assigneeSet.has(ASSIGNEE_UNASSIGNED);
     const matchesAssignee = assignee => {
       if(!assigneeFilterActive) return true;
-      const normalized = typeof assignee === 'string' ? assignee.trim() : '';
-      if(normalized) return assigneeSet.has(normalized);
+      const normalized = normalizeAssignees(assignee);
+      if(normalized.length) return normalized.some(name => assigneeSet.has(name));
       return includeUnassigned;
     };
 
@@ -6703,7 +6873,7 @@ tdFolder.appendChild(preview);
       (p.todos || []).forEach((t, todoIndex) => {
         if(!t) return;
         const todoStart = parseDate(t.start) || projectStart;
-        const todoAssignee = typeof t.assignee === 'string' ? t.assignee.trim() : '';
+        const todoAssignee = t.assignee || '';
         if(t.due && !t.done){
           const dueDate = parseDate(t.due);
           if(dueDate){
@@ -6734,7 +6904,7 @@ tdFolder.appendChild(preview);
           if(!sub || sub.done || !sub.due) return;
           const subDue = parseDate(sub.due);
           if(!subDue) return;
-          const subAssignee = typeof sub.assignee === 'string' ? sub.assignee.trim() : '';
+          const subAssignee = sub.assignee || '';
           if(assigneeFilterActive && !matchesAssignee(subAssignee)) return;
           tasks.push({
             type: 'bar',
@@ -7445,7 +7615,7 @@ tdFolder.appendChild(preview);
       if(matchProject) projectSelect.value = matchProject.id || '';
       if(assignAssignee){
         const assignees = String(lastItem.assignee || '')
-          .split(/[;,]/)
+          .split(/[;,/]/)
           .map(part => part.trim())
           .filter(Boolean);
         const assigneeSet = new Set(assignees.map(name => name.toLowerCase()));
@@ -8134,7 +8304,7 @@ tdFolder.appendChild(preview);
       const SELECT_ALL = '__all__'
       const teamList = Array.isArray(state.team) ? state.team : []
       const values = Array.isArray(state.assigneeFilter) ? state.assigneeFilter : []
-      const selected = new Set(values)
+      const selectedValue = values[0] || ''
       const addOption = (value, label, isSelected) => {
         const opt = document.createElement('option')
         opt.value = value
@@ -8142,41 +8312,30 @@ tdFolder.appendChild(preview);
         opt.selected = !!isSelected
         tableAssigneeFilter.appendChild(opt)
       }
-      addOption(SELECT_ALL, 'Alle Bearbeiter', selected.size === 0)
-      addOption(ASSIGNEE_UNASSIGNED, 'Unzugewiesen', selected.has(ASSIGNEE_UNASSIGNED))
-      teamList.forEach(name => addOption(name, name, selected.has(name)))
-      const optionCount = teamList.length + 2
-      tableAssigneeFilter.size = optionCount <= 3 ? optionCount : 3
+      addOption(SELECT_ALL, 'Alle Bearbeiter', !selectedValue)
+      addOption(ASSIGNEE_UNASSIGNED, 'Unzugewiesen', selectedValue === ASSIGNEE_UNASSIGNED)
+      teamList.forEach(name => addOption(name, name, selectedValue === name))
+      tableAssigneeFilter.multiple = false
+      tableAssigneeFilter.size = 1
     }
   q.addEventListener('input', updateFilters);
   status.addEventListener('change', updateFilters);
   sort.addEventListener('change', updateFilters);
   if(tableAssigneeFilter){
     tableAssigneeFilter.addEventListener('change', () => {
-      const rawValues = Array.from(tableAssigneeFilter.selectedOptions).map(opt => opt.value)
-      if(rawValues.includes('__all__')){
+      const value = tableAssigneeFilter.value
+      if(!value || value === '__all__'){
         state.assigneeFilter = []
         render()
         return
       }
-      const normalized = []
-      const seen = new Set()
-      rawValues.forEach(val => {
-        if(val === ASSIGNEE_UNASSIGNED){
-          if(!seen.has(ASSIGNEE_UNASSIGNED)){
-            seen.add(ASSIGNEE_UNASSIGNED)
-            normalized.push(ASSIGNEE_UNASSIGNED)
-          }
-        }else{
-          const original = (state.team || []).find(name => name.toLowerCase() === val.toLowerCase()) || val
-          const key = original.toLowerCase()
-          if(!seen.has(key)){
-            seen.add(key)
-            normalized.push(original)
-          }
-        }
-      })
-      state.assigneeFilter = normalized
+      if(value === ASSIGNEE_UNASSIGNED){
+        state.assigneeFilter = [ASSIGNEE_UNASSIGNED]
+        render()
+        return
+      }
+      const original = (state.team || []).find(name => name.toLowerCase() === value.toLowerCase()) || value
+      state.assigneeFilter = [original]
       render()
     })
   }
