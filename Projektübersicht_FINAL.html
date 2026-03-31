@@ -6537,6 +6537,12 @@ tdFolder.appendChild(preview);
           chip.className = 'assigneeChip';
           chip.textContent = task.assignee;
           header.appendChild(chip);
+          if(task.assignee.includes('/')){
+            const multiInfo = document.createElement('span');
+            multiInfo.className = 'assigneeTodoMeta';
+            multiInfo.textContent = 'Mehrere Bearbeiter';
+            header.appendChild(multiInfo);
+          }
         }
 
         body.appendChild(header);
